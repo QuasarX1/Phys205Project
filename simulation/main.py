@@ -9,8 +9,11 @@ def runExampleSim():
         def __init__(self):
             super().__init__(pygame.Rect(0, 0, 50, 50), pygame.Color(100, 100, 100))
             self.velocity = 400
+            self.xLocation = 0
         def update(self, delta_t):
-            self.setRect(self.getRect().move(delta_t * self.velocity, 0))
+            self.xLocation = delta_t * self.velocity + self.xLocation
+            self.setRect(pygame.Rect(self.xLocation, 0, 50, 50))
+
             if self.getRect().x > 400:
                 self.setRect(pygame.Rect(400, 0, 50, 50))
                 self.velocity = -400
@@ -63,7 +66,7 @@ class Simulation(object):
                 if event.type == pygame.QUIT:
                     running = False
 
-            self.update(self.clock.tick(500) / 1000)
+            self.update(self.clock.tick(60) / 1000)
 
             self.render()
 
