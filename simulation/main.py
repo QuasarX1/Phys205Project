@@ -8,15 +8,15 @@ def runExampleSim():
     class TestEntity(Entity):
         def __init__(self):
             super().__init__(pygame.Rect(0, 0, 50, 50), pygame.Color(100, 100, 100))
-            self.direction = 1
+            self.velocity = 400
         def update(self, delta_t):
-            self.setRect(self.getRect().move(delta_t * 400 * self.direction, 0))
+            self.setRect(self.getRect().move(delta_t * self.velocity, 0))
             if self.getRect().x > 400:
                 self.setRect(pygame.Rect(400, 0, 50, 50))
-                self.direction = -1
+                self.velocity = -400
             elif self.getRect().x < 0:
                 self.setRect(pygame.Rect(0, 0, 50, 50))
-                self.direction = 1
+                self.velocity = 400
 
     sim = Simulation()
     sim.getLayer("defult").addEntity("test", TestEntity())
