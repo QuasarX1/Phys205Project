@@ -1,1 +1,3 @@
-print("Hello World")
+import simulation as sim
+
+sim.run()
