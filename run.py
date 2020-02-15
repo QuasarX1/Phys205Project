@@ -1,3 +1,3 @@
 import simulation as sim
 
-sim.run()
+sim.runExampleSim()
