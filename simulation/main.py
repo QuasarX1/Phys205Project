@@ -1,4 +1,5 @@
 import pygame
+import numpy as np
 from simulation.layer import Layer
 from simulation.entity import Entity
 
@@ -6,29 +7,34 @@ pygame.init()
 
 def runExampleSim():
     class TestEntity(Entity):
-        def __init__(self):
-            super().__init__(pygame.Rect(0, 0, 50, 50), pygame.Color(100, 100, 100))
-            self.velocity = 400
-            self.xLocation = 0
+        def __init__(self, startLoc = 0, startVelocity = 100, startColour = pygame.Color(100, 100, 100)):
+            super().__init__(pygame.Rect(0, 0, 50, 50), startColour)
+            self.maxVelocity = np.abs(startVelocity)
+            self.velocity = startVelocity
+            self.xLocation = startLoc
         def update(self, delta_t):
             self.xLocation = delta_t * self.velocity + self.xLocation
             self.setRect(pygame.Rect(self.xLocation, 0, 50, 50))
 
-            if self.getRect().x > 400:
-                self.setRect(pygame.Rect(400, 0, 50, 50))
-                self.velocity = -400
+            if self.getRect().x > 450:
+                self.setRect(pygame.Rect(450, 0, 50, 50))
+                self.velocity = -self.maxVelocity
             elif self.getRect().x < 0:
                 self.setRect(pygame.Rect(0, 0, 50, 50))
-                self.velocity = 400
+                self.velocity = self.maxVelocity
 
     sim = Simulation()
+    sim.addLayer("test_overlay", Layer(pygame.Surface((500, 500), pygame.SRCALPHA)))
+
     sim.getLayer("defult").addEntity("test", TestEntity())
+    sim.getLayer("test_overlay").addEntity("test_overlay_object", TestEntity(450, -100, pygame.Color(255, 0, 0, 175)))
+
     sim.run()
 
 class Simulation(object):
     def __init__(self, render = True):
         self.canRender = render
-        self.__layers = {"defult": Layer()}
+        self.__layers = {"defult": Layer(pygame.Surface((500, 500), pygame.SRCALPHA))}
         self.clock = pygame.time.Clock()
 
         if self.canRender: self.screen: pygame.Surface = pygame.display.set_mode((500, 500))
@@ -57,7 +63,8 @@ class Simulation(object):
     def render(self):
         if self.canRender:
             for layer in self.__layers.values():
-                layer.render(self.screen)
+                layer.render()
+                self.screen.blit(layer.surface, (0, 0))
 
     def run(self):
         running = True

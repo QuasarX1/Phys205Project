@@ -2,9 +2,11 @@ import pygame
 from simulation.entity import Entity
 
 class Layer(object):
-    def __init__(self, canRender = True):
+    def __init__(self, surface: pygame.Surface, backgroundColour = pygame.Color(0, 0, 0, 0), canRender = True):
         self.canRender = canRender
         self.__entities = {}
+        self.surface = surface
+        self.backgroundColour = backgroundColour
 
     def getEntity(self, name: str):
         if name in self.__entities.keys():
@@ -26,7 +28,12 @@ class Layer(object):
         for entity in self.__entities.values():
             entity.update(delta_t)
 
-    def render(self, screen: pygame.Surface):
+    def render(self, surfaceOveride: pygame.Surface = None):
         if self.canRender:
+            self.surface.fill(self.backgroundColour)
+
             for entity in self.__entities.values():
-                entity.render(screen)
+                if surfaceOveride is None:
+                    entity.render(self.surface)
+                else:
+                    entity.render(surfaceOveride)

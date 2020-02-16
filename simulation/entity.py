@@ -17,5 +17,5 @@ class Entity(object):
     def update(self, delta_t):
         raise NotImplementedError("This method must be overridden in an inheriting class.")
 
-    def render(self, screen: pygame.Surface):
-        pygame.draw.rect(screen, self.getColour(), self.getRect())
+    def render(self, surface: pygame.Surface):
+        pygame.draw.rect(surface, self.getColour(), self.getRect())
