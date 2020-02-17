@@ -39,67 +39,13 @@ def runExampleSim():
                 self.setLocation(pygame.Vector3(25, 25, 25))
                 self.setFacing(self.getFacing() * -1)
 
-        #def update(self, delta_t):
-        #    self.setLocation(delta_t * self.speed * self.getFacing() + self.getLocation())
-
-        #    if self.getCentre().x > 475:
-        #        self.setCentre(pygame.Vector3(470, 25, 25))
-        #        self.setFacing(-1 * self.getFacing())
-        #    elif self.getCentre().x < 25:
-        #        self.setCentre(pygame.Vector3(25, 25, 25))
-        #        self.setFacing(-1 * self.getFacing())
-
     sim = Simulation()
     sim.addLayer("test_overlay", Layer(pygame.Surface((500, 500), pygame.SRCALPHA)))
 
     sim.getLayer("defult").addEntity("test", TestEntity1())
-    #sim.getLayer("test_overlay").addEntity("test_overlay_object", TestEntity1(450, -100, pygame.Color(255, 0, 0, 175)))
     sim.getLayer("test_overlay").addEntity("test_overlay_object", TestEntity2(pygame.Vector3(475, 25, 25), pygame.Vector3(-1, 0, 0), colour = pygame.Color(255, 0, 0, 175)))
 
     sim.run()
-
-#def runExampleSim():
-#    class TestEntity1(Renderable_Simple2DRect):
-#        def __init__(self, startLoc = 0, startVelocity = 100, startColour = pygame.Color(100, 100, 100)):
-#            super().__init__(pygame.Rect(0, 0, 50, 50), startColour)
-#            self.maxVelocity = np.abs(startVelocity)
-#            self.velocity = startVelocity
-#            self.xLocation = startLoc
-#            
-#        def update(self, delta_t):
-#            self.xLocation = delta_t * self.velocity + self.xLocation
-#            self.setRect(pygame.Rect(self.xLocation, 0, 50, 50))
-
-#            if self.getRect().x > 450:
-#                self.setRect(pygame.Rect(450, 0, 50, 50))
-#                self.velocity = -self.maxVelocity
-#            elif self.getRect().x < 0:
-#                self.setRect(pygame.Rect(0, 0, 50, 50))
-#                self.velocity = self.maxVelocity
-
-#    class TestEntity2(Entity3D):
-#        def __init__(self, side_length = 50, centre_start: pygame.Vector3 = pygame.Vector3(25, 25, 25), facing_start = pygame.Vector3(1, 0, 0), startSpeed = 100, start_colour: pygame.Color = pygame.Color(100, 100, 100)):
-#            super().__init__(side_length, centre_start, facing_start, start_colour)
-#            self.speed = startSpeed#np.abs(startSpeed)# Using np.abs returns an int32 not an int - causes an array to be produced when multyplying by a vector
-
-#        def update(self, delta_t):
-#            self.setCentre(delta_t * self.speed * self.getFacing() + self.getCentre())
-
-#            if self.getCentre().x > 475:
-#                self.setCentre(pygame.Vector3(470, 25, 25))
-#                self.setFacing(-1 * self.getFacing())
-#            elif self.getCentre().x < 25:
-#                self.setCentre(pygame.Vector3(25, 25, 25))
-#                self.setFacing(-1 * self.getFacing())
-
-#    sim = Simulation()
-#    sim.addLayer("test_overlay", Layer(pygame.Surface((500, 500), pygame.SRCALPHA)))
-
-#    sim.getLayer("defult").addEntity("test", TestEntity1())
-#    #sim.getLayer("test_overlay").addEntity("test_overlay_object", TestEntity1(450, -100, pygame.Color(255, 0, 0, 175)))
-#    sim.getLayer("test_overlay").addEntity("test_overlay_object", TestEntity2(centre_start = pygame.Vector3(475, 25, 25), facing_start = pygame.Vector3(-1, 0, 0), start_colour = pygame.Color(255, 0, 0, 175)))
-
-#    sim.run()
 
 class Simulation(object):
     def __init__(self, render = True):
