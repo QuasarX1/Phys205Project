@@ -1,9 +1,10 @@
 import pygame
 import numpy as np
-from simulation.layer import Layer
+from simulation.layer import Layer, Layer_2D, Layer_3D
 from simulation.entities.entity import Entity
 from simulation.entities.renderable import Renderable_Simple2DRect
 from simulation.entities.prefabs import UnitCube_Wireframe
+from simulation.graphics.camera import Camera
 from simulation.graphics.transformations import vector_to_array, array_to_vector, rotationMatrix, applyTransformation
 
 pygame.init()
@@ -39,8 +40,8 @@ def runExampleSim():
                 self.setLocation(pygame.Vector3(25, 25, 25))
                 self.setFacing(self.getFacing() * -1)
 
-    sim = Simulation()
-    sim.addLayer("test_overlay", Layer(pygame.Surface((500, 500), pygame.SRCALPHA)))
+    sim = Simulation(Camera(pygame.Vector3(0, 0, -200), field_of_vision = np.pi / 3))
+    sim.addLayer("test_overlay", Layer_3D(pygame.Surface((500, 500), pygame.SRCALPHA)))
 
     sim.getLayer("defult").addEntity("test", TestEntity1())
     sim.getLayer("test_overlay").addEntity("test_overlay_object", TestEntity2(pygame.Vector3(475, 25, 25), pygame.Vector3(-1, 0, 0), colour = pygame.Color(255, 0, 0, 175)))
@@ -48,13 +49,20 @@ def runExampleSim():
     sim.run()
 
 class Simulation(object):
-    def __init__(self, render = True):
+    def __init__(self, camera = Camera(), render = True):
+        self.__camera = camera
         self.canRender = render
-        self.__layers = {"defult": Layer(pygame.Surface((500, 500), pygame.SRCALPHA))}
+        self.__layers = {"defult": Layer_2D(pygame.Surface((500, 500), pygame.SRCALPHA))}
         self.clock = pygame.time.Clock()
 
         if self.canRender: self.screen: pygame.Surface = pygame.display.set_mode((500, 500))
         else: self.screen = None
+
+    def getCamera(self) -> Camera:
+        return self.__camera
+
+    def setCamera(self, new_camera: Camera):
+        self.__camera = new_camera
 
     def getLayer(self, name: str) -> Layer:
         if name in self.__layers.keys():
@@ -79,7 +87,8 @@ class Simulation(object):
     def render(self):
         if self.canRender:
             for layer in self.__layers.values():
-                layer.render()
+                if type(layer) is Layer_3D: layer.render(self.__camera)
+                else: layer.render()
                 self.screen.blit(layer.surface, (0, 0))
 
     def run(self):

@@ -1,7 +1,16 @@
 import pygame
 from simulation.entities.moveable import Moveable
+from simulation.graphics.camera import Camera
 
-class Renderable_Simple2DRect(Moveable):
+class Renderable_2D(Moveable):
+    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0)):
+        super().__init__(location, facing)
+
+class Renderable_3D(Moveable):
+    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0)):
+        super().__init__(location, facing)
+
+class Renderable_Simple2DRect(Renderable_2D):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0),
                  width: float = 10, height: float = 10, colour: pygame.Color = pygame.Color(255, 255, 255)):
         super().__init__(location, facing)
@@ -57,7 +66,7 @@ class Renderable_Simple2DRect(Moveable):
 
 
 
-class Renderable_3DWireframe(Moveable):
+class Renderable_3DWireframe(Renderable_3D):
     def __init__(self, vertices: list, edges: list, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), scale = 1, colour: pygame.Color = pygame.Color(255, 255, 255)):
         super().__init__(location, facing)
         self.__vertices = vertices
@@ -77,11 +86,11 @@ class Renderable_3DWireframe(Moveable):
     def setScaleFactor(self, new_scale: float):
         self.__scale = new_scale
 
-    def render(self, surface: pygame.Surface):#TODDO: calculate perspective here
+    def render(self, surface: pygame.Surface, camera: Camera):
         for edge in self.__edges:
-            startPosition = self.getLocation() + self.__vertices[edge[0]] * self.__scale
-            endPosition = self.getLocation() + self.__vertices[edge[1]] * self.__scale
-
+            startPosition = camera.calculatePerspective(self.getLocation() + self.__vertices[edge[0]] * self.__scale)
+            endPosition = camera.calculatePerspective(self.getLocation() + self.__vertices[edge[1]] * self.__scale)
+            
             pygame.draw.line(surface,
                              self.__colour,
                              (startPosition.x, startPosition.y),
