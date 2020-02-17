@@ -40,7 +40,11 @@ def runExampleSim():
                 self.setLocation(pygame.Vector3(25, 25, 25))
                 self.setFacing(self.getFacing() * -1)
 
-    sim = Simulation(Camera(pygame.Vector3(0, 0, -200), field_of_vision = np.pi / 3))
+    #sim = Simulation(Camera(pygame.Vector3(0, 0, -200), field_of_vision = np.pi / 3))
+    sim = Simulation()
+    sim.getCamera().setLocation(pygame.Vector3(0, 0, -200))
+    sim.getCamera().setFov(np.pi / 3)
+
     sim.addLayer("test_overlay", Layer_3D(pygame.Surface((500, 500), pygame.SRCALPHA)))
 
     sim.getLayer("defult").addEntity("test", TestEntity1())
@@ -49,14 +53,19 @@ def runExampleSim():
     sim.run()
 
 class Simulation(object):
-    def __init__(self, camera = Camera(), render = True):
-        self.__camera = camera
+    def __init__(self, render = True):
         self.canRender = render
         self.__layers = {"defult": Layer_2D(pygame.Surface((500, 500), pygame.SRCALPHA))}
         self.clock = pygame.time.Clock()
 
-        if self.canRender: self.screen: pygame.Surface = pygame.display.set_mode((500, 500))
-        else: self.screen = None
+        if self.canRender:
+            self.screen: pygame.Surface = pygame.display.set_mode((500, 500), flags = pygame.RESIZABLE)
+            pygame.display.set_caption("Exoplanet Simulation")
+            window_size = pygame.display.get_surface().get_size()
+            self.__camera = Camera(dimentions = pygame.Vector2(window_size[0], window_size[1]))
+        else:
+            self.screen = None
+            self.__camera = Camera()
 
     def getCamera(self) -> Camera:
         return self.__camera
@@ -97,6 +106,10 @@ class Simulation(object):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+
+                elif event.type == pygame.VIDEORESIZE:
+                    self.__camera.setWidth(event.w)
+                    self.__camera.setHeight(event.h)
 
             self.update(self.clock.tick(60) / 1000)
 
