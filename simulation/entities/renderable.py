@@ -26,14 +26,14 @@ class Renderable_Simple2DRect(Moveable):
         super().move(displacement_vector)
         self.__generateRect()
 
-    def getWidth(self):
+    def getWidth(self) -> float:
         self.__width
 
     def setWidth(self, new_width: float):
         self.__width = new_width
         self.__generateRect()
 
-    def getHeight(self):
+    def getHeight(self) -> float:
         return self.__height
 
     def setHeight(self, new_height: float):
@@ -58,9 +58,36 @@ class Renderable_Simple2DRect(Moveable):
 
 
 class Renderable_3DWireframe(Moveable):
-    pass
+    def __init__(self, vertices: list, edges: list, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), scale = 1, colour: pygame.Color = pygame.Color(255, 255, 255)):
+        super().__init__(location, facing)
+        self.__vertices = vertices
+        self.__edges = edges
+        self.__scale = scale
+        self.__colour = colour
+
+    def getColour(self) -> pygame.Color:
+        return self.__colour
+
+    def setColour(self, new_colour: pygame.Color):
+        self.__colour = new_colour
+
+    def getScaleFactor(self) -> float:
+        return self.__scale
+
+    def setScaleFactor(self, new_scale: float):
+        self.__scale = new_scale
+
+    def render(self, surface: pygame.Surface):#TODDO: calculate perspective here
+        for edge in self.__edges:
+            startPosition = self.getLocation() + self.__vertices[edge[0]] * self.__scale
+            endPosition = self.getLocation() + self.__vertices[edge[1]] * self.__scale
+
+            pygame.draw.line(surface,
+                             self.__colour,
+                             (startPosition.x, startPosition.y),
+                             (endPosition.x, endPosition.y))
 
 
 
-class Renderable_3DSolid(Moveable):
+class Renderable_3DSolid(Renderable_3DWireframe):
     pass

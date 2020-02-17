@@ -17,7 +17,7 @@ class Moveable(Entity):
         return self.__facing
 
     def setFacing(self, new_direction: pygame.Vector3):
-        self.__facing = new_direction / np.sqrt(newDirection.x**2 + newDirection.y**2 + newDirection.z**2)
+        self.__facing = new_direction / np.sqrt(new_direction.x**2 + new_direction.y**2 + new_direction.z**2)
 
     def move(self, displacement_vector: pygame.Vector3):
         self.__centre += displacement_vector
