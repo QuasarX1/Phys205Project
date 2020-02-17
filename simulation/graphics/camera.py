@@ -30,6 +30,6 @@ class Camera(Moveable):
     def setHeight(self, new_height: float):
         self.__height = new_height
 
-    def calculatePerspective(self, location: pygame.Vector3):
+    def calculatePerspective(self, location: pygame.Vector3):#TODO: upgrade perspective calculation
         result = location * self.__focus_distance / (location.z - (self.getLocation() - (self.__focus_distance * self.getFacing())).z)
         return pygame.Vector2(result.x, result.y)

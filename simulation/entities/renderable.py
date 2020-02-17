@@ -99,4 +99,4 @@ class Renderable_3DWireframe(Renderable_3D):
 
 
 class Renderable_3DSolid(Renderable_3DWireframe):
-    pass
+    pass#TODO: compute rendering or not of faces
