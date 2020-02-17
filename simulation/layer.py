@@ -1,5 +1,5 @@
 import pygame
-from simulation.entity import Entity
+from simulation.entities.entity import Entity
 
 class Layer(object):
     def __init__(self, surface: pygame.Surface, backgroundColour = pygame.Color(0, 0, 0, 0), canRender = True):
