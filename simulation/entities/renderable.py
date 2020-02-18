@@ -10,6 +10,8 @@ class Renderable_3D(Moveable):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0)):
         super().__init__(location, facing)
 
+
+
 class Renderable_Simple2DRect(Renderable_2D):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0),
                  width: float = 10, height: float = 10, colour: pygame.Color = pygame.Color(255, 255, 255)):
@@ -63,6 +65,45 @@ class Renderable_Simple2DRect(Renderable_2D):
 
     def render(self, surface: pygame.Surface):
         pygame.draw.rect(surface, self.__colour, self.__rect_casche)
+
+
+
+class Renderable_Simple2DPolygon(Renderable_2D):
+    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0),
+                 points: list = [pygame.Vector2(-0.5, -0.5), pygame.Vector2(0.5, -0.5), pygame.Vector2(0.5, 0.5), pygame.Vector2(-0.5, 0.5)],
+                 scale_factor: float = 1, colour: pygame.Color = pygame.Color(255, 255, 255)):
+        super().__init__(location, facing)
+        self.__points: list = points
+        self.__scale = scale_factor
+        self.__colour = colour
+
+    def getScaleFactor(self) -> float:
+        return self.__scale
+
+    def setScaleFactor(self, new_scale: float):
+        self.__scale = new_scale
+
+    def render(self, surface: pygame.Surface):
+        pygame.draw.polygon(surface, self.__colour, [self.getLocation() + point * self.__scale for point in self.__points])
+
+
+
+class Renderable_Simple2DCircle(Renderable_2D):
+    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0),
+                 radius: float = 1, colour: pygame.Color = pygame.Color(255, 255, 255)):
+        super().__init__(location, facing)
+        self.__points: list = points
+        self.__radius = radius
+        self.__colour = colour
+
+    def getRadius(self) -> float:
+        return self.__radius
+
+    def setRadius(self, new_radius: float):
+        self.__radius = new_radius
+
+    def render(self, surface: pygame.Surface):
+        pygame.draw.circle(surface, self.__colour, self.getLocation(), self.__radius)
 
 
 
