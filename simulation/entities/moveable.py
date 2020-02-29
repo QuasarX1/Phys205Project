@@ -3,9 +3,11 @@ import numpy as np
 from simulation.entities.entity import Entity
 
 class Moveable(Entity):
-    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0)):
+    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), **kwargs):
+        super().__init__(**kwargs)
         self.__centre: pygame.Vector3 = location
-        self.__facing: pygame.Vector3 = facing
+        self.__facing: pygame.Vector3 = facing.normalize()
+        self.__vertical: pygame.Vector3 = vertical.normalize()
 
     def getLocation(self) -> pygame.Vector3:
         return self.__centre
@@ -18,6 +20,15 @@ class Moveable(Entity):
 
     def setFacing(self, new_direction: pygame.Vector3):
         self.__facing = new_direction / np.sqrt(new_direction.x**2 + new_direction.y**2 + new_direction.z**2)
+
+    def getVertical(self) -> pygame.Vector3:
+        return self.__vertical
+
+    def setVertical(self, new_direction: pygame.Vector3):
+        self.__vertical = new_direction / np.sqrt(new_direction.x**2 + new_direction.y**2 + new_direction.z**2)
+
+    def getHorisontal(self):
+        return self.__facing.cross(self.__vertical).normalize()
 
     def move(self, displacement_vector: pygame.Vector3):
         self.__centre += displacement_vector
@@ -33,3 +44,29 @@ class Moveable(Entity):
 
     def move_forewards(self, displacement: float):
         self.move(self.__facing * displacement)
+
+    def move_upwards(self, displacement: float):
+        self.move(self.__vertical * displacement)
+
+    def move_right(self, displacement: float):
+        self.move(self.getHorisontal() * displacement)
+
+    def rotate_azimuth(self, angle):
+        """
+        Angle in degrees
+        """
+        self.__facing.rotate_ip(angle, self.__vertical)# function signiture back to front on docs
+
+    def rotate_altitude(self, angle):
+        """
+        Angle in degrees
+        """
+        axis = self.getHorisontal()
+        self.__facing.rotate_ip(angle, axis)# function signiture back to front on docs
+        self.__facing.rotate_ip(angle, axis)# function signiture back to front on docs
+
+    def rotate_roll(self, angle):
+        """
+        Angle in degrees
+        """
+        self.__vertical.rotate_ip(angle, self.__facing)# function signiture back to front on docs

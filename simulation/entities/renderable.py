@@ -3,19 +3,19 @@ from simulation.entities.moveable import Moveable
 from simulation.graphics.camera import Camera
 
 class Renderable_2D(Moveable):
-    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0)):
-        super().__init__(location, facing)
+    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), **kwargs):
+        super().__init__(location, facing, vertical, **kwargs)
 
 class Renderable_3D(Moveable):
-    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0)):
-        super().__init__(location, facing)
+    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), **kwargs):
+        super().__init__(location, facing, vertical, **kwargs)
 
 
 
 class Renderable_Simple2DRect(Renderable_2D):
-    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0),
-                 width: float = 10, height: float = 10, colour: pygame.Color = pygame.Color(255, 255, 255)):
-        super().__init__(location, facing)
+    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0),
+                 width: float = 10, height: float = 10, colour: pygame.Color = pygame.Color(255, 255, 255), **kwargs):
+        super().__init__(location, facing, vertical, **kwargs)
         self.__width = width
         self.__height = height
         self.__colour = colour
@@ -69,10 +69,10 @@ class Renderable_Simple2DRect(Renderable_2D):
 
 
 class Renderable_Simple2DPolygon(Renderable_2D):
-    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0),
+    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0),
                  points: list = [pygame.Vector2(-0.5, -0.5), pygame.Vector2(0.5, -0.5), pygame.Vector2(0.5, 0.5), pygame.Vector2(-0.5, 0.5)],
-                 scale_factor: float = 1, colour: pygame.Color = pygame.Color(255, 255, 255)):
-        super().__init__(location, facing)
+                 scale_factor: float = 1, colour: pygame.Color = pygame.Color(255, 255, 255), **kwargs):
+        super().__init__(location, facing, vertical, **kwargs)
         self.__points: list = points
         self.__scale = scale_factor
         self.__colour = colour
@@ -89,9 +89,9 @@ class Renderable_Simple2DPolygon(Renderable_2D):
 
 
 class Renderable_Simple2DCircle(Renderable_2D):
-    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0),
-                 radius: float = 1, colour: pygame.Color = pygame.Color(255, 255, 255)):
-        super().__init__(location, facing)
+    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0),
+                 radius: float = 1, colour: pygame.Color = pygame.Color(255, 255, 255), **kwargs):
+        super().__init__(location, facing, vertical, **kwargs)
         self.__points: list = points
         self.__radius = radius
         self.__colour = colour
@@ -108,8 +108,8 @@ class Renderable_Simple2DCircle(Renderable_2D):
 
 
 class Renderable_3DWireframe(Renderable_3D):
-    def __init__(self, vertices: list, edges: list, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), scale = 1, colour: pygame.Color = pygame.Color(255, 255, 255)):
-        super().__init__(location, facing)
+    def __init__(self, vertices: list, edges: list, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), scale = 1, colour: pygame.Color = pygame.Color(255, 255, 255), **kwargs):
+        super().__init__(location, facing, vertical, **kwargs)
         self.__vertices = vertices
         self.__edges = edges
         self.__scale = scale
@@ -128,10 +128,24 @@ class Renderable_3DWireframe(Renderable_3D):
         self.__scale = new_scale
 
     def render(self, surface: pygame.Surface, camera: Camera):
+        translation = camera.getLocation()
+        translation = pygame.Vector2(translation.x, translation.y)
         for edge in self.__edges:
-            startPosition = camera.calculatePerspective(self.getLocation() + self.__vertices[edge[0]] * self.__scale)
-            endPosition = camera.calculatePerspective(self.getLocation() + self.__vertices[edge[1]] * self.__scale)
+            startPosition = camera.calculatePerspective(self.getLocation() + self.__vertices[edge[0]] * self.__scale) + translation
+            endPosition = camera.calculatePerspective(self.getLocation() + self.__vertices[edge[1]] * self.__scale) + translation
             
+            pygame.draw.line(surface,
+                             self.__colour,
+                             (startPosition.x, startPosition.y),
+                             (endPosition.x, endPosition.y))
+
+    def render(self, surface: pygame.Surface, camera: Camera):
+        translation = camera.getLocation()
+        translation = pygame.Vector2(translation.x + camera.getWidth() / 2, translation.y + camera.getHeight() / 2)
+        for edge in self.__edges:
+            startPosition = camera.calculatePerspective(self.getLocation() + self.__vertices[edge[0]] * self.__scale) + translation
+            endPosition = camera.calculatePerspective(self.getLocation() + self.__vertices[edge[1]] * self.__scale) + translation
+           
             pygame.draw.line(surface,
                              self.__colour,
                              (startPosition.x, startPosition.y),
@@ -140,4 +154,6 @@ class Renderable_3DWireframe(Renderable_3D):
 
 
 class Renderable_3DSolid(Renderable_3DWireframe):
-    pass#TODO: compute rendering or not of faces
+    def __init__(self, vertices: list, edges: list, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), scale = 1, colour: pygame.Color = pygame.Color(255, 255, 255), **kwargs):
+        super().__init__(vertices, edges, location, facing, vertical, scale, colour, **kwargs)
+    #TODO: compute rendering or not of faces

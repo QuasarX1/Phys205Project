@@ -21,4 +21,4 @@ def redshift_doppler(velocity_perpendicular):
 def wavelength_doppler(redshift_factor, apparent_wavelength):
     return (redshift_factor*apparent_wavelength)
 
-
+#TODO: add function to calculate luminosity in a given wavelength given a temp of a black body

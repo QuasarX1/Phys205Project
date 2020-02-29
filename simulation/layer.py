@@ -4,7 +4,8 @@ from simulation.entities.renderable import Renderable_2D, Renderable_3D
 from simulation.graphics.camera import Camera
 
 class Layer(object):
-    def __init__(self, surface: pygame.Surface, backgroundColour = pygame.Color(0, 0, 0, 0), canRender = True):
+    def __init__(self, surface: pygame.Surface, backgroundColour = pygame.Color(0, 0, 0, 0), canRender = True, **kwargs):
+        super().__init__(**kwargs)
         self.canRender = canRender
         self.__entities = {}
         self.surface = surface
@@ -31,8 +32,8 @@ class Layer(object):
         raise NotImplementedError("This method must be overridden in an inheriting class.")
 
 class Layer_2D(Layer):
-    def __init__(self, surface: pygame.Surface, backgroundColour = pygame.Color(0, 0, 0, 0), canRender = True):
-        super().__init__(surface, backgroundColour, canRender)
+    def __init__(self, surface: pygame.Surface, backgroundColour = pygame.Color(0, 0, 0, 0), canRender = True, **kwargs):
+        super().__init__(surface, backgroundColour, canRender, **kwargs)
 
     def addEntity(self, name: str, entity: Renderable_2D):
         if not issubclass(type(entity), Renderable_2D):
@@ -54,8 +55,8 @@ class Layer_2D(Layer):
                     entity.render(surfaceOveride)
 
 class Layer_3D(Layer):
-    def __init__(self, surface: pygame.Surface, backgroundColour = pygame.Color(0, 0, 0, 0), canRender = True):
-        super().__init__(surface, backgroundColour, canRender)
+    def __init__(self, surface: pygame.Surface, backgroundColour = pygame.Color(0, 0, 0, 0), canRender = True, **kwargs):
+        super().__init__(surface, backgroundColour, canRender, **kwargs)
 
     def addEntity(self, name: str, entity: Renderable_3D):
         if not issubclass(type(entity), Renderable_3D):
