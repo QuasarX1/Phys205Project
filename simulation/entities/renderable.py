@@ -143,13 +143,14 @@ class Renderable_3DWireframe(Renderable_3D):
         translation = camera.getLocation()
         translation = pygame.Vector2(translation.x + camera.getWidth() / 2, translation.y + camera.getHeight() / 2)
         for edge in self.__edges:
-            startPosition = camera.calculatePerspective(self.getLocation() + self.__vertices[edge[0]] * self.__scale) + translation
-            endPosition = camera.calculatePerspective(self.getLocation() + self.__vertices[edge[1]] * self.__scale) + translation
+            if camera.isInView(self.getLocation() + self.__vertices[edge[0]] * self.__scale) or camera.isInView(self.getLocation() + self.__vertices[edge[1]] * self.__scale):
+                startPosition = camera.calculatePerspective(self.getLocation() + self.__vertices[edge[0]] * self.__scale) + translation
+                endPosition = camera.calculatePerspective(self.getLocation() + self.__vertices[edge[1]] * self.__scale) + translation
            
-            pygame.draw.line(surface,
-                             self.__colour,
-                             (startPosition.x, startPosition.y),
-                             (endPosition.x, endPosition.y))
+                pygame.draw.line(surface,
+                                 self.__colour,
+                                 (startPosition.x, startPosition.y),
+                                 (endPosition.x, endPosition.y))
 
 
 

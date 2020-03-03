@@ -8,27 +8,34 @@ class Camera(Moveable):
         self.__width: float = dimentions.x
         self.__height: float = dimentions.y
         self.__fov: float = field_of_vision
-        self.__focus_distance: float = float(self.__width / 2 / np.tan(self.__fov / 2))
+        self.__focus_distance: float = None
+        self.__setFov()
 
     def getFov(self) -> float:
         return self.__fov
 
+    def __setFov(self):
+        self.__focus_distance: float = float(self.__width / 2 / np.tan(self.__fov / 2))# This be +ve
+
     def setFov(self, new_field_of_vision: float):
         self.__fov = new_field_of_vision
-        self.__focus_distance = float(self.__width / 2 / np.tan(self.__fov / 2))
+        self.__setFov()
 
     def getWidth(self) -> float:
         return self.__width
 
     def setWidth(self, new_width: float):
         self.__width = new_width
-        self.__focus_distance = float(self.__width / 2 / np.tan(self.__fov / 2))
+        self.__setFov()
 
     def getHeight(self) -> float:
         return self.__height
 
     def setHeight(self, new_height: float):
         self.__height = new_height
+
+    def getFocus(self):
+        return self.getLocation() - self.__focus_distance * self.getFacing()
 
     #def calculatePerspective(self, location: pygame.Vector3):#TODO: upgrade perspective calculation
     #    result = location * self.__focus_distance / (location.z - (self.getLocation() - (self.__focus_distance * self.getFacing())).z)
@@ -49,6 +56,17 @@ class Camera(Moveable):
         #result = (location + pygame.Vector3(self.__width / 2, self.__height / 2, 0)) * self.__focus_distance / (location.z - ((self.getLocation() + pygame.Vector3(self.__width / 2, self.__height / 2, 0)) - (self.__focus_distance * self.getFacing())).z)
         
         return pygame.Vector2(result.x, result.y)
+
+    def isInView(self, point: pygame.Vector3):
+        locationToPoint = point - self.getLocation()
+        focusToPoint = point - self.getFocus()
+
+        inView = True
+        inView &= locationToPoint.dot(self.getFacing()) > 0# Infront of the camera
+        inView &= np.abs(focusToPoint.dot(self.getFacing()) / locationToPoint.dot(self.getHorisontal())) > np.abs(2 * self.__focus_distance / self.__width)# Right of left fov bound and Left of right fov bound
+        inView &= np.abs(focusToPoint.dot(self.getFacing()) / locationToPoint.dot(self.getVertical())) > np.abs(2 * self.__focus_distance / self.__height)# Above lower fov bound and Below upper fov bound
+        return inView
+
 
     def update(self, delta_t):
         keys = pygame.key.get_pressed()
