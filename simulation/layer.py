@@ -24,9 +24,17 @@ class Layer(object):
         if name in self.__entities.keys():
             self.__entities.pop(name, None)
 
+    def pre_update(self):
+        for entity in self.__entities.values():
+            entity.pre_update()
+
     def update(self, delta_t):
         for entity in self.__entities.values():
             entity.update(delta_t)
+
+    def post_update(self):
+        for entity in self.__entities.values():
+            entity.post_update()
 
     def render(self, surfaceOveride: pygame.Surface = None):
         raise NotImplementedError("This method must be overridden in an inheriting class.")

@@ -48,9 +48,14 @@ class Simulation(object):
             self.__layers.pop(name, None)
 
     def update(self, delta_t):
-        #TODO: consider running these as paralell threads
         for layer in self.__layers.values():
-            layer.update(delta_t)
+            layer.pre_update()#TODO: consider running these as paralell threads
+
+        for layer in self.__layers.values():
+            layer.update(delta_t)#TODO: consider running these as paralell threads
+
+        for layer in self.__layers.values():
+            layer.post_update()#TODO: consider running these as paralell threads
 
     def render(self):
         if self.canRender:

@@ -12,11 +12,20 @@ simulation.addLayer("HUD", HUD)
 simulation_layer = sim.layer.Layer_3D(pygame.Surface((500, 500), pygame.SRCALPHA))
 simulation.addLayer("simulation_layer", simulation_layer)
 
+target_star = Star(radius = 100,
+                   tempriture = 100,
+                   mass = 10000000000000000000,#1.9891 * 10**30,#500000,
+                   location = pygame.Vector3(-200, 0, 0))
+simulation_layer.addEntity("target_star", target_star)
 
-simulation_layer.addEntity("target_star", Star(radius = 100,
-                                               tempriture = 100,
-                                               mass = 500000,
-                                               location = pygame.Vector3(0, 0, 0)))
+test_star = Star(radius = 100,
+                 tempriture = 100,
+                 mass = 10000000000000000000,#1.9891 * 10**30,#500000,
+                 location = pygame.Vector3(200, 0, 0))
+simulation_layer.addEntity("test_star", test_star)
+
+target_star.bindEntity_by_name("test_star", simulation_layer)
+test_star.bindEntity_by_name("target_star", simulation_layer)
 
 #TODO: add a planet
 
