@@ -4,18 +4,18 @@ from simulation.graphics.camera import Camera
 
 class Renderable_2D(Moveable):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), **kwargs):
-        super().__init__(location, facing, vertical, **kwargs)
+        super().__init__(location = location, facing = facing, vertical = vertical, **kwargs)
 
 class Renderable_3D(Moveable):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), **kwargs):
-        super().__init__(location, facing, vertical, **kwargs)
+        super().__init__(location = location, facing = facing, vertical = vertical, **kwargs)
 
 
 
 class Renderable_Simple2DRect(Renderable_2D):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0),
                  width: float = 10, height: float = 10, colour: pygame.Color = pygame.Color(255, 255, 255), **kwargs):
-        super().__init__(location, facing, vertical, **kwargs)
+        super().__init__(location = location, facing = facing, vertical = vertical, **kwargs)
         self.__width = width
         self.__height = height
         self.__colour = colour
@@ -72,7 +72,7 @@ class Renderable_Simple2DPolygon(Renderable_2D):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0),
                  points: list = [pygame.Vector2(-0.5, -0.5), pygame.Vector2(0.5, -0.5), pygame.Vector2(0.5, 0.5), pygame.Vector2(-0.5, 0.5)],
                  scale_factor: float = 1, colour: pygame.Color = pygame.Color(255, 255, 255), **kwargs):
-        super().__init__(location, facing, vertical, **kwargs)
+        super().__init__(location = location, facing = facing, vertical = vertical, **kwargs)
         self.__points: list = points
         self.__scale = scale_factor
         self.__colour = colour
@@ -91,7 +91,7 @@ class Renderable_Simple2DPolygon(Renderable_2D):
 class Renderable_Simple2DCircle(Renderable_2D):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0),
                  radius: float = 1, colour: pygame.Color = pygame.Color(255, 255, 255), **kwargs):
-        super().__init__(location, facing, vertical, **kwargs)
+        super().__init__(location = location, facing = facing, vertical = vertical, **kwargs)
         self.__points: list = points
         self.__radius = radius
         self.__colour = colour
@@ -109,7 +109,7 @@ class Renderable_Simple2DCircle(Renderable_2D):
 
 class Renderable_3DWireframe(Renderable_3D):
     def __init__(self, vertices: list, edges: list, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), scale = 1, colour: pygame.Color = pygame.Color(255, 255, 255), **kwargs):
-        super().__init__(location, facing, vertical, **kwargs)
+        super().__init__(location = location, facing = facing, vertical = vertical, **kwargs)
         self.__vertices = vertices
         self.__edges = edges
         self.__scale = scale
@@ -156,5 +156,5 @@ class Renderable_3DWireframe(Renderable_3D):
 
 class Renderable_3DSolid(Renderable_3DWireframe):
     def __init__(self, vertices: list, edges: list, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), scale = 1, colour: pygame.Color = pygame.Color(255, 255, 255), **kwargs):
-        super().__init__(vertices, edges, location, facing, vertical, scale, colour, **kwargs)
+        super().__init__(vertices = vertices, edges = edges, location = location, facing = facing, vertical = vertical, scale = scale, colour = colour, **kwargs)
     #TODO: compute rendering or not of faces

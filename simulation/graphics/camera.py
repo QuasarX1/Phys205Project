@@ -4,7 +4,7 @@ from simulation.entities.moveable import Moveable
 
 class Camera(Moveable):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(0, 0, 1), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), dimentions: pygame.Vector2 = pygame.Vector2(500, 500), field_of_vision: float = np.pi / 2, **kwargs):
-        super().__init__(location, facing, vertical, **kwargs)
+        super().__init__(location = location, facing = facing, vertical = vertical, **kwargs)
         self.__width: float = dimentions.x
         self.__height: float = dimentions.y
         self.__fov: float = field_of_vision
@@ -63,8 +63,17 @@ class Camera(Moveable):
 
         inView = True
         inView &= locationToPoint.dot(self.getFacing()) > 0# Infront of the camera
-        inView &= np.abs(focusToPoint.dot(self.getFacing()) / locationToPoint.dot(self.getHorisontal())) > np.abs(2 * self.__focus_distance / self.__width)# Right of left fov bound and Left of right fov bound
-        inView &= np.abs(focusToPoint.dot(self.getFacing()) / locationToPoint.dot(self.getVertical())) > np.abs(2 * self.__focus_distance / self.__height)# Above lower fov bound and Below upper fov bound
+
+        try:
+            inView &= np.abs(focusToPoint.dot(self.getFacing()) / locationToPoint.dot(self.getHorisontal())) > np.abs(2 * self.__focus_distance / self.__width)# Right of left fov bound and Left of right fov bound
+        except ZeroDivisionError:
+            inView &= True
+
+        try:
+            inView &= np.abs(focusToPoint.dot(self.getFacing()) / locationToPoint.dot(self.getVertical())) > np.abs(2 * self.__focus_distance / self.__height)# Above lower fov bound and Below upper fov bound
+        except ZeroDivisionError:
+            inView &= True
+
         return inView
 
 

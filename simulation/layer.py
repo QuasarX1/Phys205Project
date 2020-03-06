@@ -33,7 +33,7 @@ class Layer(object):
 
 class Layer_2D(Layer):
     def __init__(self, surface: pygame.Surface, backgroundColour = pygame.Color(0, 0, 0, 0), canRender = True, **kwargs):
-        super().__init__(surface, backgroundColour, canRender, **kwargs)
+        super().__init__(surface = surface, backgroundColour = backgroundColour, canRender = canRender, **kwargs)
 
     def addEntity(self, name: str, entity: Renderable_2D):
         if not issubclass(type(entity), Renderable_2D):
@@ -56,7 +56,7 @@ class Layer_2D(Layer):
 
 class Layer_3D(Layer):
     def __init__(self, surface: pygame.Surface, backgroundColour = pygame.Color(0, 0, 0, 0), canRender = True, **kwargs):
-        super().__init__(surface, backgroundColour, canRender, **kwargs)
+        super().__init__(surface = surface, backgroundColour = backgroundColour, canRender = canRender, **kwargs)
 
     def addEntity(self, name: str, entity: Renderable_3D):
         if not issubclass(type(entity), Renderable_3D):
