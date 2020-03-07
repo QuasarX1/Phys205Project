@@ -12,11 +12,24 @@
   </camera>
 
   <layer_3D render_capability="true">
-    <star tempriture="100" radius="100" mass="10000000000000000000" moment_of_inertia="0" angular_velocity="0">
-      <location x="0" y="0" z="0" />
+    <star name="target_star" tempriture="100" radius="100">
+      <location x="-200" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
-      <velocity x="0" y="0" z="0" />
+      <free_body mass="10000000000000000000" moment_of_inertia="0" angular_velocity="0">
+        <velocity x="0" y="0" z="0" />
+        <bound_entity_name>test_star</bound_entity_name>
+      </free_body>
+    </star>
+
+    <star name="test_star" tempriture="100" radius="100">
+      <location x="200" y="0" z="0" />
+      <facing x="1" y="0" z="0" />
+      <vertical x="0" y="1" z="0" />
+      <free_body mass="10000000000000000000" moment_of_inertia="0" angular_velocity="0">
+        <velocity x="0" y="0" z="0" />
+        <bound_entity_name>target_star</bound_entity_name>
+      </free_body>
     </star>
   </layer_3D>
   
