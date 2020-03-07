@@ -8,7 +8,7 @@ class FreeBody(object):# Foreward declaration of FreeBody
     pass
 
 class FreeBody(Moveable):
-    def __init__(self, mass, moment_of_inertia,
+    def __init__(self, mass: float, moment_of_inertia: float,
                  initial_velocity: pygame.Vector3 = pygame.Vector3(0, 0, 0), initial_angular_velocity = 0,#TODO: angular a vector???
                  location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0),
                  **kwargs):

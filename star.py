@@ -16,5 +16,5 @@ class Star(FreeBody, Sphere):
     def setTempriture(self, new_tempriture: float):
         self.__tempriture = new_tempriture
 
-    #def update(self, delta_t):#TODO: star updates here? or in free body?
-        #pass
+    def update(self, delta_t):#TODO: star updates here? or in free body?
+        self.manual_update_FreeBody()

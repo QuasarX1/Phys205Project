@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://tempuri.org/XMLSchema.xsd"
+    elementFormDefault="qualified"
+    xmlns="http://tempuri.org/XMLSchema.xsd"
+    xmlns:mstns="http://tempuri.org/XMLSchema.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+
+<!-- Vectors -->
+  <xs:complexType name="Vector2">
+    <xs:attribute name="x" type="xs:float" />
+    <xs:attribute name="y" type="xs:float" />
+  </xs:complexType>
+
+  <xs:complexType name="Vector3">
+    <xs:attribute name="x" type="xs:float" />
+    <xs:attribute name="y" type="xs:float" />
+    <xs:attribute name="z" type="xs:float" />
+  </xs:complexType>
+
+
+<!--Free Body -->
+  <xs:complexType name="free_body_type">
+    <xs:sequence>
+      <xs:element name="velocity" type="xs:float" />
+    </xs:sequence>
+    <xs:attribute name="mass" type="xs:float" />
+    <xs:attribute name="moment_of_inertia" type="xs:float" />
+    <xs:attribute name="angular_velocity" type="xs:float" />
+  </xs:complexType>
+
+
+<!-- Entities -->
+  <xs:complexType name="moveable_type">
+    <xs:sequence>
+      <xs:element name="location" type="Vector3" />
+      <xs:element name="facing" type="Vector3" />
+      <xs:element name="vertical" type="Vector3" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="sphere_type">
+    <xs:complexContent>
+      <xs:extension base="moveable_type">
+        <xs:sequence>
+          <xs:element name="radius" type="xs:float" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="camera_type">
+    <xs:complexContent>
+      <xs:extension base="moveable_type">
+        <xs:attribute name="render_capability" type="xs:boolean" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  
+<!-- Leaf Entities -->
+  <xs:complexType name="star_type">
+    <xs:complexContent>
+      <xs:extension base="sphere_type">
+        <xs:sequence>
+          <xs:element name="free_body" type="free_body_type" />
+        </xs:sequence>
+        <xs:attribute name="tempriture" type="xs:float" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+<!-- Entity Groups -->
+  <xs:group name="entities_2D_group">
+    <xs:choice>
+    </xs:choice>
+  </xs:group>
+  
+  <xs:group name="entities_3D_group">
+    <xs:choice>
+      <xs:element name="sphere" type="sphere_type" />
+      <xs:element name="star" type="star_type" />
+    </xs:choice>
+  </xs:group>
+  
+  
+
+  <xs:complexType name="layer_2D_type">
+    <xs:sequence>
+      <xs:group ref="entities_2D_group" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="layer_3D_type">
+    <xs:sequence>
+      <xs:group ref="entities_3D_group" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:group name="layers_group">
+    <xs:choice>
+      <xs:element name="layer_2D" type="layer_2D_type" />
+      <xs:element name="layer_3D" type="layer_3D_type" />
+    </xs:choice>
+  </xs:group>
+
+  
+  
+  <xs:complexType name="simulation_type">
+    <xs:sequence>
+      <xs:element name="camera" type="camera_type" minOccurs="0" />
+      <xs:group ref="layers_group" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="render_capability" type="xs:boolean" />
+  </xs:complexType>
+
+  
+  
+  <xs:element name="simulation" type="simulation_type" />
+  
+</xs:schema>
