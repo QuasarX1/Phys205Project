@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<simulation render_capability="true">
+<simulation xmlns="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/layout_schema"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/layout_schema simulation_layout_schema.xsd"
+            render_capability="true">
   <camera>
     
   </camera>

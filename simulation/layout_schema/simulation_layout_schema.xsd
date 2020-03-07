@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema targetNamespace="http://tempuri.org/XMLSchema.xsd"
+<xs:schema targetNamespace="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/layout_schema"
     elementFormDefault="qualified"
-    xmlns="http://tempuri.org/XMLSchema.xsd"
-    xmlns:mstns="http://tempuri.org/XMLSchema.xsd"
+    xmlns="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/layout_schema"
+    xmlns:mstns="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/layout_schema"
     xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 
