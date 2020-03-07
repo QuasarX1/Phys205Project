@@ -32,6 +32,18 @@ class Simulation(object):
             self.screen = None
             self.__camera = Camera()
 
+    @staticmethod
+    def create_from_xml(path_to_xml: str):
+        """
+        Create a simulation from a pre-created XML file.
+
+        The XML must conform to http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/layout_schema/simulation_layout_schema.xsd.
+        
+        Paramiters:
+            str path_to_xml -> The filepath to the XML document to be loaded
+        """
+        raise NotImplementedError("This has not yet been implemented.")#TODO: add this using DOM from https://www.tutorialspoint.com/python/python_xml_processing.htm
+
     def getCamera(self) -> Camera:
         """
         Returns a reference to the simulation's camera.
