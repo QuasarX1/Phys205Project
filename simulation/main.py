@@ -110,7 +110,7 @@ class Simulation(object):
 
     def run(self):
         """
-        --!! WARNING: This is a blocking method !!--
+        --!! WARNING !!-- This is a blocking method
 
         Runs the simulation untill it terminates or is manualy terminated.
 

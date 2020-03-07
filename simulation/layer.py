@@ -4,7 +4,20 @@ from simulation.entities.renderable import Renderable_2D, Renderable_3D
 from simulation.graphics.camera import Camera
 
 class Layer(object):
-    def __init__(self, surface: pygame.Surface, backgroundColour = pygame.Color(0, 0, 0, 0), canRender = True, **kwargs):
+    """
+    A layer of entities in a simulation.
+    Holds a group of similar entities and handles updating of entities.
+
+    This is a base class and must be inherited.
+    The "update" method MUST be overridden in a subclass!
+
+    Constructor:
+        pygame.Surface surface -> The surface on which to render the layer
+        pygame.Color backgroundColour -> The background colour used to fill the pygame.Surface between renders (pygame.Color(0, 0, 0, 0))
+        bool canRander -> Can the layer be rendered? (True)
+    """
+
+    def __init__(self, surface: pygame.Surface, backgroundColour: pygame.Color = pygame.Color(0, 0, 0, 0), canRender: bool = True, **kwargs):
         super().__init__(**kwargs)
         self.canRender = canRender
         self.__entities = {}
@@ -12,38 +25,93 @@ class Layer(object):
         self.backgroundColour = backgroundColour
 
     def getEntity(self, name: str):
+        """
+        Returns a reference to an entity registered with the layer.
+
+        Paramiters:
+            str name -> The name the entity was registered with
+        """
         if name in self.__entities.keys():
             return self.__entities[name]
         else:
             return None
 
     def addEntity(self, name: str, entity: Entity):
+        """
+        Regsisters an entity with the layer.
+
+        Paramiters:
+            str name -> The name the new entity should be registered with
+            Entity entity -> The entity to register
+        """
         raise NotImplementedError("This method must be overridden in an inheriting class.")
 
     def removeEntity(self, name: str):
+        """
+        Un-registers an existing entity from the layer.
+
+        Paramiters:
+            str name -> The name of the existing entity that should be un-registered
+        """
         if name in self.__entities.keys():
             self.__entities.pop(name, None)
 
     def pre_update(self):
+        """
+        Calls the "pre_update" method of all registered entities.
+        """
         for entity in self.__entities.values():
             entity.pre_update()
 
     def update(self, delta_t):
+        """
+        Updates all registered entities.
+
+        Paramiters:
+            float delta_t -> The time in seconds that has passed since the last update
+        """
         for entity in self.__entities.values():
             entity.update(delta_t)
 
     def post_update(self):
+        """
+        Calls the "post_update" method of all registered entities.
+        """
         for entity in self.__entities.values():
             entity.post_update()
 
     def render(self, surfaceOveride: pygame.Surface = None):
+        """
+        --!! WARNING !!-- This method throws a "NotImplementedError" - it MUST be overridden in a subclass
+
+        Renders all the entities in the layer.
+
+        Paramiters:
+            pygame.Surface surfaceOveride -> Specify a different surface to render to instead of the defult one (None)
+        """
         raise NotImplementedError("This method must be overridden in an inheriting class.")
 
 class Layer_2D(Layer):
-    def __init__(self, surface: pygame.Surface, backgroundColour = pygame.Color(0, 0, 0, 0), canRender = True, **kwargs):
-        super().__init__(surface = surface, backgroundColour = backgroundColour, canRender = canRender, **kwargs)
+    """
+    A layer specificly for 2D rendered entities (that inherit from "Renderable_2D").
+
+    Constructor:
+        pygame.Surface surface -> The surface on which to render the layer
+        pygame.Color backgroundColour -> The background colour used to fill the pygame.Surface between renders (pygame.Color(0, 0, 0, 0))
+        bool canRander -> Can the layer be rendered? (True)
+    """
+
+    #def __init__(self, surface: pygame.Surface, backgroundColour = pygame.Color(0, 0, 0, 0), canRender = True, **kwargs):
+    #    super().__init__(surface = surface, backgroundColour = backgroundColour, canRender = canRender, **kwargs)
 
     def addEntity(self, name: str, entity: Renderable_2D):
+        """
+        Registers a new Renderable_2D entity with the simulation.
+
+        Paramiters:
+            str name -> The name the new entity should be registered with
+            Renderable_2D entity -> The entity to register
+        """
         if not issubclass(type(entity), Renderable_2D):
             raise TypeError("The entities added to a 2D layer must be 2D renderables.")
 
@@ -53,6 +121,12 @@ class Layer_2D(Layer):
             raise KeyError("An entity already exists with the name {}.".format(name))
 
     def render(self, surfaceOveride: pygame.Surface = None):
+        """
+        Renders all entities in the layer provide the layer is allowed to be rendered.
+
+        Paramiters:
+            pygame.Surface surfaceOveride -> Specify a different surface to render to instead of the defult one (None)
+        """
         if self.canRender:
             self.surface.fill(self.backgroundColour)
 
@@ -63,10 +137,25 @@ class Layer_2D(Layer):
                     entity.render(surfaceOveride)
 
 class Layer_3D(Layer):
-    def __init__(self, surface: pygame.Surface, backgroundColour = pygame.Color(0, 0, 0, 0), canRender = True, **kwargs):
-        super().__init__(surface = surface, backgroundColour = backgroundColour, canRender = canRender, **kwargs)
+    """
+    A layer specificly for 3D rendered entities (that inherit from "Renderable_3D").
+
+    Constructor:
+        pygame.Surface surface -> The surface on which to render the layer
+        pygame.Color backgroundColour -> The background colour used to fill the pygame.Surface between renders (pygame.Color(0, 0, 0, 0))
+        bool canRander -> Can the layer be rendered? (True)
+    """
+    #def __init__(self, surface: pygame.Surface, backgroundColour = pygame.Color(0, 0, 0, 0), canRender = True, **kwargs):
+    #    super().__init__(surface = surface, backgroundColour = backgroundColour, canRender = canRender, **kwargs)
 
     def addEntity(self, name: str, entity: Renderable_3D):
+        """
+        Registers a new Renderable_3D entity with the simulation.
+
+        Paramiters:
+            str name -> The name the new entity should be registered with
+            Renderable_3D entity -> The entity to register
+        """
         if not issubclass(type(entity), Renderable_3D):
             raise TypeError("The entities added to a 3D layer must be 3D renderables.")
 
@@ -76,6 +165,14 @@ class Layer_3D(Layer):
             raise KeyError("An entity already exists with the name {}.".format(name))
 
     def render(self, camera: Camera, surfaceOveride: pygame.Surface = None):
+        """
+        Renders all entities in the layer provide the layer is allowed to be rendered.
+        Rendering is done with respect to the camera's position and orientation.
+
+        Paramiters:
+            Camera camera -> The camera object for the simulation
+            pygame.Surface surfaceOveride -> Specify a different surface to render to instead of the defult one (None)
+        """
         if self.canRender:
             self.surface.fill(self.backgroundColour)
 
