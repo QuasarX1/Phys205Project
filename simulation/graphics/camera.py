@@ -91,6 +91,15 @@ class Camera(Moveable):
         if forewards != 0:
             self.move_forewards(100 * forewards * delta_t)#TODO: remove hard coded velocity
 
+        vertical = 0
+        if keys[pygame.K_SPACE]:
+            vertical += 1
+        if keys[pygame.K_LSHIFT]:
+            vertical -= 1
+
+        if vertical != 0:
+            self.move_upwards(100 * vertical * delta_t)#TODO: remove hard coded velocity
+
         strafe = 0
         if keys[pygame.K_d]:
             strafe += 1
@@ -104,4 +113,4 @@ class Camera(Moveable):
         if mouseDeltaY != 0:
             self.rotate_altitude((mouseDeltaY / self.__focus_distance) * 180 / np.pi)
         if mouseDeltaX != 0:
-            self.rotate_azimuth((mouseDeltaX / self.__focus_distance) * 180 / np.pi)
+            self.rotate_azimuth((-mouseDeltaX / self.__focus_distance) * 180 / np.pi)
