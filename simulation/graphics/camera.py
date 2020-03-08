@@ -52,10 +52,12 @@ class Camera(Moveable):
     #    return pygame.Vector2(x_projection, y_projection)
 
     def calculatePerspective(self, location: pygame.Vector3):#TODO: upgrade perspective calculation
-        result = location * self.__focus_distance / (location.z - (self.getLocation() - (self.__focus_distance * self.getFacing())).z)
+        #result = location * self.__focus_distance / (location.z - (self.getLocation() - (self.__focus_distance * self.getFacing())).z)
         #result = (location + pygame.Vector3(self.__width / 2, self.__height / 2, 0)) * self.__focus_distance / (location.z - ((self.getLocation() + pygame.Vector3(self.__width / 2, self.__height / 2, 0)) - (self.__focus_distance * self.getFacing())).z)
         
-        return pygame.Vector2(result.x, result.y)
+        ratio = self.__focus_distance / (location - self.getFocus()).dot(self.getFacing())
+
+        return pygame.Vector2(location.dot(self.getHorisontal()) * ratio, location.dot(self.getVertical()) * ratio)
 
     def isInView(self, point: pygame.Vector3):
         locationToPoint = point - self.getLocation()
