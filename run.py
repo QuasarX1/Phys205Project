@@ -1,5 +1,5 @@
-import simulation as sim
+#import simulation as sim
 
-sim.runExampleSim()
+#sim.runExampleSim()
 
-#import exoplanet_simulation
+import exoplanet_simulation

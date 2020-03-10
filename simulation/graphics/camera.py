@@ -89,7 +89,11 @@ class Camera(Moveable):
             forewards -= 1
 
         if forewards != 0:
-            self.move_forewards(100 * forewards * delta_t)#TODO: remove hard coded velocity
+            #self.move_forewards(100 * forewards * delta_t)#TODO: remove hard coded velocity
+            try:
+                self.move(100 * forewards * delta_t * pygame.Vector3(self.getFacing().dot(pygame.Vector3(1, 0, 0)), 0, self.getFacing().dot(pygame.Vector3(0, 0, 1))).normalize())
+            except ValueError:
+                pass
 
         vertical = 0
         if keys[pygame.K_SPACE]:
@@ -98,7 +102,7 @@ class Camera(Moveable):
             vertical -= 1
 
         if vertical != 0:
-            self.move_upwards(100 * vertical * delta_t)#TODO: remove hard coded velocity
+            self.move_y(100 * vertical * delta_t)#TODO: remove hard coded velocity
 
         strafe = 0
         if keys[pygame.K_d]:
@@ -107,7 +111,12 @@ class Camera(Moveable):
             strafe -= 1
 
         if strafe != 0:
-            self.move_right(100 * strafe * delta_t)#TODO: remove hard coded velocity
+            #self.move_right(100 * strafe * delta_t)#TODO: remove hard coded velocity
+            try:
+                self.move(100 * strafe * delta_t * pygame.Vector3(self.getHorisontal().dot(pygame.Vector3(1, 0, 0)), 0, self.getHorisontal().dot(pygame.Vector3(0, 0, 1))).normalize())
+            except ValueError:
+                pass
+            
 
         mouseDeltaX, mouseDeltaY = pygame.mouse.get_rel()
         if mouseDeltaY != 0:

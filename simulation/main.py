@@ -131,8 +131,9 @@ class Simulation(object):
         """
         running = True
         paused = False
-        pygame.mouse.set_visible(False)#TODO: how to deal with non-rendering???
-        pygame.event.set_grab(True)
+        if self.canRender:
+            pygame.mouse.set_visible(False)#TODO: how to deal with non-rendering???
+            pygame.event.set_grab(True)
 
         while running:
             for event in pygame.event.get():
@@ -144,7 +145,9 @@ class Simulation(object):
                         paused = not paused
                         if self.canRender:
                             pygame.mouse.set_visible(paused)
+                            pygame.mouse.set_pos(self.__camera.getWidth() / 2, self.__camera.getHeight() / 2)
                             pygame.event.set_grab(not paused)
+                            pygame.mouse.get_rel()# Prevents mouse movement whilst paused from being used
 
                 elif event.type == pygame.VIDEORESIZE:
                     self.__camera.setWidth(event.w)

@@ -26,7 +26,7 @@ simulation_layer.addEntity("target_star", target_star)
 test_star = Star(radius = 10,
                  tempriture = 100,
                  mass = 10000,#1.9891 * 10**30,#500000,
-                   initial_velocity = pygame.Vector3(0, 0, -30),
+                   initial_velocity = pygame.Vector3(0, 0, -70),
                  location = pygame.Vector3(200, 0, 0))
 simulation_layer.addEntity("test_star", test_star)
 
