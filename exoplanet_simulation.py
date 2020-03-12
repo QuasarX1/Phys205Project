@@ -1,4 +1,5 @@
 import pygame
+from matplotlib import pyplot as plt
 import simulation as sim
 from star import Star
 
@@ -34,5 +35,39 @@ target_star.bindEntity_by_name("test_star", simulation_layer)
 test_star.bindEntity_by_name("target_star", simulation_layer)
 
 #TODO: add a planet
+
+class PositionLog(object):
+    def __init__(self, entity):
+        self.x = [test_star.getLocation().x]
+        self.z = [test_star.getLocation().z]
+        self.t = [0]
+
+        self.entity = entity
+
+    def logPositions(self, sim, delta_t):
+        self.x.append(self.entity.getLocation().x)
+        self.z.append(self.entity.getLocation().z)
+        self.t.append(self.t[-1] + delta_t)
+
+        if len(self.t) > 100:
+            sim.pause()
+
+            plt.plot(self.x, self.t)
+            plt.plot(self.z, self.t)
+            plt.show()
+
+            plt.plot(self.x, self.z)
+            plt.show()
+
+            self.x = [self.entity.getLocation().x]
+            self.z = [self.entity.getLocation().z]
+            self.t = [0]
+
+            #input("Press enter to run next chunk... ")
+            sim.resume()
+
+logger = PositionLog(test_star)
+
+simulation.onItterationEnd = logger.logPositions
 
 simulation.run()

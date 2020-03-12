@@ -22,6 +22,9 @@ class Simulation(object):
         self.canRender = render
         self.__layers = {"defult": Layer_2D(pygame.Surface((500, 500), pygame.SRCALPHA))}
         self.clock = pygame.time.Clock()
+        self.onItterationEnd = lambda simulation, delta_t: None
+        self.__running = False
+        self.__paused = True
 
         if self.canRender:
             self.screen: pygame.Surface = pygame.display.set_mode((500, 500), flags = pygame.RESIZABLE)
@@ -94,6 +97,15 @@ class Simulation(object):
         if name in self.__layers.keys():
             self.__layers.pop(name, None)
 
+    def pause(self):
+        self.__paused = True
+
+    def resume(self):
+        self.__paused = False
+
+    def togglePauseState(self):
+        self.__paused = not self.__paused
+
     def update(self, delta_t):
         """
         Update all layers registered with the simulation in the order in which they were registered.
@@ -129,24 +141,24 @@ class Simulation(object):
         Simulations that are rendered will capture the mouse pointer.
         In order to pause updating, press 'Escape' - this will also release the mouse pointer.
         """
-        running = True
-        paused = False
+        self.__running = True
+        self.__paused = False
         if self.canRender:
             pygame.mouse.set_visible(False)#TODO: how to deal with non-rendering???
             pygame.event.set_grab(True)
 
-        while running:
+        while self.__running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
 
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        paused = not paused
+                        self.togglePauseState()
                         if self.canRender:
-                            pygame.mouse.set_visible(paused)
+                            pygame.mouse.set_visible(self.__paused)
                             pygame.mouse.set_pos(self.__camera.getWidth() / 2, self.__camera.getHeight() / 2)
-                            pygame.event.set_grab(not paused)
+                            pygame.event.set_grab(not self.__paused)
                             pygame.mouse.get_rel()# Prevents mouse movement whilst paused from being used
 
                 elif event.type == pygame.VIDEORESIZE:
@@ -154,7 +166,7 @@ class Simulation(object):
                     self.__camera.setHeight(event.h)
 
             delta_t = self.clock.tick(60) / 1000
-            if not paused:
+            if not self.__paused:
                 self.__camera.update(delta_t)
                 self.update(delta_t)
 
@@ -164,3 +176,5 @@ class Simulation(object):
                 pygame.display.flip()
                 #pygame.display.update()
                 self.screen.fill((0, 0, 0))
+
+            self.onItterationEnd(self, delta_t)
