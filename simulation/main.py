@@ -165,7 +165,7 @@ class Simulation(object):
                     self.__camera.setWidth(event.w)
                     self.__camera.setHeight(event.h)
 
-            delta_t = self.clock.tick(60) / 1000
+            delta_t = 3600*24*self.clock.tick(60) / 1000
             if not self.__paused:
                 self.__camera.update(delta_t)
                 self.update(delta_t)
