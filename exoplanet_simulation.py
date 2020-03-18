@@ -25,11 +25,11 @@ target_star = Star(radius = 6371 * 10**3,
                    location = pygame.Vector3(0, 0, 0))
 simulation_layer.addEntity("target_star", target_star)
 
-test_star = Star(radius = 1737 * 10 **3,
-                 temperature = 100,
+test_star = Planet(radius = 1737 * 10 **3,
                  mass = 7.4 * 10**22,#1.9891 * 10**30,#500000,
                  initial_velocity = pygame.Vector3(0, 0, 1040),
-                 location = pygame.Vector3(384000 * 10**3, 0, 0))
+                 location = pygame.Vector3(384000 * 10**3, 0, 0),
+                 colour = pygame.Color(0, 255, 0))
 simulation_layer.addEntity("test_star", test_star)
 
 target_star.bindEntity_by_name("test_star", simulation_layer)
@@ -50,20 +50,20 @@ class PositionLog(object):
         self.z.append(self.entity.getLocation().z)
         self.t.append(self.t[-1] + delta_t)
 
-        if len(self.t) > 250:
+        if len(self.t) > 10000:
             sim.pause()
-
+        
             plt.plot(self.x, self.t)
             plt.plot(self.z, self.t)
             plt.show()
-
+        
             plt.plot(self.x, self.z)
             plt.show()
-
+        
             self.x = [self.entity.getLocation().x]
             self.z = [self.entity.getLocation().z]
             self.t = [0]
-
+        
             #input("Press enter to run next chunk... ")
             sim.resume()
 
