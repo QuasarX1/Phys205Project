@@ -24,3 +24,10 @@ def massFromRadiusForceBetweenTwoLargeBodies(mass, force, radius):
     """Finds the other mass from F1 = F2 = G ((m1 x m2)/r^2)"""
     #return (bob.G * ((mass1 * mass2)/force))**1/2
     return 1/(-G * (mass / (force * radius**2)))
+
+def centrifrugalForce(mass1, initial_velocity, radiusFromForceBetweenTwoLargeBodies):
+    return (mass1 * initial_velocity**2 / radiusFromForceMassBetweenTwoLargeBodies)
+
+'''
+Keyman Fung here, just adding a centrifrugal force equation to test something, i'm being an idiot however, and i cant see where acceleration is being calculated for the orbits
+'''
