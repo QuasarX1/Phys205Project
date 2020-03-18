@@ -2,6 +2,7 @@ import pygame
 from matplotlib import pyplot as plt
 import simulation as sim
 from star import Star
+from planet import Planet
 
 simulation = sim.Simulation()
 
@@ -24,11 +25,11 @@ target_star = Star(radius = 100,
                    location = pygame.Vector3(-200, 0, 0))
 simulation_layer.addEntity("target_star", target_star)
 
-test_star = Star(radius = 10,
-                 temperature = 100,
-                 mass = 10000,#1.9891 * 10**30,#500000,
-                 initial_velocity = pygame.Vector3(0, 0, 80),
-                 location = pygame.Vector3(400, 0, 0))
+test_star = Planet(radius = 10,
+                   mass = 10000,#1.9891 * 10**30,#500000,
+                   initial_velocity = pygame.Vector3(0, 0, 80),
+                   location = pygame.Vector3(200, 0, 0),
+                   colour = pygame.Color(0, 255, 0))
 simulation_layer.addEntity("test_star", test_star)
 
 target_star.bindEntity_by_name("test_star", simulation_layer)
@@ -49,7 +50,7 @@ class PositionLog(object):
         self.z.append(self.entity.getLocation().z)
         self.t.append(self.t[-1] + delta_t)
 
-        if len(self.t) > 100:
+        if len(self.t) > 250:
             sim.pause()
 
             plt.plot(self.x, self.t)
