@@ -4,20 +4,31 @@ import simulation as sim
 from star import Star
 from planet import Planet
 
-simulation = sim.Simulation()
 
+
+# Create a blank simulation ----------------------------------------------------------------------------------------------------------
+simulation = sim.Simulation(render = False)
+
+
+
+# Position the Camera ----------------------------------------------------------------------------------------------------------------
 #simulation.getCamera().setLocation(pygame.Vector3(0, 200, 0))
 #simulation.getCamera().setFacing(pygame.Vector3(0, -1, 0))
 #simulation.getCamera().setVertical(pygame.Vector3(0, 0, 1))
 
-simulation.getCamera().setLocation(pygame.Vector3(0, 0, -200))
+simulation.getCamera().setLocation(pygame.Vector3(0, 0, -4 * 10**7))
 
+
+# Create and add display layers ------------------------------------------------------------------------------------------------------
 HUD = sim.layer.Layer_2D(pygame.Surface((500, 500), pygame.SRCALPHA))
 simulation.addLayer("HUD", HUD)
 
 simulation_layer = sim.layer.Layer_3D(pygame.Surface((500, 500), pygame.SRCALPHA))
 simulation.addLayer("simulation_layer", simulation_layer)
 
+
+
+# Add massive boddies to a simulation layer ------------------------------------------------------------------------------------------
 target_star = Star(radius = 6371 * 10**3,
                    temperature = 100,
                    mass = 6 * 10**24,#1.9891 * 10**30,#500000,
@@ -25,22 +36,39 @@ target_star = Star(radius = 6371 * 10**3,
                    location = pygame.Vector3(0, 0, 0))
 simulation_layer.addEntity("target_star", target_star)
 
-test_star = Planet(radius = 1737 * 10 **3,
-                 mass = 7.4 * 10**22,#1.9891 * 10**30,#500000,
-                 initial_velocity = pygame.Vector3(0, 0, 1040),
-                 location = pygame.Vector3(384000 * 10**3, 0, 0),
-                 colour = pygame.Color(0, 255, 0))
-simulation_layer.addEntity("test_star", test_star)
+test_planet = Planet(radius = 1737 * 10 **3,
+                     mass = 7.4 * 10**22,#1.9891 * 10**30,#500000,
+                     initial_velocity = pygame.Vector3(0, 0, 1040),
+                     location = pygame.Vector3(384000 * 10**3, 0, 0),
+                     colour = pygame.Color(0, 255, 0))
+simulation_layer.addEntity("test_planet", test_planet)
 
-target_star.bindEntity_by_name("test_star", simulation_layer)
-test_star.bindEntity_by_name("target_star", simulation_layer)
+second_planet = Planet(radius = 1737 * 10 **3,
+                       mass = 7.4 * 10**22,#1.9891 * 10**30,#500000,
+                       initial_velocity = pygame.Vector3(0, 0, -1040),
+                       location = pygame.Vector3(-384000 * 10**3, 0, 0),
+                       colour = pygame.Color(0, 0, 255))
+simulation_layer.addEntity("second_planet", second_planet)
 
-#TODO: add a planet
 
+
+# Bind obbjects that should be gravetationaly bound-----------------------------------------------------------------------------------
+target_star.bindEntity_by_name("test_planet", simulation_layer)
+target_star.bindEntity_by_name("second_planet", simulation_layer)
+
+test_planet.bindEntity_by_name("target_star", simulation_layer)
+test_planet.bindEntity_by_name("second_planet", simulation_layer)
+
+second_planet.bindEntity_by_name("target_star", simulation_layer)
+second_planet.bindEntity_by_name("test_planet", simulation_layer)
+
+
+
+# Set up logging for important quantities --------------------------------------------------------------------------------------------
 class PositionLog(object):
     def __init__(self, entity):
-        self.x = [test_star.getLocation().x]
-        self.z = [test_star.getLocation().z]
+        self.x = [entity.getLocation().x]
+        self.z = [entity.getLocation().z]
         self.t = [0]
 
         self.entity = entity
@@ -67,8 +95,15 @@ class PositionLog(object):
             #input("Press enter to run next chunk... ")
             sim.resume()
 
-logger = PositionLog(test_star)
+logger = PositionLog(test_planet)
 
 simulation.onItterationEnd = logger.logPositions
 
+
+
+# Run the simulation------------------------------------------------------------------------------------------------------------------
 simulation.run()
+
+
+
+# ------------------------------------------------------------------------------------------------------------------------------------

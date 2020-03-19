@@ -1,5 +1,8 @@
 import pygame
 import numpy as np
+import threading
+import os
+from simulation.commands import commands
 from simulation.layer import Layer, Layer_2D, Layer_3D
 from simulation.entities.entity import Entity
 from simulation.entities.renderable import Renderable_Simple2DRect
@@ -25,6 +28,7 @@ class Simulation(object):
         self.onItterationEnd = lambda simulation, delta_t: None
         self.__running = False
         self.__paused = True
+        self.__total_delta_t = 0
 
         if self.canRender:
             self.screen: pygame.Surface = pygame.display.set_mode((500, 500), flags = pygame.RESIZABLE)
@@ -97,6 +101,9 @@ class Simulation(object):
         if name in self.__layers.keys():
             self.__layers.pop(name, None)
 
+    def getRunTime(self):
+        return self.__total_delta_t
+
     def pause(self):
         self.__paused = True
 
@@ -105,6 +112,12 @@ class Simulation(object):
 
     def togglePauseState(self):
         self.__paused = not self.__paused
+
+    def isPaused(self):
+        return self.__paused
+
+    def isRunning(self):
+        return self.__running
 
     def update(self, delta_t):
         """
@@ -141,6 +154,31 @@ class Simulation(object):
         Simulations that are rendered will capture the mouse pointer.
         In order to pause updating, press 'Escape' - this will also release the mouse pointer.
         """
+        if self.canRender == True:
+            self.__run()
+
+        else:
+            simulationThread = self.__run_threaded()
+
+            os.system("cls")
+            while self.isRunning():
+                print("({}) >>> ".format("running" if not self.isPaused() else "paused"), end = "")
+                command, *arguments = (input() + " ").split(" ")
+                arguments = arguments[:-1]
+
+                try:
+                    output = commands[command][0](self, *arguments)
+                    os.system("cls")
+                    if output is not None and output != "":
+                        print(output)
+                except:
+                    print("Invalid Command \"{}\". Run \"help\" for a list of commands.".format(command))
+
+                print()
+
+            simulationThread.join()
+
+    def __run(self):
         self.__running = True
         self.__paused = False
         if self.canRender:
@@ -169,13 +207,24 @@ class Simulation(object):
             if not self.__paused:
                 self.__camera.update(delta_t)
                 self.update(delta_t)
+                self.__total_delta_t += delta_t
                 self.onItterationEnd(self, delta_t)
 
             self.render()
 
-            if self.render:
+            if self.canRender:
                 pygame.display.flip()
                 #pygame.display.update()
                 self.screen.fill((0, 0, 0))
 
             #self.onRenderEnd(self, delta_t)
+
+    def __run_threaded(self) -> threading.Thread:
+        """
+        Runs the simulation untill it terminates or is manualy terminated.
+
+        NOTE: This should not be used for rendered simulations!
+        """
+        simulationThread = threading.Thread(target = self.__run)
+        simulationThread.start()
+        return simulationThread
