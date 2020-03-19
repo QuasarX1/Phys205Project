@@ -52,14 +52,26 @@ def peak_wavelength_surface_temp(surface_temperature):
     return ((3 * 10**8) / (surface*temperature * 5.879 * 10**10)
 
 '''
-Calculates the peak wavelength from the surface temperature of the star
+Calculates the peak wavelength from the surface temperature of the star, this should be used if the light emitted from the star is considered to be monochromatic
 '''
 
 def radiance_wavelength_temperature(peak_wavelength, surface_temperature):
     return ((2 * 6.63 * (10**-34) / (peak_wavelength)) * (1/(np.exp(6.63 * 10**-34 / (1.38 * 10**-23) * surface_temperature))))
 
 '''
-Calculates the radience (or effective intensity) of the peak wavelength of a star, from the peak wavelength and the surface temperature
+Calculates the radience (or effective intensity) of the peak wavelength of a star, from the peak wavelength and the surface temperature, likely shouldn't be needed unless light emission is calculated as an array
 '''
 
-#TODO: add function to calculate luminosity in a given wavelength given a temp of a black body
+def luminosity_peak_wavelength(peak_wavelength, star_radius):
+    return (4 * np.pi * (star_radius**2) * (5.67 * 10**-8) * ((0.0029 / peak_wavelength)**4))
+'''
+Calculates luminosity of the star from the star's radius and the peak wavelength of emitted light
+'''
+
+
+# Not sure whether to implement a code for how the star appears light wise, but i will make a code regardless:
+# 
+#
+#
+#
+#
