@@ -150,7 +150,7 @@ class Simulation(object):
         while self.__running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    self.__running = False
 
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
@@ -169,6 +169,7 @@ class Simulation(object):
             if not self.__paused:
                 self.__camera.update(delta_t)
                 self.update(delta_t)
+                self.onItterationEnd(self, delta_t)
 
             self.render()
 
@@ -177,4 +178,4 @@ class Simulation(object):
                 #pygame.display.update()
                 self.screen.fill((0, 0, 0))
 
-            self.onItterationEnd(self, delta_t)
+            #self.onRenderEnd(self, delta_t)

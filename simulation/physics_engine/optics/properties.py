@@ -1,52 +1,46 @@
 import numpy as np
 
 def flux_sphere(luminosity, distance):
+    '''
+    Calculates flux from the luminosity of the star and the distance the star is from the planet
+    '''
     return luminosity / (4 * np.pi * (distance**2))
 
-'''
-Calculates flux from the luminosity of the star and the distance the star is from the planet
-'''
-
 def flux_inverse_square(flux_B, distance_a, distance_b):
+    '''
+    Converts the flux from one distance, to a flux of the same star, at a different distance
+    '''
     return flux_b * ((distance_b / distance_a)**2)
 
-'''
-Converts the flux from one distance, to a flux of the same star, at a different distance
-'''
-
 def luminosity_boltzmann(surface_area, surface_temperature):
+    '''
+    Calculates total Luminosity from the surface temperature of the star and its surface area
+    '''
     return (5.6704 * 10**-8) * surface_area * surface_temperature
 
-'''
-Calculates total Luminosity from the surface temperature of the star and its surface area
-'''
-
 def luminosity_flux_density(flux_density, illuminated_area):
+    '''
+    Calculates Luminosity from flux density and the luminated area 
+    '''
     return flux_density * illuminated_area
 
-'''
-Calculates Luminosity from flux density and the luminated area 
-'''
-
 def luminosity_sphere(flux, star_radius):
+    '''
+    Calculates Luminosity from Flux and the radius of the star
+    '''
     return flux * 4 * np.pi * (star_radius**2)
-'''
-Calculates Luminosity from Flux and the radius of the star
-'''
 
 def redshift_doppler(velocity_perpendicular):
+    '''
+    Calculates redshift factor from the perpendicular velocity
+    '''
     return np.sqrt(1 + (velocity_perpendicular / (3*10**8)) / (1 - (velocity_perpendicular / (3*10**8)) - 1))
 
-'''
-Calculates redshift factor from the perpendicular velocity
-'''
-
 def wavelength_doppler(redshift_factor, apparent_wavelength):
+    '''
+    Calculates the true wavelength, from the redshift factor and the apparent wavelength
+    '''
     return (apparent_wavelength / redshift_factor)
-
-'''
-Calculates the true wavelength, from the redshift factor and the apparent wavelength
-'''
 
 def peak_wavelength_surface_temp(surface_temperature):
     return ((3 * 10**8) / (surface*temperature * 5.879 * 10**10)
