@@ -1,13 +1,27 @@
 import pygame
 from matplotlib import pyplot as plt
+import sys
 import simulation as sim
 from star import Star
 from planet import Planet
 
 
 
+# Look for a command line paramiter indication the render status ---------------------------------------------------------------------
+if len(sys.argv) > 1:
+    if sys.argv[1] in ("False", "false", "F", "f", "0"):
+        renderOption = False
+    elif sys.argv[1] in ("True", "true", "T", "t", "1"):
+        renderOption = True
+    else:
+        raise ValueError("The first command line paramiter should indicate whether or not the simulation should be rendered (a boolean).")
+else:
+    renderOption = True
+
+
+
 # Create a blank simulation ----------------------------------------------------------------------------------------------------------
-simulation = sim.Simulation(render = False)
+simulation = sim.Simulation(render = renderOption)
 
 
 
