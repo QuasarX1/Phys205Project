@@ -46,6 +46,9 @@ class FreeBody(Moveable):
     def setAngularVelocity(self, new_angular_velocity: float):
         self.__angularVelocity = new_angular_velocity
 
+    def addForce(self, force: pygame.Vector3):
+        self.__forces.append(force)
+
     def bindEntity(self, entity):
         if not isinstance(entity, FreeBody):
             raise TypeError("The entity's type did not inherit FreeBody.")
@@ -79,10 +82,10 @@ class FreeBody(Moveable):
             radius = self.getLocation() - entity.getLocation()
             self.__forces.append(forceBetweenTwoLargeBodies(entity.getMass(), self.getMass(), radius.length_squared()) * radius)
 
-    def update(self, delta_t):
-        self.manual_update_FreeBody(delta_t)
+    def update(self, delta_t, simulation):
+        self.manual_update_FreeBody(delta_t, simulation)
 
-    def manual_update_FreeBody(self, delta_t):
+    def manual_update_FreeBody(self, delta_t, simulation):
         netForce = pygame.Vector3(0, 0, 0)
         for force in self.__forces:
             netForce += force

@@ -1,15 +1,17 @@
 import pygame
 import numpy as np
 from simulation.entities.moveable import Moveable
+from simulation.physics_engine.newtonian.freeBody import FreeBody
 
-class Camera(Moveable):
+class Camera(FreeBody, Moveable):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(0, 0, 1), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), dimentions: pygame.Vector2 = pygame.Vector2(500, 500), field_of_vision: float = np.pi / 2, **kwargs):
-        super().__init__(location = location, facing = facing, vertical = vertical, **kwargs)
+        super().__init__(mass = 1, moment_of_inertia = 0, location = location, facing = facing, vertical = vertical, **kwargs)
         self.__width: float = dimentions.x
         self.__height: float = dimentions.y
         self.__fov: float = field_of_vision
         self.__focus_distance: float = None
         self.__setFov()
+        self.__movementForce = 300# Newtons
 
     def getFov(self) -> float:
         return self.__fov
@@ -79,7 +81,7 @@ class Camera(Moveable):
         return inView
 
 
-    def update(self, delta_t):
+    def pre_update(self):
         keys = pygame.key.get_pressed()
 
         forewards = 0
@@ -88,21 +90,11 @@ class Camera(Moveable):
         if keys[pygame.K_s]:
             forewards -= 1
 
-        if forewards != 0:
-            #self.move_forewards(100 * forewards * delta_t)#TODO: remove hard coded velocity
-            try:
-                self.move(100 * forewards * delta_t * pygame.Vector3(self.getFacing().dot(pygame.Vector3(1, 0, 0)), 0, self.getFacing().dot(pygame.Vector3(0, 0, 1))).normalize())
-            except ValueError:
-                pass
-
         vertical = 0
         if keys[pygame.K_SPACE]:
             vertical += 1
         if keys[pygame.K_LSHIFT]:
             vertical -= 1
-
-        if vertical != 0:
-            self.move_y(100 * vertical * delta_t)#TODO: remove hard coded velocity
 
         strafe = 0
         if keys[pygame.K_d]:
@@ -110,13 +102,32 @@ class Camera(Moveable):
         if keys[pygame.K_a]:
             strafe -= 1
 
-        if strafe != 0:
-            #self.move_right(100 * strafe * delta_t)#TODO: remove hard coded velocity
-            try:
-                self.move(100 * strafe * delta_t * pygame.Vector3(self.getHorisontal().dot(pygame.Vector3(1, 0, 0)), 0, self.getHorisontal().dot(pygame.Vector3(0, 0, 1))).normalize())
-            except ValueError:
-                pass
-            
+        if forewards != 0 or vertical != 0 or strafe != 0:
+            self.addForce((self.getFacing() * forewards + self.getVertical() * vertical + self.getHorisontal() * strafe).normalize() * self.__movementForce)
+
+        #if forewards != 0:
+        #    #self.move_forewards(100 * forewards * delta_t)#TODO: remove hard coded velocity
+        #    try:
+        #        test = 100 * forewards * delta_t * pygame.Vector3(self.getFacing().dot(pygame.Vector3(1, 0, 0)), 0, self.getFacing().dot(pygame.Vector3(0, 0, 1))).normalize()
+        #        self.move(100 * forewards * delta_t * pygame.Vector3(self.getFacing().dot(pygame.Vector3(1, 0, 0)), 0, self.getFacing().dot(pygame.Vector3(0, 0, 1))).normalize())
+        #    except ValueError:
+        #        pass
+
+        #if vertical != 0:
+        #    test = 100 * vertical * delta_t
+        #    self.move_y(100 * vertical * delta_t)#TODO: remove hard coded velocity
+
+        #if strafe != 0:
+        #    #self.move_right(100 * strafe * delta_t)#TODO: remove hard coded velocity
+        #    try:
+        #        test = 100 * strafe * delta_t * pygame.Vector3(self.getHorisontal().dot(pygame.Vector3(1, 0, 0)), 0, self.getHorisontal().dot(pygame.Vector3(0, 0, 1))).normalize()
+        #        self.move(100 * strafe * delta_t * pygame.Vector3(self.getHorisontal().dot(pygame.Vector3(1, 0, 0)), 0, self.getHorisontal().dot(pygame.Vector3(0, 0, 1))).normalize())
+        #    except ValueError:
+        #        pass
+
+
+    def update(self, delta_t, simulation):
+        self.manual_update_FreeBody(delta_t, simulation)            
 
         mouseDeltaX, mouseDeltaY = pygame.mouse.get_rel()
         if mouseDeltaY != 0:

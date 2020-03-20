@@ -5,7 +5,7 @@ class Entity(object):
     def pre_update(self):
         pass
 
-    def update(self, delta_t):
+    def update(self, delta_t, simulation):
         raise NotImplementedError("This method must be overridden in an inheriting class.")
 
     def post_update(self):

@@ -18,9 +18,11 @@ class Simulation(object):
     
     Constructor:
         bool render -> Should the simulation be rendered? (True)
+        float tickScale -> Number of seconds to simulate per 1 tick or per 1 second of a randered simulation. (1 hour)
+        float distanceScale -> Number of pixels used to represent 1 meter. (1)
     """
 
-    def __init__(self, render = True, **kwargs):
+    def __init__(self, render = True, tickScale = 3600 * 24, distanceScale = 1, **kwargs):
         super().__init__(**kwargs)
         self.canRender = render
         self.__layers = {"defult": Layer_2D(pygame.Surface((500, 500), pygame.SRCALPHA))}
@@ -29,6 +31,8 @@ class Simulation(object):
         self.__running = False
         self.__paused = True
         self.__total_delta_t = 0
+        self.__tickScale = tickScale# simulated time : real time
+        self.__distanceScale = distanceScale# pixels : simulated meters
 
         if self.canRender:
             self.screen: pygame.Surface = pygame.display.set_mode((500, 500), flags = pygame.RESIZABLE)
@@ -104,6 +108,12 @@ class Simulation(object):
     def getRunTime(self):
         return self.__total_delta_t
 
+    def getTickScale(self):
+        return self.__tickScale
+
+    def getDistanceScale(self):
+        return self.__distanceScale
+
     def pause(self):
         self.__paused = True
 
@@ -130,7 +140,7 @@ class Simulation(object):
             layer.pre_update()#TODO: consider running these as paralell threads
 
         for layer in self.__layers.values():
-            layer.update(delta_t)#TODO: consider running these as paralell threads
+            layer.update(delta_t, self)#TODO: consider running these as paralell threads
 
         for layer in self.__layers.values():
             layer.post_update()#TODO: consider running these as paralell threads
@@ -203,12 +213,15 @@ class Simulation(object):
                     self.__camera.setWidth(event.w)
                     self.__camera.setHeight(event.h)
 
-            delta_t = 3600*24*self.clock.tick(60) / 1000
+            delta_t = self.clock.tick(60) / 1000
+            simulated_delta_t = self.__tickScale * delta_t
             if not self.__paused:
-                self.__camera.update(delta_t)
-                self.update(delta_t)
-                self.__total_delta_t += delta_t
-                self.onItterationEnd(self, delta_t)
+                self.__camera.pre_update()
+                self.__camera.update(delta_t, self)
+                self.update(simulated_delta_t)
+                self.__camera.post_update()
+                self.__total_delta_t += simulated_delta_t
+                self.onItterationEnd(self, simulated_delta_t)
 
             self.render()
 

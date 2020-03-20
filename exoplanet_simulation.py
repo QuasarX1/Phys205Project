@@ -16,7 +16,7 @@ if len(sys.argv) > 1:
     else:
         raise ValueError("The first command line paramiter should indicate whether or not the simulation should be rendered (a boolean).")
 else:
-    renderOption = True
+    renderOption = False# Overide this to change the defult setting
 
 
 

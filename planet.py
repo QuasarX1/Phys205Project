@@ -8,5 +8,5 @@ class Planet(FreeBody, Sphere):
         super().__init__(mass = mass, moment_of_inertia = 0, radius = radius, location = location, facing = facing, vertical = vertical, colour = colour, **kwargs)
         #TODO: change moment of inertia
 
-    def update(self, delta_t):#TODO: star updates here? or in free body?
-        self.manual_update_FreeBody(delta_t)
+    #def update(self, delta_t, simulation):#TODO: star updates here? or in free body?
+    #    self.manual_update_FreeBody(delta_t, simulation)

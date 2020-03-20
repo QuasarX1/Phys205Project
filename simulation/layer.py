@@ -1,7 +1,12 @@
 import pygame
 from simulation.entities.entity import Entity
-from simulation.entities.renderable import Renderable_2D, Renderable_3D
-from simulation.graphics.camera import Camera
+
+class Renderable_2D(object):# Foreward declaration of Renderable_2D
+    pass
+class Renderable_3D(object):# Foreward declaration of Renderable_3D
+    pass
+class Camera(object):# Foreward declaration of Camera
+    pass
 
 class Layer(object):
     """
@@ -63,7 +68,7 @@ class Layer(object):
         for entity in self.__entities.values():
             entity.pre_update()
 
-    def update(self, delta_t):
+    def update(self, delta_t, simulation):
         """
         Updates all registered entities.
 
@@ -71,7 +76,7 @@ class Layer(object):
             float delta_t -> The time in seconds that has passed since the last update
         """
         for entity in self.__entities.values():
-            entity.update(delta_t)
+            entity.update(delta_t, simulation)
 
     def post_update(self):
         """
@@ -181,3 +186,6 @@ class Layer_3D(Layer):
                     entity.render(self.surface, camera)
                 else:
                     entity.render(surfaceOveride, camera)
+
+from simulation.entities.renderable import Renderable_2D, Renderable_3D
+from simulation.graphics.camera import Camera
