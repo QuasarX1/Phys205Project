@@ -7,7 +7,7 @@ from planet import Planet
 
 
 # Create a blank simulation ----------------------------------------------------------------------------------------------------------
-simulation = sim.Simulation(render = False)
+simulation = sim.Simulation(render = True)
 
 
 
