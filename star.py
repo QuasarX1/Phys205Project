@@ -1,6 +1,7 @@
 import pygame
 from simulation.entities.prefabs import Sphere
 from simulation.physics_engine.newtonian.freeBody import FreeBody
+from simulation.physics_engine.optics.colour import blackbody_visable_colour
 
 class Star(FreeBody, Sphere):
     def __init__(self, radius, mass, temperature, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), **kwargs):
@@ -43,13 +44,11 @@ class Star(FreeBody, Sphere):
     #            G = 0
     #            B = 1
 
-#def setColour(self, wavelength):
-#    maxColouredWavelength = max(Rintensity, Gintensity, Bintesnity)
-#    return:
-#        R = 255 * Rintensity / maxColouredWavelength
-#        G = 255 * Gintensity / maxColouredWavelength
-#        B = 255 * Bintensity / maxColouredWavelength
+    #def setColour(self, wavelength):
+    #    maxColouredWavelength = max(Rintensity, Gintensity, Bintesnity)
+    #    super().setColour(pygame.Color(255 * Rintensity / maxColouredWavelength, 255 * Gintensity / maxColouredWavelength, 255 * Bintensity / maxColouredWavelength))
 
 
-    #def update(self, delta_t, simulation):#TODO: star updates here? or in free body?
-    #    self.manual_update_FreeBody(delta_t, simulation)
+    def update(self, delta_t, simulation):#TODO: star updates here? or in free body?
+        self.setColour(blackbody_visable_colour(self.__temperature))
+        self.manual_update_FreeBody(delta_t, simulation)

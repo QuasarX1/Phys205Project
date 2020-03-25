@@ -11,7 +11,8 @@ class Camera(FreeBody, Moveable):
         self.__fov: float = field_of_vision
         self.__focus_distance: float = None
         self.__setFov()
-        self.__movementForce = 300# Newtons
+        self.__movementForce = 1300# Newtons
+        self.__resistanceToMovementForce = 1000# Newtons
 
     def getFov(self) -> float:
         return self.__fov
@@ -104,6 +105,9 @@ class Camera(FreeBody, Moveable):
 
         if forewards != 0 or vertical != 0 or strafe != 0:
             self.addForce((self.getFacing() * forewards + self.getVertical() * vertical + self.getHorisontal() * strafe).normalize() * self.__movementForce)
+
+        if self.getVelocity() != pygame.Vector3(0, 0, 0):
+            self.addForce(self.getVelocity().normalize() * -1 * self.__resistanceToMovementForce)
 
         #if forewards != 0:
         #    #self.move_forewards(100 * forewards * delta_t)#TODO: remove hard coded velocity

@@ -19,13 +19,13 @@ class Moveable(Entity):
         return self.__facing
 
     def setFacing(self, new_direction: pygame.Vector3):
-        self.__facing = new_direction / np.sqrt(new_direction.x**2 + new_direction.y**2 + new_direction.z**2)
+        self.__facing = new_direction.normalize()
 
     def getVertical(self) -> pygame.Vector3:
         return self.__vertical
 
     def setVertical(self, new_direction: pygame.Vector3):
-        self.__vertical = new_direction / np.sqrt(new_direction.x**2 + new_direction.y**2 + new_direction.z**2)
+        self.__vertical = new_direction.normalize()
 
     def getHorisontal(self):
         return self.__facing.cross(self.__vertical).normalize()
@@ -55,18 +55,21 @@ class Moveable(Entity):
         """
         Angle in degrees
         """
-        self.__facing.rotate_ip(angle, self.__vertical)# function signiture back to front on docs
+        print(self.__facing)
+        self.__facing.rotate_ip(angle, self.__vertical)# function signiture back to front on docs for 2.0
+        print(self.__facing)
+        print("\n")
 
     def rotate_altitude(self, angle):
         """
         Angle in degrees
         """
         axis = self.getHorisontal()
-        self.__facing.rotate_ip(angle, axis)# function signiture back to front on docs
-        self.__facing.rotate_ip(angle, axis)# function signiture back to front on docs
+        self.__facing.rotate_ip(angle, axis)# function signiture back to front on docs for 2.0
+        self.__facing.rotate_ip(angle, axis)# function signiture back to front on docs for 2.0
 
     def rotate_roll(self, angle):
         """
         Angle in degrees
         """
-        self.__vertical.rotate_ip(angle, self.__facing)# function signiture back to front on docs
+        self.__vertical.rotate_ip(angle, self.__facing)# function signiture back to front on docs for 2.0

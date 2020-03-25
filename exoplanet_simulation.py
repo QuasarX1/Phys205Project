@@ -16,7 +16,7 @@ if len(sys.argv) > 1:
     else:
         raise ValueError("The first command line paramiter should indicate whether or not the simulation should be rendered (a boolean).")
 else:
-    renderOption = False# Overide this to change the defult setting
+    renderOption = True# Overide this to change the defult setting
 
 
 
@@ -92,7 +92,7 @@ class PositionLog(object):
         self.z.append(self.entity.getLocation().z)
         self.t.append(self.t[-1] + delta_t)
 
-        if len(self.t) > 10000:
+        if len(self.t) > 1000:
             sim.pause()
         
             plt.plot(self.x, self.t)

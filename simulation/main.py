@@ -18,7 +18,7 @@ class Simulation(object):
     
     Constructor:
         bool render -> Should the simulation be rendered? (True)
-        float tickScale -> Number of seconds to simulate per 1 tick or per 1 second of a randered simulation. (1 hour)
+        float tickScale -> Number of seconds to simulate per 1 tick or per 1 second of a randered simulation. (1 earth day)
         float distanceScale -> Number of pixels used to represent 1 meter. (1)
     """
 
