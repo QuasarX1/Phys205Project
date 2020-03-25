@@ -57,8 +57,6 @@ class Moveable(Entity):
         """
         print(self.__facing)
         self.__facing.rotate_ip(angle, self.__vertical)# function signiture back to front on docs for 2.0
-        print(self.__facing)
-        print("\n")
 
     def rotate_altitude(self, angle):
         """
