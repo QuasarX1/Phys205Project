@@ -1,5 +1,5 @@
 import numpy as np
-from simulation.physics_engine.constants import c as speed_of_light, h as planksConstant
+from simulation.physics_engine.constants import c as speed_of_light, h as planksConstant, k as boltzmann_constant
 
 def flux_sphere(luminosity, distance):
     '''
@@ -56,7 +56,7 @@ def radiance_wavelength_temperature(surface_temperature):
     Calculates the radience (or effective intensity) of the peak wavelength of a star, from the peak wavelength and the surface temperature, likely shouldn't be needed unless light emission is calculated as an array
     '''
     peak_wavelength = peak_wavelength_surface_temp(surface_temperature)
-    return (2 * planksConstant / peak_wavelength) * np.exp(planksConstant / 1.38 * 10**-23 * surface_temperature)
+    return (2 * planksConstant / peak_wavelength) * np.exp(planksConstant / boltzmann_constant * surface_temperature)
 
 def blackbody_luminosity(wavelength, surface_temperature):
     """
@@ -66,15 +66,16 @@ def blackbody_luminosity(wavelength, surface_temperature):
         float wavelength -> The wavelength in meters
         float surface_temperature -> The blackbody's temperature in kelvin
     """
+    return ((2 * planksConstant * speed_of_light / (wavelength)**3 ) * 1 / (np.exp(planksConstant / (wavelength) * surface*temperature * boltzmann_constant) - 1)))
     pass
 
 def RGB_Intensity(surface_temperature):
     '''
-    Calculates the relative intensitites of the light emitted for Red Green and Blue, equation returns [Rintensity, Ointensity, Yintensity Gintensity, Bintensity, Pintensity]  
+    Calculates the relative intensitites of the light emitted for Red Green and Blue, equation returns [Rintensity, Gintensity, Bintensity]  
     '''
-    return [((2 * planksConstant * speed_of_light / (700 * 10**-8)**3 ) * 1 / (np.exp(planksConstant / (700 * 10**-7) * surface*temperature * 1.38 * 10**-23) - 1)), #RED
-            ((2 * planksConstant * speed_of_light / (520 * 10**-8)**3 ) * 1 / (np.exp(planksConstant / (550 * 10**-7) * surface*temperature * 1.38 * 10**-23) - 1)), #GREEN
-            ((2 * planksConstant * speed_of_light / (460 * 10**-8)**3 ) * 1 / (np.exp(planksConstant / (400 * 10**-7) * surface*temperature * 1.38 * 10**-23) - 1))] #BLUE
+    return [((2 * planksConstant * speed_of_light / (700 * 10**-8)**3 ) * 1 / (np.exp(planksConstant / (700 * 10**-7) * surface*temperature * boltzmann_constant) - 1)), #RED
+            ((2 * planksConstant * speed_of_light / (520 * 10**-8)**3 ) * 1 / (np.exp(planksConstant / (550 * 10**-7) * surface*temperature * boltzmann_constant) - 1)), #GREEN
+            ((2 * planksConstant * speed_of_light / (460 * 10**-8)**3 ) * 1 / (np.exp(planksConstant / (400 * 10**-7) * surface*temperature * boltzmann_constant) - 1))] #BLUE
 
 
 def luminosity_peak_wavelength(peak_wavelength, star_radius):
