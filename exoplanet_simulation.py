@@ -79,6 +79,8 @@ second_planet.bindEntity_by_name("test_planet", simulation_layer)
 
 
 # Set up logging for important quantities --------------------------------------------------------------------------------------------
+
+
 class PositionLog(object):
     def __init__(self, entity):
         self.x = [entity.getLocation().x]
@@ -92,7 +94,7 @@ class PositionLog(object):
         self.z.append(self.entity.getLocation().z)
         self.t.append(self.t[-1] + delta_t)
 
-        if len(self.t) > 1000:
+        if len(self.t) > 100:
             sim.pause()
         
             plt.plot(self.x, self.t)
@@ -109,9 +111,44 @@ class PositionLog(object):
             #input("Press enter to run next chunk... ")
             sim.resume()
 
+class FacingLog(object):
+    def __init__(self, entity):
+        self.x = [entity.getFacing().x]
+        self.y = [entity.getFacing().y]
+        self.z = [entity.getFacing().z]
+        self.t = [0]
+
+        self.entity = entity
+
+    def logFacing(self, sim, delta_t):
+        self.x.append(self.entity.getFacing().x)
+        self.y.append(self.entity.getFacing().y)
+        self.z.append(self.entity.getFacing().z)
+        self.t.append(self.t[-1] + delta_t)
+
+        if len(self.t) > 100:
+            sim.pause()
+        
+            plt.plot(self.x, self.t)
+            plt.plot(self.z, self.t)
+            plt.show()
+        
+            plt.plot(self.x, self.z)
+            plt.show()
+        
+            self.x = [self.entity.getFacing().x]
+            self.y = [self.entity.getFacing().y]
+            self.z = [self.entity.getFacing().z]
+            self.t = [0]
+        
+            #input("Press enter to run next chunk... ")
+            sim.resume()
+
 logger = PositionLog(test_planet)
+#logger = FacingLog(simulation.getCamera())
 
 simulation.onItterationEnd = logger.logPositions
+#simulation.onItterationEnd = logger.logFacing
 
 
 
