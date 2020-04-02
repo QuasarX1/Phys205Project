@@ -105,6 +105,9 @@ class Simulation(object):
         if name in self.__layers.keys():
             self.__layers.pop(name, None)
 
+    def getEntity(self, layer_name: str, entity_name: str):
+        return self.getLayer(layer_name).getEntity(entity_name)
+
     def getRunTime(self):
         return self.__total_delta_t
 
