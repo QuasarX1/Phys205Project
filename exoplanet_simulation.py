@@ -8,7 +8,7 @@ from planet import Planet
 
 
 
-# Look for a command line paramiter indication the render status ---------------------------------------------------------------------
+# Look for a command line paramater indication the render status ---------------------------------------------------------------------
 if len(sys.argv) > 1:
     if sys.argv[1] in ("False", "false", "F", "f", "0"):
         renderOption = False
@@ -43,7 +43,7 @@ simulation.addLayer("simulation_layer", simulation_layer)
 
 
 
-# Add massive boddies to a simulation layer ------------------------------------------------------------------------------------------
+# Add massive bodies to a simulation layer ------------------------------------------------------------------------------------------
 target_star = Star(radius = 6371 * 10**3,
                    temperature = 100,
                    mass = 6 * 10**24,#1.9891 * 10**30,#500000,
@@ -67,7 +67,7 @@ simulation_layer.addEntity("second_planet", second_planet)
 
 
 
-# Bind obbjects that should be gravetationaly bound-----------------------------------------------------------------------------------
+# Bind objects that should be gravitationally bound-----------------------------------------------------------------------------------
 target_star.bindEntity_by_name("test_planet", simulation_layer)
 target_star.bindEntity_by_name("second_planet", simulation_layer)
 
