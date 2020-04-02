@@ -1,4 +1,5 @@
 import pygame
+import numpy as np
 from matplotlib import pyplot as plt
 import sys
 import simulation as sim
@@ -89,7 +90,7 @@ class PositionLog(object):
 
         self.entity = entity
 
-    def logPositions(self, sim, delta_t):
+    def log(self, sim, delta_t):
         self.x.append(self.entity.getLocation().x)
         self.z.append(self.entity.getLocation().z)
         self.t.append(self.t[-1] + delta_t)
@@ -111,6 +112,40 @@ class PositionLog(object):
             #input("Press enter to run next chunk... ")
             sim.resume()
 
+class VelocityLog(object):
+    def __init__(self, entity):
+        self.x = [entity.getVelocity().x]
+        self.y = [entity.getVelocity().y]
+        self.z = [entity.getVelocity().z]
+        self.t = [0]
+
+        self.entity = entity
+
+    def log(self, sim, delta_t):
+        self.x.append(self.entity.getVelocity().x)
+        self.y.append(self.entity.getVelocity().y)
+        self.z.append(self.entity.getVelocity().z)
+        self.t.append(self.t[-1] + delta_t)
+
+        if len(self.t) > 5000:
+            sim.pause()
+        
+            #plt.plot(self.x, self.t)
+            #plt.plot(self.y, self.t)
+            #plt.plot(self.z, self.t)
+            #plt.show()
+
+            plt.plot([np.sqrt(self.x[i]**2 + self.y[i]**2 + self.z[i]**2) for i in range(len(self.t))], self.t)
+            plt.show()
+        
+            self.x = [self.entity.getVelocity().x]
+            self.y = [self.entity.getVelocity().y]
+            self.z = [self.entity.getVelocity().z]
+            self.t = [0]
+        
+            #input("Press enter to run next chunk... ")
+            sim.resume()
+
 class FacingLog(object):
     def __init__(self, entity):
         self.x = [entity.getFacing().x]
@@ -120,7 +155,7 @@ class FacingLog(object):
 
         self.entity = entity
 
-    def logFacing(self, sim, delta_t):
+    def log(self, sim, delta_t):
         self.x.append(self.entity.getFacing().x)
         self.y.append(self.entity.getFacing().y)
         self.z.append(self.entity.getFacing().z)
@@ -144,11 +179,11 @@ class FacingLog(object):
             #input("Press enter to run next chunk... ")
             sim.resume()
 
-logger = PositionLog(test_planet)
+#logger = PositionLog(test_planet)
+logger = VelocityLog(test_planet)
 #logger = FacingLog(simulation.getCamera())
 
-simulation.onItterationEnd = logger.logPositions
-#simulation.onItterationEnd = logger.logFacing
+simulation.onItterationEnd = logger.log
 
 
 
