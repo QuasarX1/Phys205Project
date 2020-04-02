@@ -60,22 +60,22 @@ def radiance_wavelength_temperature(surface_temperature):
 
 def blackbody_luminosity(wavelength, surface_temperature):
     """
-    Calculates the luminosity of radiation emmited by a blackbody of a given tempriture in a given wavelength.
+    Calculates the luminosity of radiation emitted by a blackbody of a given temperature in a given wavelength.
 
     Paramiters:
         float wavelength -> The wavelength in meters
         float surface_temperature -> The blackbody's temperature in kelvin
     """
-    return ((2 * planksConstant * speed_of_light / (wavelength)**3 ) * 1 / (np.exp(planksConstant / (wavelength) * surface*temperature * boltzmann_constant) - 1)))
+    return ((2 * planksConstant * speed_of_light / (wavelength)**3 ) * 1 / (np.exp(planksConstant / (wavelength) * surface_temperature * boltzmann_constant) - 1)))
     pass
 
 def RGB_Intensity(surface_temperature):
     '''
     Calculates the relative intensitites of the light emitted for Red Green and Blue, equation returns [Rintensity, Gintensity, Bintensity]  
     '''
-    return [((2 * planksConstant * speed_of_light / (700 * 10**-8)**3 ) * 1 / (np.exp(planksConstant / (700 * 10**-7) * surface*temperature * boltzmann_constant) - 1)), #RED
-            ((2 * planksConstant * speed_of_light / (520 * 10**-8)**3 ) * 1 / (np.exp(planksConstant / (550 * 10**-7) * surface*temperature * boltzmann_constant) - 1)), #GREEN
-            ((2 * planksConstant * speed_of_light / (460 * 10**-8)**3 ) * 1 / (np.exp(planksConstant / (400 * 10**-7) * surface*temperature * boltzmann_constant) - 1))] #BLUE
+    return [((2 * planksConstant * speed_of_light / (700 * 10**-8)**3 ) * 1 / (np.exp(planksConstant / (700 * 10**-7) * surface_temperature * boltzmann_constant) - 1)), #RED
+            ((2 * planksConstant * speed_of_light / (520 * 10**-8)**3 ) * 1 / (np.exp(planksConstant / (550 * 10**-7) * surface_temperature * boltzmann_constant) - 1)), #GREEN
+            ((2 * planksConstant * speed_of_light / (460 * 10**-8)**3 ) * 1 / (np.exp(planksConstant / (400 * 10**-7) * surface_temperature * boltzmann_constant) - 1))] #BLUE
 
 
 def luminosity_peak_wavelength(peak_wavelength, star_radius):
