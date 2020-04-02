@@ -55,7 +55,6 @@ class Moveable(Entity):
         """
         Angle in degrees
         """
-        print(self.__facing)
         self.__facing.rotate_ip(angle, self.__vertical)# function signiture back to front on docs for 2.0
 
     def rotate_altitude(self, angle):
