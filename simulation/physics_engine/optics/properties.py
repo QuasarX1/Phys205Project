@@ -58,13 +58,13 @@ def radiance_wavelength_temperature(surface_temperature):
     peak_wavelength = peak_wavelength_surface_temp(surface_temperature)
     return (2 * planksConstant / peak_wavelength) * np.exp(planksConstant / 1.38 * 10**-23 * surface_temperature)
 
-def blackbody_luminosity(wavelength, tempriture):
+def blackbody_luminosity(wavelength, surface_temperature):
     """
     Calculates the luminosity of radiation emmited by a blackbody of a given tempriture in a given wavelength.
 
     Paramiters:
         float wavelength -> The wavelength in meters
-        float tempriture -> The blackbody's tempriture in kelvin
+        float surface_temperature -> The blackbody's temperature in kelvin
     """
     pass
 
