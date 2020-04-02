@@ -83,8 +83,8 @@ second_planet.bindEntity_by_name("test_planet", simulation_layer)
 
 class PositionLog(object):
     def __init__(self, entity):
-        self.x = [entity.getFacing().x]
-        self.z = [entity.getFacing().z]
+        self.x = [entity.getLocation().x]
+        self.z = [entity.getLocation().z]
         self.t = [0]
 
         self.entity = entity
@@ -144,10 +144,10 @@ class FacingLog(object):
             #input("Press enter to run next chunk... ")
             sim.resume()
 
-#logger = PositionLog(test_planet)
-logger = FacingLog(simulation.getCamera())
+logger = PositionLog(test_planet)
+#logger = FacingLog(simulation.getCamera())
 
-#simulation.onItterationEnd = logger.logPositions
+simulation.onItterationEnd = logger.logPositions
 #simulation.onItterationEnd = logger.logFacing
 
 
