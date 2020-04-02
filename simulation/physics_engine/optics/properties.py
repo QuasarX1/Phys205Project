@@ -58,6 +58,13 @@ def radiance_wavelength_temperature(surface_temperature):
     peak_wavelength = peak_wavelength_surface_temp(surface_temperature)
     return (2 * planksConstant / peak_wavelength) * np.exp(planksConstant / 1.38 * 10**-23 * surface_temperature)
 
+def RGB_Intensity(surface_temperature):
+    '''
+    Calculates the relative intensitites of the light emitted for Red Green and Blue, equation returns [Rintensity, Ointensity, Yintensity Gintensity, Bintensity, Pintensity]  
+    '''
+    return [((2 * planksConstant * speed_of_light / (700 * 10**-8)**3 ) * 1 / (np.exp(planksConstant / (700 * 10**-7) * surface*temperature * 1.38 * 10**-23) - 1)), #RED
+            ((2 * planksConstant * speed_of_light / (520 * 10**-8)**3 ) * 1 / (np.exp(planksConstant / (550 * 10**-7) * surface*temperature * 1.38 * 10**-23) - 1)), #GREEN
+            ((2 * planksConstant * speed_of_light / (460 * 10**-8)**3 ) * 1 / (np.exp(planksConstant / (400 * 10**-7) * surface*temperature * 1.38 * 10**-23) - 1))] #BLUE
 
 
 def luminosity_peak_wavelength(peak_wavelength, star_radius):

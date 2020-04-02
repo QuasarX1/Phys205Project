@@ -48,7 +48,6 @@ class Star(FreeBody, Sphere):
     #    maxColouredWavelength = max(Rintensity, Gintensity, Bintesnity)
     #    super().setColour(pygame.Color(255 * Rintensity / maxColouredWavelength, 255 * Gintensity / maxColouredWavelength, 255 * Bintensity / maxColouredWavelength))
 
-
     def update(self, delta_t, simulation):#TODO: star updates here? or in free body?
         self.setColour(blackbody_visable_colour(self.__temperature))
         self.manual_update_FreeBody(delta_t, simulation)
