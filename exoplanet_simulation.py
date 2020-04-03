@@ -34,12 +34,17 @@ simulation = sim.Simulation(render = renderOption)
 simulation.getCamera().setLocation(pygame.Vector3(0, 0, -4 * 10**7))
 
 
+
 # Create and add display layers ------------------------------------------------------------------------------------------------------
 HUD = sim.layer.Layer_2D(pygame.Surface((500, 500), pygame.SRCALPHA))
 simulation.addLayer("HUD", HUD)
 
 simulation_layer = sim.layer.Layer_3D(pygame.Surface((500, 500), pygame.SRCALPHA))
 simulation.addLayer("simulation_layer", simulation_layer)
+
+
+
+# Add display entities to the HUD layer ------------------------------------------------------------------------------------------
 
 
 
@@ -80,8 +85,6 @@ test_planet.bindEntity_by_name("target_star", simulation_layer)
 
 
 # Set up logging for important quantities --------------------------------------------------------------------------------------------
-
-
 class PositionLog(object):
     def __init__(self, entity):
         self.x = [entity.getLocation().x]
@@ -179,7 +182,7 @@ class FacingLog(object):
             #input("Press enter to run next chunk... ")
             sim.resume()
 
-logger = PositionLog(test_planet)
+#logger = PositionLog(test_planet)
 #logger = VelocityLog(test_planet)
 #logger = FacingLog(simulation.getCamera())
 
@@ -187,7 +190,7 @@ from simulation.logging.logger import PositionLogger, VelocityLogger, Seperation
 #logger = PositionLogger(test_planet, lambda self, sim, delta_t: len(self._getTime()) > 1000, False)
 #logger = SeperationLogger(test_planet, target_star, lambda self, sim, delta_t: len(self._getTime()) > 1000, False)
 
-simulation.onItterationEnd = logger.log
+#simulation.onItterationEnd = logger.log
 
 
 

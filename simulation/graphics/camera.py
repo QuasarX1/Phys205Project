@@ -2,6 +2,7 @@ import pygame
 import numpy as np
 from simulation.entities.moveable import Moveable
 from simulation.physics_engine.newtonian.freeBody import FreeBody
+from simulation.graphics.HUD.text import Text
 
 class Camera(FreeBody, Moveable):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(0, 0, 1), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), dimentions: pygame.Vector2 = pygame.Vector2(500, 500), field_of_vision: float = np.pi / 2, **kwargs):
@@ -39,6 +40,12 @@ class Camera(FreeBody, Moveable):
 
     def getFocus(self):
         return self.getLocation() - self.__focus_distance * self.getFacing()
+
+    def getNetForce(self):
+        return self.__movementForce - self.__resistanceToMovementForce
+
+    def setNetForce(self, new_net_force):
+        self.__movementForce = self.__resistanceToMovementForce + np.abs(new_net_force)
 
     #def calculatePerspective(self, location: pygame.Vector3):#TODO: upgrade perspective calculation
     #    result = location * self.__focus_distance / (location.z - (self.getLocation() - (self.__focus_distance * self.getFacing())).z)
@@ -138,3 +145,18 @@ class Camera(FreeBody, Moveable):
             self.rotate_altitude((mouseDeltaY / self.__focus_distance) * 180 / np.pi)
         if mouseDeltaX != 0:
             self.rotate_azimuth((-mouseDeltaX / self.__focus_distance) * 180 / np.pi)
+
+
+
+class CameraSpeedDisplay(Text):
+    def __init__(self, camera: Camera,
+                 location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0),
+                 vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), colour: pygame.Color = pygame.Color(255, 255, 255), *args, **kwargs):
+        self.__camera = camera
+        super().__init__(text = str(self.__camera.getNetForce()), font_face = "freesansbold.ttf", size = 30,
+                         location = location, facing = facing, vertical = vertical, colour = colour, *args, **kwargs)
+
+    def update(self, delta_t, simulation):
+        new_text = str(self.__camera.getNetForce())
+        if self.getText() != new_text:# This removes the redundant processing for re-creating the font
+            self.setText(new_text)

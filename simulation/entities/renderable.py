@@ -1,14 +1,12 @@
 import pygame
 from simulation.entities.moveable import Moveable
-from simulation.graphics.camera import Camera
 
 class Renderable_2D(Moveable):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), **kwargs):
         super().__init__(location = location, facing = facing, vertical = vertical, **kwargs)
 
-class Renderable_3D(Moveable):
-    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), **kwargs):
-        super().__init__(location = location, facing = facing, vertical = vertical, **kwargs)
+    def render(self, surface: pygame.Surface):
+        raise NotImplementedError("This method must be overridden in an inheriting class.")
 
 
 
@@ -106,6 +104,15 @@ class Renderable_Simple2DCircle(Renderable_2D):
         pygame.draw.circle(surface, self.__colour, self.getLocation(), self.__radius)
 
 
+        
+from simulation.graphics.camera import Camera
+
+class Renderable_3D(Moveable):
+    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), **kwargs):
+        super().__init__(location = location, facing = facing, vertical = vertical, **kwargs)
+
+    def render(self, surface: pygame.Surface, camera: Camera):
+        raise NotImplementedError("This method must be overridden in an inheriting class.")
 
 class Renderable_3DWireframe(Renderable_3D):
     def __init__(self, vertices: list, edges: list, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), scale = 1, colour: pygame.Color = pygame.Color(255, 255, 255), **kwargs):

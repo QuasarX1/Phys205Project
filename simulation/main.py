@@ -7,10 +7,11 @@ from simulation.layer import Layer, Layer_2D, Layer_3D
 from simulation.entities.entity import Entity
 from simulation.entities.renderable import Renderable_Simple2DRect
 from simulation.entities.prefabs import UnitCube_Wireframe, TriangularPyrimid_Wireframe
-from simulation.graphics.camera import Camera
+from simulation.graphics.camera import Camera, CameraSpeedDisplay
 from simulation.graphics.transformations import vector_to_array, array_to_vector, rotationMatrix, applyTransformation
 
 pygame.init()
+pygame.font.init()
 
 class Simulation(object):
     """
@@ -39,6 +40,7 @@ class Simulation(object):
             pygame.display.set_caption("Exoplanet Simulation")
             window_size = pygame.display.get_surface().get_size()
             self.__camera = Camera(dimentions = pygame.Vector2(window_size[0], window_size[1]))
+            self.__layers["defult"].addEntity("camera_speed", CameraSpeedDisplay(self.__camera))
         else:
             self.screen = None
             self.__camera = Camera()
@@ -211,6 +213,12 @@ class Simulation(object):
                             pygame.mouse.set_pos(self.__camera.getWidth() / 2, self.__camera.getHeight() / 2)
                             pygame.event.set_grab(not self.__paused)
                             pygame.mouse.get_rel()# Prevents mouse movement whilst paused from being used
+
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 4:# Scroll Up
+                        self.__camera.setNetForce(self.__camera.getNetForce() + 10)
+                    elif event.button == 5:# Scroll Down
+                        self.__camera.setNetForce(self.__camera.getNetForce() - 10)
 
                 elif event.type == pygame.VIDEORESIZE:
                     self.__camera.setWidth(event.w)
