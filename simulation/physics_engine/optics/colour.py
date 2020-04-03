@@ -1,5 +1,5 @@
 import pygame
-from simulation.physics_engine.optics.blackbody import luminosity as blackbody_luminosity
+from simulation.physics_engine.optics.blackbody import radiance as blackbody_luminosity
 
 def blackbody_visable_colour(temperature):
     redIntensity = blackbody_luminosity(700 * 10**-9, temperature)
