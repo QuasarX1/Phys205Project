@@ -1,9 +1,10 @@
 import pygame
+from simulation.physics_engine.optics.blackbody import luminosity as blackbody_luminosity
 
 def blackbody_visable_colour(tempriture):
-    redIntensity = 1
-    greenIntensity = 1
-    blueIntensity = 1
+    redIntensity = blackbody_luminosity(700 * 10**-9, tempriture)
+    greenIntensity = blackbody_luminosity(520 * 10**-9, tempriture)
+    blueIntensity = blackbody_luminosity(460 * 10**-9, tempriture)
 
     maxColouredWavelength = max((redIntensity, greenIntensity, blueIntensity))
 
