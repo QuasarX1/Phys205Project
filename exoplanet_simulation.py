@@ -58,24 +58,24 @@ test_planet = Planet(radius = 1737 * 10 **3,
                      colour = pygame.Color(0, 255, 0))
 simulation_layer.addEntity("test_planet", test_planet)
 
-second_planet = Planet(radius = 1737 * 10 **3,
-                       mass = 7.4 * 10**22,#1.9891 * 10**30,#500000,
-                       initial_velocity = pygame.Vector3(0, 0, -1040),
-                       location = pygame.Vector3(-384000 * 10**3, 0, 0),
-                       colour = pygame.Color(0, 0, 255))
-simulation_layer.addEntity("second_planet", second_planet)
+#second_planet = Planet(radius = 1737 * 10 **3,
+#                       mass = 7.4 * 10**22,#1.9891 * 10**30,#500000,
+#                       initial_velocity = pygame.Vector3(0, 0, -1040),
+#                       location = pygame.Vector3(-384000 * 10**3, 0, 0),
+#                       colour = pygame.Color(0, 0, 255))
+#simulation_layer.addEntity("second_planet", second_planet)
 
 
 
 # Bind objects that should be gravitationally bound-----------------------------------------------------------------------------------
 target_star.bindEntity_by_name("test_planet", simulation_layer)
-target_star.bindEntity_by_name("second_planet", simulation_layer)
+#target_star.bindEntity_by_name("second_planet", simulation_layer)
 
 test_planet.bindEntity_by_name("target_star", simulation_layer)
-test_planet.bindEntity_by_name("second_planet", simulation_layer)
+#test_planet.bindEntity_by_name("second_planet", simulation_layer)
 
-second_planet.bindEntity_by_name("target_star", simulation_layer)
-second_planet.bindEntity_by_name("test_planet", simulation_layer)
+#second_planet.bindEntity_by_name("target_star", simulation_layer)
+#second_planet.bindEntity_by_name("test_planet", simulation_layer)
 
 
 
