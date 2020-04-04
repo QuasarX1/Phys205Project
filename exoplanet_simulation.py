@@ -187,10 +187,10 @@ class FacingLog(object):
 #logger = FacingLog(simulation.getCamera())
 
 from simulation.logging.logger import PositionLogger, VelocityLogger, SeperationLogger
-#logger = PositionLogger(test_planet, lambda self, sim, delta_t: len(self._getTime()) > 1000, False)
+logger = PositionLogger(test_planet, lambda self, sim, delta_t: len(self._getTime()) > 100, False)
 #logger = SeperationLogger(test_planet, target_star, lambda self, sim, delta_t: len(self._getTime()) > 1000, False)
 
-#simulation.onItterationEnd = logger.log
+simulation.onItterationEnd = logger.log
 
 
 
