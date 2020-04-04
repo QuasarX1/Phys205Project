@@ -22,25 +22,25 @@ class FreeBody(Moveable):
 
         super().__init__(location = location, facing = facing, vertical = vertical, **kwargs)
 
-    def getMass(self):
+    def getMass(self) -> float:
         return self.__mass
 
     def setMass(self, new_mass: float):
         self.__mass = new_mass
 
-    def getMomentOfInertia(self):
+    def getMomentOfInertia(self) -> float:
         return self.__momentOfInertia
 
     def setMomentOfInertia(self, new_moment_of_inertia: float):
         self.__momentOfInertia = new_moment_of_inertia
 
-    def getVelocity(self):
+    def getVelocity(self) -> pygame.Vector3:
         return self.__velocity
 
-    def setVelocity(self, new_velocity: float):
+    def setVelocity(self, new_velocity: pygame.Vector3):
         self.__velocity = new_velocity
 
-    def getAngularVelocity(self):
+    def getAngularVelocity(self) -> float:
         return self.__mass
 
     def setAngularVelocity(self, new_angular_velocity: float):

@@ -56,3 +56,22 @@ class Text(Renderable_2D):
 
     def render(self, surface: pygame.Surface):
         surface.blit(self.__renderedText, (self.getLocation().x, self.getLocation().y))
+
+
+
+class UpdatingText(Text):
+    def __init__(self, function, font_face: str, size: int = 1, objectReferences: dict = {},
+                 location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0),
+                 vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), colour: pygame.Color = pygame.Color(255, 255, 255), *args, **kwargs):
+        self.__objects = objectReferences
+        self.__function = function
+        super().__init__(text = str(self.__function(self)), font_face = font_face, size = size,
+                         location = location, facing = facing, vertical = vertical, colour = colour, *args, **kwargs)
+
+    def getReferencedObject(self, dictKey):
+        return self.__objects[dictKey]
+
+    def update(self, delta_t, simulation):
+        new_text = str(self.__function(self))
+        if self.getText() != new_text:# This removes the redundant processing for re-creating the font
+            self.setText(new_text)

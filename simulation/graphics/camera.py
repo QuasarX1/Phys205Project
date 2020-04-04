@@ -2,7 +2,7 @@ import pygame
 import numpy as np
 from simulation.entities.moveable import Moveable
 from simulation.physics_engine.newtonian.freeBody import FreeBody
-from simulation.graphics.HUD.text import Text
+from simulation.graphics.HUD.text import Text, UpdatingText
 
 class Camera(FreeBody, Moveable):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(0, 0, 1), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), dimentions: pygame.Vector2 = pygame.Vector2(500, 500), field_of_vision: float = np.pi / 2, **kwargs):
@@ -47,24 +47,7 @@ class Camera(FreeBody, Moveable):
     def setNetForce(self, new_net_force):
         self.__movementForce = self.__resistanceToMovementForce + np.abs(new_net_force)
 
-    #def calculatePerspective(self, location: pygame.Vector3):#TODO: upgrade perspective calculation
-    #    result = location * self.__focus_distance / (location.z - (self.getLocation() - (self.__focus_distance * self.getFacing())).z)
-    #    #result = (location + pygame.Vector3(self.__width / 2, self.__height / 2, 0)) * self.__focus_distance / (location.z - ((self.getLocation() + pygame.Vector3(self.__width / 2, self.__height / 2, 0)) - (self.__focus_distance * self.getFacing())).z)
-    #    #result = location * self.__focus_distance / (location.z - ((self.getLocation() + pygame.Vector3(self.__width / 2, self.__height / 2, 0)) - (self.__focus_distance * self.getFacing())).z)
-        
-    #    focusToObject = location - self.getLocation() - (self.__focus_distance * self.getFacing())
-
-    #    focusToObject_inFacingDirection = focusToObject.dot(self.getFacing())
-
-    #    x_projection = self.__focus_distance * focusToObject.dot(self.getFacing()) / focusToObject_inFacingDirection
-    #    y_projection = self.__focus_distance * focusToObject.dot(self.getVertical().cross(self.getFacing())) / focusToObject_inFacingDirection
-        
-    #    return pygame.Vector2(x_projection, y_projection)
-
-    def calculatePerspective(self, location: pygame.Vector3):#TODO: upgrade perspective calculation
-        #result = location * self.__focus_distance / (location.z - (self.getLocation() - (self.__focus_distance * self.getFacing())).z)
-        #result = (location + pygame.Vector3(self.__width / 2, self.__height / 2, 0)) * self.__focus_distance / (location.z - ((self.getLocation() + pygame.Vector3(self.__width / 2, self.__height / 2, 0)) - (self.__focus_distance * self.getFacing())).z)
-        
+    def calculatePerspective(self, location: pygame.Vector3):
         ratio = self.__focus_distance / (location - self.getFocus()).dot(self.getFacing())
 
         return pygame.Vector2(location.dot(self.getHorisontal()) * ratio, location.dot(self.getVertical()) * ratio)
@@ -74,7 +57,7 @@ class Camera(FreeBody, Moveable):
         focusToPoint = point - self.getFocus()
 
         inView = True
-        inView &= locationToPoint.dot(self.getFacing()) > 0# Infront of the camera
+        inView &= locationToPoint.dot(self.getFacing()) > 0# In front of the camera
 
         try:
             inView &= np.abs(focusToPoint.dot(self.getFacing()) / locationToPoint.dot(self.getHorisontal())) > np.abs(2 * self.__focus_distance / self.__width)# Right of left fov bound and Left of right fov bound
@@ -113,32 +96,16 @@ class Camera(FreeBody, Moveable):
         if forewards != 0 or vertical != 0 or strafe != 0:
             self.addForce((self.getFacing() * forewards + self.getVertical() * vertical + self.getHorisontal() * strafe).normalize() * self.__movementForce)
 
-        if self.getVelocity() != pygame.Vector3(0, 0, 0):
-            self.addForce(self.getVelocity().normalize() * -1 * self.__resistanceToMovementForce)
-
-        #if forewards != 0:
-        #    #self.move_forewards(100 * forewards * delta_t)#TODO: remove hard coded velocity
-        #    try:
-        #        test = 100 * forewards * delta_t * pygame.Vector3(self.getFacing().dot(pygame.Vector3(1, 0, 0)), 0, self.getFacing().dot(pygame.Vector3(0, 0, 1))).normalize()
-        #        self.move(100 * forewards * delta_t * pygame.Vector3(self.getFacing().dot(pygame.Vector3(1, 0, 0)), 0, self.getFacing().dot(pygame.Vector3(0, 0, 1))).normalize())
-        #    except ValueError:
-        #        pass
-
-        #if vertical != 0:
-        #    test = 100 * vertical * delta_t
-        #    self.move_y(100 * vertical * delta_t)#TODO: remove hard coded velocity
-
-        #if strafe != 0:
-        #    #self.move_right(100 * strafe * delta_t)#TODO: remove hard coded velocity
-        #    try:
-        #        test = 100 * strafe * delta_t * pygame.Vector3(self.getHorisontal().dot(pygame.Vector3(1, 0, 0)), 0, self.getHorisontal().dot(pygame.Vector3(0, 0, 1))).normalize()
-        #        self.move(100 * strafe * delta_t * pygame.Vector3(self.getHorisontal().dot(pygame.Vector3(1, 0, 0)), 0, self.getHorisontal().dot(pygame.Vector3(0, 0, 1))).normalize())
-        #    except ValueError:
-        #        pass
+        currentVelocity = self.getVelocity()
+        if currentVelocity != pygame.Vector3(0, 0, 0):
+            self.addForce(currentVelocity.normalize() * -1 * self.__resistanceToMovementForce)
 
 
     def update(self, delta_t, simulation):
-        self.manual_update_FreeBody(delta_t, simulation)            
+        self.manual_update_FreeBody(delta_t, simulation) 
+        
+        if self.getVelocity().magnitude() < 10:
+            self.setVelocity(pygame.Vector3(0, 0, 0))
 
         mouseDeltaX, mouseDeltaY = pygame.mouse.get_rel()
         if mouseDeltaY != 0:
@@ -148,15 +115,22 @@ class Camera(FreeBody, Moveable):
 
 
 
-class CameraSpeedDisplay(Text):
+class CameraForceDisplay(UpdatingText):
     def __init__(self, camera: Camera,
                  location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0),
                  vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), colour: pygame.Color = pygame.Color(255, 255, 255), *args, **kwargs):
         self.__camera = camera
-        super().__init__(text = str(self.__camera.getNetForce()), font_face = "freesansbold.ttf", size = 30,
+        super().__init__(function = lambda self: str(self.getReferencedObject("camera").getNetForce()),
+                         font_face = "freesansbold.ttf", size = 30, objectReferences = {"camera":camera},
                          location = location, facing = facing, vertical = vertical, colour = colour, *args, **kwargs)
 
-    def update(self, delta_t, simulation):
-        new_text = str(self.__camera.getNetForce())
-        if self.getText() != new_text:# This removes the redundant processing for re-creating the font
-            self.setText(new_text)
+
+
+class CameraSpeedDisplay(UpdatingText):
+    def __init__(self, camera: Camera,
+                 location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0),
+                 vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), colour: pygame.Color = pygame.Color(255, 255, 255), *args, **kwargs):
+        self.__camera = camera
+        super().__init__(function = lambda self: str(self.getReferencedObject("camera").getVelocity().magnitude()),
+                         font_face = "freesansbold.ttf", size = 30, objectReferences = {"camera":camera},
+                         location = location, facing = facing, vertical = vertical, colour = colour, *args, **kwargs)

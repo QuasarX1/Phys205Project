@@ -7,7 +7,7 @@ from simulation.layer import Layer, Layer_2D, Layer_3D
 from simulation.entities.entity import Entity
 from simulation.entities.renderable import Renderable_Simple2DRect
 from simulation.entities.prefabs import UnitCube_Wireframe, TriangularPyrimid_Wireframe
-from simulation.graphics.camera import Camera, CameraSpeedDisplay
+from simulation.graphics.camera import Camera, CameraForceDisplay, CameraSpeedDisplay
 from simulation.graphics.transformations import vector_to_array, array_to_vector, rotationMatrix, applyTransformation
 
 pygame.init()
@@ -40,7 +40,8 @@ class Simulation(object):
             pygame.display.set_caption("Exoplanet Simulation")
             window_size = pygame.display.get_surface().get_size()
             self.__camera = Camera(dimentions = pygame.Vector2(window_size[0], window_size[1]))
-            self.__layers["defult"].addEntity("camera_speed", CameraSpeedDisplay(self.__camera))
+            self.__layers["defult"].addEntity("camera_force", CameraForceDisplay(self.__camera))
+            self.__layers["defult"].addEntity("camera_speed", CameraSpeedDisplay(self.__camera, location = pygame.Vector3(0, 50, 0)))
         else:
             self.screen = None
             self.__camera = Camera()
