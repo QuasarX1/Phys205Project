@@ -1,5 +1,6 @@
 import pygame
 import numpy as np
+import copy
 from simulation.entities.entity import Entity
 
 class Moveable(Entity):

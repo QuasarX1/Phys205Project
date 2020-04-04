@@ -1,4 +1,5 @@
 import numpy as np
+import copy
 from matplotlib import pyplot as plt
 from simulation import Simulation
 from simulation.entities.entity import Entity
@@ -55,11 +56,11 @@ class ActionLogger(Logger):
 
 class PositionLogger(ActionLogger):
     def __init__(self, entity: Moveable, trigger = lambda self, sim, delta_t: False, zero_time_on_action: bool = False, *args, **kwargs):
-        self.__positions = [entity.getLocation()]
+        self.__positions = [copy.copy(entity.getLocation())]
         super().__init__(entities = {"entity":entity}, trigger = trigger, action = self.__customAction, zero_time_on_action = zero_time_on_action, *args, **kwargs)
 
     def log(self, sim: Simulation, delta_t: float):
-        self.__positions.append(self._getEntities()["entity"].getLocation())
+        self.__positions.append(copy.copy(self._getEntities()["entity"].getLocation()))
         super().log(sim, delta_t)
 
     def resetLog(self, set_time_to_zero: bool = False):
@@ -76,7 +77,7 @@ class PositionLogger(ActionLogger):
         t = self._getTime()
 
         for position in self.__positions:
-            distance.append(np.abs(position.magnitude()))
+            distance.append(position.magnitude())
             x.append(position.x)
             y.append(position.y)
             z.append(position.z)
@@ -105,11 +106,11 @@ class PositionLogger(ActionLogger):
 
 class VelocityLogger(ActionLogger):
     def __init__(self, entity: FreeBody, trigger = (lambda self, sim, delta_t: False), zero_time_on_action: bool = False, *args, **kwargs):
-        self.__velocities = [entity.getVelocity()]
+        self.__velocities = [copy.copy(entity.getVelocity())]
         super().__init__(entities = {"entity":entity}, trigger = trigger, action = self.__customAction, zero_time_on_action = zero_time_on_action, *args, **kwargs)
 
     def log(self, sim: Simulation, delta_t: float):
-        self.__velocities.append(self._getEntities()["entity"].getVelocity())
+        self.__velocities.append(copy.copy(self._getEntities()["entity"].getVelocity()))
         super().log(sim, delta_t)
 
     def resetLog(self, set_time_to_zero: bool = False):
@@ -155,12 +156,12 @@ class VelocityLogger(ActionLogger):
 
 class SeperationLogger(ActionLogger):
     def __init__(self, entity: Moveable, referenceEntity: Moveable, trigger = lambda self, sim, delta_t: False, zero_time_on_action: bool = False, *args, **kwargs):
-        self.__positions = {"entity":[entity.getLocation()], "reference_entity":[referenceEntity.getLocation()]}
+        self.__positions = {"entity":[copy.copy(entity.getLocation())], "reference_entity":[copy.copy(referenceEntity.getLocation())]}
         super().__init__(entities = {"entity":entity, "reference_entity":referenceEntity}, trigger = trigger, action = self.__customAction, zero_time_on_action = zero_time_on_action, *args, **kwargs)
 
     def log(self, sim: Simulation, delta_t: float):
-        self.__positions["entity"].append(self._getEntities()["entity"].getLocation())
-        self.__positions["reference_entity"].append(self._getEntities()["reference_entity"].getLocation())
+        self.__positions["entity"].append(copy.copy(self._getEntities()["entity"].getLocation()))
+        self.__positions["reference_entity"].append(copy.copy(self._getEntities()["reference_entity"].getLocation()))
         super().log(sim, delta_t)
 
     def resetLog(self, set_time_to_zero: bool = False):

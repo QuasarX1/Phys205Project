@@ -2,6 +2,7 @@ import pygame
 import numpy as np
 import threading
 import os
+from QuasarCode.edp import Event
 from simulation.commands import commands
 from simulation.layer import Layer, Layer_2D, Layer_3D
 from simulation.entities.entity import Entity
@@ -28,7 +29,7 @@ class Simulation(object):
         self.canRender = render
         self.__layers = {"defult": Layer_2D(pygame.Surface((500, 500), pygame.SRCALPHA))}
         self.clock = pygame.time.Clock()
-        self.onItterationEnd = lambda simulation, delta_t: None
+        self.onItterationEnd = Event()# lambda simulation, delta_t: None
         self.__running = False
         self.__paused = True
         self.__total_delta_t = 0
@@ -233,7 +234,8 @@ class Simulation(object):
                 self.update(simulated_delta_t)
                 self.__camera.post_update()
                 self.__total_delta_t += simulated_delta_t
-                self.onItterationEnd(self, simulated_delta_t)
+                #self.onItterationEnd(self, simulated_delta_t)
+                self.onItterationEnd.run(self, simulated_delta_t)
 
             self.render()
 

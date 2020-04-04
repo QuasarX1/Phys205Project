@@ -5,6 +5,7 @@ import sys
 import simulation as sim
 from star import Star
 from planet import Planet
+from simulation.logging.logger import PositionLogger, VelocityLogger, SeperationLogger
 
 
 
@@ -85,112 +86,9 @@ test_planet.bindEntity_by_name("target_star", simulation_layer)
 
 
 # Set up logging for important quantities --------------------------------------------------------------------------------------------
-class PositionLog(object):
-    def __init__(self, entity):
-        self.x = [entity.getLocation().x]
-        self.z = [entity.getLocation().z]
-        self.t = [0]
-
-        self.entity = entity
-
-    def log(self, sim, delta_t):
-        self.x.append(self.entity.getLocation().x)
-        self.z.append(self.entity.getLocation().z)
-        self.t.append(self.t[-1] + delta_t)
-
-        if len(self.t) > 100:
-            sim.pause()
-        
-            plt.plot(self.x, self.t)
-            plt.plot(self.z, self.t)
-            plt.show()
-        
-            plt.plot(self.x, self.z)
-            plt.show()
-        
-            self.x = [self.entity.getLocation().x]
-            self.z = [self.entity.getLocation().z]
-            self.t = [0]
-        
-            #input("Press enter to run next chunk... ")
-            sim.resume()
-
-class VelocityLog(object):
-    def __init__(self, entity):
-        self.x = [entity.getVelocity().x]
-        self.y = [entity.getVelocity().y]
-        self.z = [entity.getVelocity().z]
-        self.t = [0]
-
-        self.entity = entity
-
-    def log(self, sim, delta_t):
-        self.x.append(self.entity.getVelocity().x)
-        self.y.append(self.entity.getVelocity().y)
-        self.z.append(self.entity.getVelocity().z)
-        self.t.append(self.t[-1] + delta_t)
-
-        if len(self.t) > 5000:
-            sim.pause()
-        
-            #plt.plot(self.x, self.t)
-            #plt.plot(self.y, self.t)
-            #plt.plot(self.z, self.t)
-            #plt.show()
-
-            plt.plot([np.sqrt(self.x[i]**2 + self.y[i]**2 + self.z[i]**2) for i in range(len(self.t))], self.t)
-            plt.show()
-        
-            self.x = [self.entity.getVelocity().x]
-            self.y = [self.entity.getVelocity().y]
-            self.z = [self.entity.getVelocity().z]
-            self.t = [0]
-        
-            #input("Press enter to run next chunk... ")
-            sim.resume()
-
-class FacingLog(object):
-    def __init__(self, entity):
-        self.x = [entity.getFacing().x]
-        self.y = [entity.getFacing().y]
-        self.z = [entity.getFacing().z]
-        self.t = [0]
-
-        self.entity = entity
-
-    def log(self, sim, delta_t):
-        self.x.append(self.entity.getFacing().x)
-        self.y.append(self.entity.getFacing().y)
-        self.z.append(self.entity.getFacing().z)
-        self.t.append(self.t[-1] + delta_t)
-
-        if len(self.t) > 100:
-            sim.pause()
-        
-            plt.plot(self.x, self.t)
-            plt.plot(self.z, self.t)
-            plt.show()
-        
-            plt.plot(self.x, self.z)
-            plt.show()
-        
-            self.x = [self.entity.getFacing().x]
-            self.y = [self.entity.getFacing().y]
-            self.z = [self.entity.getFacing().z]
-            self.t = [0]
-        
-            #input("Press enter to run next chunk... ")
-            sim.resume()
-
-#logger = PositionLog(test_planet)
-#logger = VelocityLog(test_planet)
-#logger = FacingLog(simulation.getCamera())
-
-from simulation.logging.logger import PositionLogger, VelocityLogger, SeperationLogger
-logger = PositionLogger(test_planet, lambda self, sim, delta_t: len(self._getTime()) > 100, False)
-#logger = SeperationLogger(test_planet, target_star, lambda self, sim, delta_t: len(self._getTime()) > 1000, False)
-
-simulation.onItterationEnd = logger.log
+simulation.onItterationEnd += PositionLogger(test_planet, lambda self, sim, delta_t: len(self._getTime()) > 1000, False).log
+simulation.onItterationEnd += VelocityLogger(test_planet, lambda self, sim, delta_t: len(self._getTime()) > 1000, False).log
+simulation.onItterationEnd += SeperationLogger(test_planet, target_star, lambda self, sim, delta_t: len(self._getTime()) > 1000, False).log
 
 
 
