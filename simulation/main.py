@@ -29,7 +29,8 @@ class Simulation(object):
         self.canRender = render
         self.__layers = {"defult": Layer_2D(pygame.Surface((500, 500), pygame.SRCALPHA))}
         self.clock = pygame.time.Clock()
-        self.onItterationEnd = Event()# lambda simulation, delta_t: None
+        self.onItterationEnd = Event()
+        self.onRenderEnd = Event()
         self.__running = False
         self.__paused = True
         self.__total_delta_t = 0
@@ -234,8 +235,9 @@ class Simulation(object):
                 self.update(simulated_delta_t)
                 self.__camera.post_update()
                 self.__total_delta_t += simulated_delta_t
-                #self.onItterationEnd(self, simulated_delta_t)
-                self.onItterationEnd.run(self, simulated_delta_t)
+
+                if self.onItterationEnd.getTotalSubscribers() > 0:
+                    self.onItterationEnd.run(self, simulated_delta_t)
 
             self.render()
 
@@ -244,7 +246,8 @@ class Simulation(object):
                 #pygame.display.update()
                 self.screen.fill((0, 0, 0))
 
-            #self.onRenderEnd(self, delta_t)
+            if self.onRenderEnd.getTotalSubscribers() > 0:
+                self.onRenderEnd.run(self, simulated_delta_t)
 
     def __run_threaded(self) -> threading.Thread:
         """
