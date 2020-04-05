@@ -3,6 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import sys
 import simulation as sim
+from simulation.main import RenderMode
 from star import Star
 from planet import Planet
 from simulation.logging.logger import PositionLogger, VelocityLogger, SeperationLogger
@@ -23,7 +24,7 @@ else:
 
 
 # Create a blank simulation ----------------------------------------------------------------------------------------------------------
-simulation = sim.Simulation(render = renderOption)
+simulation = sim.Simulation(renderMode = RenderMode.real_time, cameraDimentions = pygame.Vector2(500, 500))
 
 
 
@@ -37,10 +38,7 @@ simulation.getCamera().setLocation(pygame.Vector3(0, 0, -4 * 10**7))
 
 
 # Create and add display layers ------------------------------------------------------------------------------------------------------
-HUD = sim.layer.Layer_2D(pygame.Surface((500, 500), pygame.SRCALPHA))
-simulation.addLayer("HUD", HUD)
-
-simulation_layer = sim.layer.Layer_3D(pygame.Surface((500, 500), pygame.SRCALPHA))
+simulation_layer = sim.layer.Layer_3D()
 simulation.addLayer("simulation_layer", simulation_layer)
 
 
@@ -86,7 +84,7 @@ test_planet.bindEntity_by_name("target_star", simulation_layer)
 
 
 # Set up logging for important quantities --------------------------------------------------------------------------------------------
-simulation.onItterationEnd += PositionLogger(test_planet, lambda self, sim, delta_t: len(self._getTime()) > 1000, False).log
+#simulation.onItterationEnd += PositionLogger(test_planet, lambda self, sim, delta_t: len(self._getTime()) > 1000, False).log
 #simulation.onItterationEnd += VelocityLogger(test_planet, lambda self, sim, delta_t: len(self._getTime()) > 1000, False).log
 #simulation.onItterationEnd += SeperationLogger(test_planet, target_star, lambda self, sim, delta_t: len(self._getTime()) > 1000, False).log
 

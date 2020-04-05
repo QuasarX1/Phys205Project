@@ -2,6 +2,7 @@ import pygame
 import numpy as np
 import threading
 import os
+from enum import Enum
 from QuasarCode.edp import Event
 from simulation.commands import commands
 from simulation.layer import Layer, Layer_2D, Layer_3D
@@ -14,6 +15,33 @@ from simulation.graphics.transformations import vector_to_array, array_to_vector
 pygame.init()
 pygame.font.init()
 
+class SimulationClock(object):
+    def tick(*args, **kwargs):
+        raise NotImplementedError("")
+
+class PygameClockWrapper(SimulationClock):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__clock = pygame.time.Clock()
+
+    def tick(self, *args, **kwargs):
+        return self.__clock.tick(*args, **kwargs)
+
+class LinearTickClock(SimulationClock):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__counter = 0
+
+    def tick(*args, **kwargs):
+        self.__counter += 1
+        return 1
+
+class RenderMode(Enum):
+    no_render = 0,
+    real_time = 1,
+    save_file = 2
+
+
 class Simulation(object):
     """
     Runs a constructed simulation in a self contained environment.
@@ -24,29 +52,62 @@ class Simulation(object):
         float distanceScale -> Number of pixels used to represent 1 meter. (1)
     """
 
-    def __init__(self, render = True, tickScale = 3600 * 24, distanceScale = 1, **kwargs):
-        super().__init__(**kwargs)
-        self.canRender = render
-        self.__layers = {"defult": Layer_2D(pygame.Surface((500, 500), pygame.SRCALPHA))}
-        self.clock = pygame.time.Clock()
-        self.onItterationEnd = Event()
-        self.onRenderEnd = Event()
-        self.__running = False
-        self.__paused = True
-        self.__total_delta_t = 0
-        self.__tickScale = tickScale# simulated time : real time
-        self.__distanceScale = distanceScale# pixels : simulated meters
+    def __init__(self, renderMode: RenderMode = RenderMode.real_time, timeScale: float = 3600.0 * 24.0,
+                 cameraDimentions: tuple = (1, 1), displayWindowDimentions = (500, 500), maxFPS = 60, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        if self.canRender:
-            self.screen: pygame.Surface = pygame.display.set_mode((500, 500), flags = pygame.RESIZABLE)
+        # Events
+        self.onItterationEnd: Event = Event()
+        self.onRenderEnd: Event = Event()
+        self.onWindoDimentionChange: Event = Event()
+
+        # Rendering Attributes
+        self.__camera: Camera = Camera(dimentions = cameraDimentions)
+
+        self.__distanceScale: float = None# pixels : simulated meters
+        self.__calculatePixelsPerMeter(displayWindowDimentions[0])
+
+        self.__camera.setHeightOffset(displayWindowDimentions[1], self.__distanceScale)
+
+        self.__renderMode: RenderMode = renderMode
+        self.__displayOutput: bool = self.__renderMode == RenderMode.real_time
+        
+        self.__maxFPS:int = maxFPS# Only relivant for use with the pygame clock
+
+        self.__layers: dict = {"background": Layer_2D(self.createCameraSizedSurface()), "HUD": Layer_2D(self.createCameraSizedSurface())}# Layers for entity storage
+        self.__protectedLayerNames = ("background", "HUD")
+        
+        if self.__displayOutput:
+            self.__screen: pygame.Surface = self.__newScreenSurface(
+                (
+                    int(self.__camera.getWidth() * self.__distanceScale),
+                    int(self.__camera.getHeight() * self.__distanceScale)
+                ))
             pygame.display.set_caption("Exoplanet Simulation")
-            window_size = pygame.display.get_surface().get_size()
-            self.__camera = Camera(dimentions = pygame.Vector2(window_size[0], window_size[1]))
-            self.__layers["defult"].addEntity("camera_force", CameraForceDisplay(self.__camera))
-            self.__layers["defult"].addEntity("camera_speed", CameraSpeedDisplay(self.__camera, location = pygame.Vector3(0, 50, 0)))
+
+            #TODO: add a toggalable option on the pause menu for these
+            self.__layers["HUD"].addEntity("camera_force", CameraForceDisplay(self.__camera))
+            self.__layers["HUD"].addEntity("camera_speed", CameraSpeedDisplay(self.__camera, location = pygame.Vector3(0, 50, 0)))
         else:
-            self.screen = None
-            self.__camera = Camera()
+            self.__screen: pygame.Surface = self.createCameraSizedSurface()
+
+        # Clock Options
+        self.__timeScale: float = timeScale# simulated seconds : real seconds
+
+        if self.__displayOutput:
+            # Use a real-time clock for live rendering
+            # Each tick vairies in length
+            self.__clock: SimulationClock = PygameClockWrapper()
+            self.__tickConversion: float = 0.001# Seconds per Tick
+        else:
+            # Incremental ticks of 1 to reduce variation
+            self.__clock: SimulationClock = LinearTickClock()
+            self.__tickConversion: float = 1.0# Seconds per Tick
+
+        # Pre-set the simulation state
+        self.__running: bool = False
+        self.__paused: bool = True
+        self.__total_delta_t: float = 0
 
     @staticmethod
     def create_from_xml(path_to_xml: str):
@@ -60,20 +121,25 @@ class Simulation(object):
         """
         raise NotImplementedError("This has not yet been implemented.")#TODO: add this using DOM from https://www.tutorialspoint.com/python/python_xml_processing.htm
 
+    def __calculatePixelsPerMeter(self, windowWidth):
+        self.__distanceScale = windowWidth / self.__camera.getWidth()
+
+    def __newScreenSurface(self, size: tuple) -> pygame.Surface:
+        return pygame.display.set_mode(size, flags = pygame.RESIZABLE)
+
+    def createCameraSizedSurface(self):
+        return pygame.Surface(
+            (
+                int(self.__camera.getWidth() * self.__distanceScale),
+                int(self.__camera.getHeight() * self.__distanceScale)
+            ),
+            flags = pygame.SRCALPHA)
+        
     def getCamera(self) -> Camera:
         """
         Returns a reference to the simulation's camera.
         """
         return self.__camera
-
-    def setCamera(self, new_camera: Camera):
-        """
-        Overwrites the simulation's camera with a new Camera object.
-
-        Paramiters:
-            Camera new_camera -> A new camera object to be used as the simulation's camera
-        """
-        self.__camera = new_camera
 
     def getLayer(self, name: str) -> Layer:
         """
@@ -82,9 +148,9 @@ class Simulation(object):
         Paramiters:
             str name -> The name of the layer
         """
-        if name in self.__layers.keys():
+        try:
             return self.__layers[name]
-        else:
+        except KeyError:
             return None
 
     def addLayer(self, name: str, layer: Layer):
@@ -97,6 +163,7 @@ class Simulation(object):
         """
         if name not in self.__layers.keys():
             self.__layers[name] = layer
+            layer.setSurface(self.createCameraSizedSurface())
         else:
             raise KeyError("A layer already exists with the name {}.".format(name))
 
@@ -107,8 +174,28 @@ class Simulation(object):
         Paramiters:
             str name -> The name of the existing layer that should be un-registered
         """
-        if name in self.__layers.keys():
-            self.__layers.pop(name, None)
+        if name in self.__protectedLayerNames:
+            raise ValueError("The layer {} is a protected layer and as such can't be removed.".format(name))
+
+        self.__layers.pop(name, None)
+
+    def showLayer(self, layer_name):
+        try:
+            self.__layers[layer_name].show()
+        except KeyError:
+            pass
+
+    def hideLayer(self, layer_name):
+        try:
+            self.__layers[layer_name].hide()
+        except KeyError:
+            pass
+
+    def showHUD(self):
+        self.__layers["HUD"].show()
+
+    def hideHUD(self):
+        self.__layers["HUD"].hide()
 
     def getEntity(self, layer_name: str, entity_name: str):
         return self.getLayer(layer_name).getEntity(entity_name)
@@ -117,7 +204,7 @@ class Simulation(object):
         return self.__total_delta_t
 
     def getTickScale(self):
-        return self.__tickScale
+        return self.__timeScale
 
     def getDistanceScale(self):
         return self.__distanceScale
@@ -136,6 +223,9 @@ class Simulation(object):
 
     def isRunning(self):
         return self.__running
+
+    def isRenderable(self):
+        return self.__renderMode != RenderMode.no_render
 
     def update(self, delta_t):
         """
@@ -157,11 +247,96 @@ class Simulation(object):
         """
         Renders each layer in order provided the simulation is specified as being renderable.
         """
-        if self.canRender:
-            for layer in self.__layers.values():
-                if type(layer) is Layer_3D: layer.render(self.__camera)
-                else: layer.render()
-                self.screen.blit(layer.surface, (0, 0))#(self.__camera.getWidth() / 2, self.__camera.getHeight() / 2))#(0, 0))
+        if self.isRenderable():
+            self.__screen.fill((0, 0, 0))
+
+            self.__layers["background"].render()
+            self.__screen.blit(self.__layers["background"].surface, (0, 0))
+
+            for layerName in self.__layers.keys():
+                if layerName not in self.__protectedLayerNames:
+                    layer = self.__layers[layerName]
+                    if layer.isRenderable():
+                        if type(layer) is Layer_3D: layer.render(self.__camera, self.__distanceScale)
+                        else: layer.render()
+                        self.__screen.blit(layer.surface, (0, 0))
+
+            self.__layers["HUD"].render()
+            self.__screen.blit(self.__layers["HUD"].surface, (0, 0))
+
+            if self.__displayOutput:
+                pygame.display.flip()
+                #pygame.display.update()
+
+            if self.onRenderEnd.getTotalSubscribers() > 0:
+                    self.onRenderEnd.run(self, simulated_delta_t)
+
+    def __run(self):
+        self.__running = True
+
+        if not self.__displayOutput:
+            self.__paused = False
+
+        if self.__displayOutput and not self.__paused:
+            pygame.mouse.set_visible(False)
+            pygame.event.set_grab(True)
+
+        while self.__running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.__running = False
+
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.togglePauseState()
+                        if self.__displayOutput:
+                            pygame.mouse.set_visible(self.__paused)
+                            pygame.mouse.set_pos(self.__camera.getWidth() / 2, self.__camera.getHeight() / 2)
+                            pygame.event.set_grab(not self.__paused)
+                            pygame.mouse.get_rel()# Prevents mouse movement whilst paused from being used
+
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 4:# Scroll Up
+                        self.__camera.setNetForce(self.__camera.getNetForce() + 10)
+                    elif event.button == 5:# Scroll Down
+                        self.__camera.setNetForce(self.__camera.getNetForce() - 10)
+
+                elif event.type == pygame.VIDEORESIZE:
+                    self.__calculatePixelsPerMeter(event.w)
+                    self.__camera.setHeightOffset(event.h, self.__distanceScale)
+
+                    #TODO: normalise the height on rendering!!!!!!!!!!!!!!!!!!!!!!!!
+
+                    for layer in self.__layers.values():
+                        layer.setSurface(self.createCameraSizedSurface())
+                    self.__screen = self.__newScreenSurface(event.dict['size'])
+
+            delta_t = self.__clock.tick(self.__maxFPS) * self.__tickConversion
+            simulated_delta_t = self.__timeScale * delta_t
+            if not self.__paused:
+                self.__camera.pre_update()
+                # delta_t passed to camera must be independant of the timescale of the simulation for live rendering
+                self.__camera.update(delta_t if self.__displayOutput else simulated_delta_t, self)
+                self.update(simulated_delta_t)
+                self.__camera.post_update()
+                self.__total_delta_t += simulated_delta_t
+
+                if self.onItterationEnd.getTotalSubscribers() > 0:
+                    self.onItterationEnd.run(self, simulated_delta_t)
+
+            self.render()
+
+            
+
+    def __run_threaded(self) -> threading.Thread:
+        """
+        Runs the simulation untill it terminates or is manualy terminated.
+
+        NOTE: This should not be used for live rendered simulations!
+        """
+        simulationThread = threading.Thread(target = self.__run)
+        simulationThread.start()
+        return simulationThread
 
     def run(self):
         """
@@ -172,10 +347,10 @@ class Simulation(object):
         Simulations that are rendered will capture the mouse pointer.
         In order to pause updating, press 'Escape' - this will also release the mouse pointer.
         """
-        if self.canRender == True:
+        if self.__displayOutput:# Is the output live?
             self.__run()
 
-        else:
+        else:# Terminal controll required
             simulationThread = self.__run_threaded()
 
             os.system("cls")
@@ -195,66 +370,3 @@ class Simulation(object):
                 print()
 
             simulationThread.join()
-
-    def __run(self):
-        self.__running = True
-        self.__paused = False
-        if self.canRender:
-            pygame.mouse.set_visible(False)#TODO: how to deal with non-rendering???
-            pygame.event.set_grab(True)
-
-        while self.__running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.__running = False
-
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        self.togglePauseState()
-                        if self.canRender:
-                            pygame.mouse.set_visible(self.__paused)
-                            pygame.mouse.set_pos(self.__camera.getWidth() / 2, self.__camera.getHeight() / 2)
-                            pygame.event.set_grab(not self.__paused)
-                            pygame.mouse.get_rel()# Prevents mouse movement whilst paused from being used
-
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 4:# Scroll Up
-                        self.__camera.setNetForce(self.__camera.getNetForce() + 10)
-                    elif event.button == 5:# Scroll Down
-                        self.__camera.setNetForce(self.__camera.getNetForce() - 10)
-
-                elif event.type == pygame.VIDEORESIZE:
-                    self.__camera.setWidth(event.w)
-                    self.__camera.setHeight(event.h)
-
-            delta_t = self.clock.tick(60) / 1000
-            simulated_delta_t = self.__tickScale * delta_t
-            if not self.__paused:
-                self.__camera.pre_update()
-                self.__camera.update(delta_t, self)
-                self.update(simulated_delta_t)
-                self.__camera.post_update()
-                self.__total_delta_t += simulated_delta_t
-
-                if self.onItterationEnd.getTotalSubscribers() > 0:
-                    self.onItterationEnd.run(self, simulated_delta_t)
-
-            self.render()
-
-            if self.canRender:
-                pygame.display.flip()
-                #pygame.display.update()
-                self.screen.fill((0, 0, 0))
-
-            if self.onRenderEnd.getTotalSubscribers() > 0:
-                self.onRenderEnd.run(self, simulated_delta_t)
-
-    def __run_threaded(self) -> threading.Thread:
-        """
-        Runs the simulation untill it terminates or is manualy terminated.
-
-        NOTE: This should not be used for rendered simulations!
-        """
-        simulationThread = threading.Thread(target = self.__run)
-        simulationThread.start()
-        return simulationThread

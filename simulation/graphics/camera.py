@@ -5,13 +5,14 @@ from simulation.physics_engine.newtonian.freeBody import FreeBody
 from simulation.graphics.HUD.text import Text, UpdatingText
 
 class Camera(FreeBody, Moveable):
-    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(0, 0, 1), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), dimentions: pygame.Vector2 = pygame.Vector2(500, 500), field_of_vision: float = np.pi / 2, **kwargs):
-        super().__init__(mass = 1, moment_of_inertia = 0, location = location, facing = facing, vertical = vertical, **kwargs)
+    def __init__(self, dimentions: pygame.Vector2 = pygame.Vector2(500, 500), field_of_vision: float = np.pi / 2, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(0, 0, 1), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), *args, **kwargs):
+        super().__init__(mass = 1, moment_of_inertia = 0, location = location, facing = facing, vertical = vertical, *args, **kwargs)
         self.__width: float = dimentions.x
         self.__height: float = dimentions.y
         self.__fov: float = field_of_vision
         self.__focus_distance: float = None
         self.__setFov()
+        self.__renderHeightOffset = None
         self.__movementForce = 1300# Newtons
         self.__resistanceToMovementForce = 1000# Newtons
 
@@ -46,6 +47,15 @@ class Camera(FreeBody, Moveable):
 
     def setNetForce(self, new_net_force):
         self.__movementForce = self.__resistanceToMovementForce + np.abs(new_net_force)
+
+    def getHeightOffset(self):
+        if self.__renderHeightOffset is None:
+            raise NotImplementedError("setHeightOffset has not yet been called. It must be called at least once!")
+
+        return self.__renderHeightOffset
+
+    def setHeightOffset(self, windowHeight: int, distanceScale: float):
+        self.__renderHeightOffset = (self.__height * distanceScale - windowHeight) / 2
 
     def calculatePerspective(self, location: pygame.Vector3):
         ratio = self.__focus_distance / (location - self.getFocus()).dot(self.getFacing())

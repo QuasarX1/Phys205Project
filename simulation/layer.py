@@ -18,16 +18,38 @@ class Layer(object):
 
     Constructor:
         pygame.Surface surface -> The surface on which to render the layer
+                                  Can be omitted if the layer is to be registered to a simulation (pygame.Surface((1, 1), pygame.SRCALPHA))
         pygame.Color backgroundColour -> The background colour used to fill the pygame.Surface between renders (pygame.Color(0, 0, 0, 0))
         bool canRander -> Can the layer be rendered? (True)
     """
 
-    def __init__(self, surface: pygame.Surface, backgroundColour: pygame.Color = pygame.Color(0, 0, 0, 0), canRender: bool = True, **kwargs):
+    def __init__(self, surface: pygame.Surface = pygame.Surface((1, 1), pygame.SRCALPHA), backgroundColour: pygame.Color = pygame.Color(0, 0, 0, 0), canRender: bool = True, **kwargs):
         super().__init__(**kwargs)
-        self.canRender = canRender
+        self.__canRender = canRender
         self.__entities = {}
         self.surface = surface
         self.backgroundColour = backgroundColour
+
+    def isRenderable(self):
+        return self.__canRender
+
+    def show(self):
+        self.__canRender = True
+
+    def hide(self):
+        self.__canRender = False
+
+    def getSurface(self):
+        return self.surface
+
+    def setSurface(self, new_surface):
+        self.surface = new_surface
+
+    def getBackgroundColour(self):
+        return self.backgroundColour
+
+    def setBackgroundColour(self, new_background_colour):
+        self.backgroundColour = new_background_colour
 
     def getEntity(self, name: str):
         """
@@ -85,7 +107,7 @@ class Layer(object):
         for entity in self.__entities.values():
             entity.post_update()
 
-    def render(self, surfaceOveride: pygame.Surface = None):
+    def render(self, pixelsPerMeter = 1, surfaceOveride: pygame.Surface = None):
         """
         --!! WARNING !!-- This method throws a "NotImplementedError" - it MUST be overridden in a subclass
 
@@ -102,12 +124,10 @@ class Layer_2D(Layer):
 
     Constructor:
         pygame.Surface surface -> The surface on which to render the layer
+                                  Can be omitted if the layer is to be registered to a simulation (pygame.Surface((1, 1), pygame.SRCALPHA))
         pygame.Color backgroundColour -> The background colour used to fill the pygame.Surface between renders (pygame.Color(0, 0, 0, 0))
         bool canRander -> Can the layer be rendered? (True)
     """
-
-    #def __init__(self, surface: pygame.Surface, backgroundColour = pygame.Color(0, 0, 0, 0), canRender = True, **kwargs):
-    #    super().__init__(surface = surface, backgroundColour = backgroundColour, canRender = canRender, **kwargs)
 
     def addEntity(self, name: str, entity: Renderable_2D):
         """
@@ -132,13 +152,14 @@ class Layer_2D(Layer):
         Paramiters:
             pygame.Surface surfaceOveride -> Specify a different surface to render to instead of the defult one (None)
         """
-        if self.canRender:
+        if self.isRenderable():
             self.surface.fill(self.backgroundColour)
 
-            for entity in self._Layer__entities.values():
-                if surfaceOveride is None:
+            if surfaceOveride is None:
+                for entity in self._Layer__entities.values():
                     entity.render(self.surface)
-                else:
+            else:
+                for entity in self._Layer__entities.values():
                     entity.render(surfaceOveride)
 
 class Layer_3D(Layer):
@@ -147,11 +168,10 @@ class Layer_3D(Layer):
 
     Constructor:
         pygame.Surface surface -> The surface on which to render the layer
+                                  Can be omitted if the layer is to be registered to a simulation (pygame.Surface((1, 1), pygame.SRCALPHA))
         pygame.Color backgroundColour -> The background colour used to fill the pygame.Surface between renders (pygame.Color(0, 0, 0, 0))
         bool canRander -> Can the layer be rendered? (True)
     """
-    #def __init__(self, surface: pygame.Surface, backgroundColour = pygame.Color(0, 0, 0, 0), canRender = True, **kwargs):
-    #    super().__init__(surface = surface, backgroundColour = backgroundColour, canRender = canRender, **kwargs)
 
     def addEntity(self, name: str, entity: Renderable_3D):
         """
@@ -169,7 +189,7 @@ class Layer_3D(Layer):
         else:
             raise KeyError("An entity already exists with the name {}.".format(name))
 
-    def render(self, camera: Camera, surfaceOveride: pygame.Surface = None):
+    def render(self, camera: Camera, pixelsPerMeter = 1, surfaceOveride: pygame.Surface = None):
         """
         Renders all entities in the layer provide the layer is allowed to be rendered.
         Rendering is done with respect to the camera's position and orientation.
@@ -178,14 +198,16 @@ class Layer_3D(Layer):
             Camera camera -> The camera object for the simulation
             pygame.Surface surfaceOveride -> Specify a different surface to render to instead of the defult one (None)
         """
-        if self.canRender:
+        if self.isRenderable():
             self.surface.fill(self.backgroundColour)
 
-            for entity in self._Layer__entities.values():
-                if surfaceOveride is None:
-                    entity.render(self.surface, camera)
-                else:
-                    entity.render(surfaceOveride, camera)
+            
+            if surfaceOveride is None:
+                for entity in self._Layer__entities.values():
+                    entity.render(self.surface, camera, pixelsPerMeter)
+            else:
+                for entity in self._Layer__entities.values():
+                    entity.render(surfaceOveride, camera, pixelsPerMeter)
 
 from simulation.entities.renderable import Renderable_2D, Renderable_3D
 from simulation.graphics.camera import Camera

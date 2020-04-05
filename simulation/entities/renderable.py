@@ -111,7 +111,7 @@ class Renderable_3D(Moveable):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), **kwargs):
         super().__init__(location = location, facing = facing, vertical = vertical, **kwargs)
 
-    def render(self, surface: pygame.Surface, camera: Camera):
+    def render(self, surface: pygame.Surface, camera: Camera, pixelsPerMeter = 1):
         raise NotImplementedError("This method must be overridden in an inheriting class.")
 
 class Renderable_3DWireframe(Renderable_3D):
@@ -134,25 +134,13 @@ class Renderable_3DWireframe(Renderable_3D):
     def setScaleFactor(self, new_scale: float):
         self.__scale = new_scale
 
-    def render(self, surface: pygame.Surface, camera: Camera):
-        translation = camera.getLocation()
-        translation = pygame.Vector2(translation.x, translation.y)
-        for edge in self.__edges:
-            startPosition = camera.calculatePerspective(self.getLocation() + self.__vertices[edge[0]] * self.__scale) + translation
-            endPosition = camera.calculatePerspective(self.getLocation() + self.__vertices[edge[1]] * self.__scale) + translation
-            
-            pygame.draw.line(surface,
-                             self.__colour,
-                             (startPosition.x, startPosition.y),
-                             (endPosition.x, endPosition.y))
-
-    def render(self, surface: pygame.Surface, camera: Camera):
+    def render(self, surface: pygame.Surface, camera: Camera, pixelsPerMeter = 1):
         translation = camera.getLocation()
         translation = pygame.Vector2(translation.x + camera.getWidth() / 2, translation.y + camera.getHeight() / 2)
         for edge in self.__edges:
             if camera.isInView(self.getLocation() + self.__vertices[edge[0]] * self.__scale) or camera.isInView(self.getLocation() + self.__vertices[edge[1]] * self.__scale):
-                startPosition = camera.calculatePerspective(self.getLocation() + self.__vertices[edge[0]] * self.__scale) + translation
-                endPosition = camera.calculatePerspective(self.getLocation() + self.__vertices[edge[1]] * self.__scale) + translation
+                startPosition = (camera.calculatePerspective(self.getLocation() + self.__vertices[edge[0]] * self.__scale) + translation) * pixelsPerMeter - camera.getHeightOffset() * pygame.Vector2(0, 1)
+                endPosition = (camera.calculatePerspective(self.getLocation() + self.__vertices[edge[1]] * self.__scale) + translation) * pixelsPerMeter - camera.getHeightOffset() * pygame.Vector2(0, 1)
            
                 pygame.draw.line(surface,
                                  self.__colour,
