@@ -51,7 +51,7 @@ simulation.addLayer("simulation_layer", simulation_layer)
 
 # Add massive bodies to a simulation layer ------------------------------------------------------------------------------------------
 target_star = Star(radius = 6371 * 10**3,
-                   temperature = 12000,
+                   temperature = 5700,
                    mass = 6 * 10**24,#1.9891 * 10**30,#500000,
                    initial_velocity = pygame.Vector3(0, 0, 0),
                    location = pygame.Vector3(0, 0, 0))
