@@ -62,6 +62,7 @@ class Simulation(object):
         self.onWindoDimentionChange: Event = Event()
 
         # Rendering Attributes
+        self.__fullscreen = False
         self.__camera: Camera = Camera(dimentions = cameraDimentions)
 
         self.__distanceScale: float = None# pixels : simulated meters
@@ -78,7 +79,8 @@ class Simulation(object):
         self.__protectedLayerNames = ("background", "HUD")
         
         if self.__displayOutput:
-            self.__screen: pygame.Surface = self.__newScreenSurface(
+            self.__screen: pygame.Surface = None
+            self.__newScreenSurface(
                 (
                     int(self.__camera.getWidth() * self.__distanceScale),
                     int(self.__camera.getHeight() * self.__distanceScale)
@@ -124,8 +126,19 @@ class Simulation(object):
     def __calculatePixelsPerMeter(self, windowWidth):
         self.__distanceScale = windowWidth / self.__camera.getWidth()
 
-    def __newScreenSurface(self, size: tuple) -> pygame.Surface:
-        return pygame.display.set_mode(size, flags = pygame.RESIZABLE)
+    def __newScreenSurface(self, size: tuple):
+        if not self.__fullscreen:
+            self.__caschedScreenSize = size
+        self.__screen = pygame.display.set_mode(size, flags = pygame.RESIZABLE)
+
+    def __toggleFullscreen(self):
+        self.__fullscreen = not self.__fullscreen
+        pygame.display.quit()
+        pygame.display.init()
+        if self.__fullscreen:
+            self.__screen = pygame.display.set_mode((0, 0), flags = pygame.FULLSCREEN)
+        else:
+            self.__newScreenSurface(self.__caschedScreenSize)
 
     def createCameraSizedSurface(self):
         return pygame.Surface(
@@ -295,6 +308,9 @@ class Simulation(object):
                             pygame.event.set_grab(not self.__paused)
                             pygame.mouse.get_rel()# Prevents mouse movement whilst paused from being used
 
+                    elif event.key == pygame.K_F11:
+                        self.__toggleFullscreen()
+
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 4:# Scroll Up
                         self.__camera.setNetForce(self.__camera.getNetForce() + 10)
@@ -305,11 +321,10 @@ class Simulation(object):
                     self.__calculatePixelsPerMeter(event.w)
                     self.__camera.setHeightOffset(event.h, self.__distanceScale)
 
-                    #TODO: normalise the height on rendering!!!!!!!!!!!!!!!!!!!!!!!!
-
                     for layer in self.__layers.values():
                         layer.setSurface(self.createCameraSizedSurface())
-                    self.__screen = self.__newScreenSurface(event.dict['size'])
+                    if not self.__fullscreen:
+                        self.__newScreenSurface(event.dict['size'])
 
             delta_t = self.__clock.tick(self.__maxFPS) * self.__tickConversion
             simulated_delta_t = self.__timeScale * delta_t
