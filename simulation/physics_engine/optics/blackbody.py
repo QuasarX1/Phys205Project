@@ -15,7 +15,6 @@ def radiance(wavelength, surface_temperature):
         float wavelength -> The wavelength in meters
         float surface_temperature -> The blackbody's temperature in kelvin
     """
-    # Precision of np.exp too small so e**n becomes 1 therfore the return value is infinity
     return 2 * planksConstant * speed_of_light**2 / (wavelength**5 * (np.exp(planksConstant * speed_of_light / (wavelength * boltzmann_constant * surface_temperature)) - 1))
 
 def total_luminosity(peak_wavelength, star_radius):
