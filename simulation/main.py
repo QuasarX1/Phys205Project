@@ -7,8 +7,6 @@ from QuasarCode.edp import Event
 from simulation.commands import commands
 from simulation.layer import Layer, Layer_2D, Layer_3D
 from simulation.entities.entity import Entity
-from simulation.entities.renderable import Renderable_Simple2DRect
-from simulation.entities.prefabs import UnitCube_Wireframe, TriangularPyrimid_Wireframe
 from simulation.graphics.camera import Camera, CameraForceDisplay, CameraSpeedDisplay
 from simulation.graphics.transformations import vector_to_array, array_to_vector, rotationMatrix, applyTransformation
 
@@ -89,7 +87,7 @@ class Simulation(object):
 
             #TODO: add a toggalable option on the pause menu for these
             self.__layers["HUD"].addEntity("camera_force", CameraForceDisplay(self.__camera))
-            self.__layers["HUD"].addEntity("camera_speed", CameraSpeedDisplay(self.__camera, location = pygame.Vector3(0, 50, 0)))
+            self.__layers["HUD"].addEntity("camera_speed", CameraSpeedDisplay(self.__camera, location = pygame.Vector3(0, 0.1, 0)))
         else:
             self.__screen: pygame.Surface = self.createCameraSizedSurface()
 
@@ -140,13 +138,22 @@ class Simulation(object):
         else:
             self.__newScreenSurface(self.__caschedScreenSize)
 
+    def __handleMouseCapture(self):
+        if self.__displayOutput:
+            pygame.mouse.set_visible(self.__paused)
+            pygame.mouse.set_pos(self.__camera.getWidth() * self.__distanceScale / 2, self.__camera.getHeight() * self.__distanceScale / 2)
+            pygame.event.set_grab(not self.__paused)
+            pygame.mouse.get_rel()# Prevents mouse movement whilst paused from being used
+
     def createCameraSizedSurface(self):
-        return pygame.Surface(
+        return self.createSurface(
             (
                 int(self.__camera.getWidth() * self.__distanceScale),
                 int(self.__camera.getHeight() * self.__distanceScale)
-            ),
-            flags = pygame.SRCALPHA)
+            ))
+
+    def createSurface(self, dimentions: tuple):
+        return pygame.Surface(dimentions, flags = pygame.SRCALPHA)
         
     def getCamera(self) -> Camera:
         """
@@ -290,9 +297,8 @@ class Simulation(object):
         if not self.__displayOutput:
             self.__paused = False
 
-        if self.__displayOutput and not self.__paused:
-            pygame.mouse.set_visible(False)
-            pygame.event.set_grab(True)
+        if not self.__paused:
+            self.__handleMouseCapture()
 
         while self.__running:
             for event in pygame.event.get():
@@ -302,14 +308,11 @@ class Simulation(object):
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.togglePauseState()
-                        if self.__displayOutput:
-                            pygame.mouse.set_visible(self.__paused)
-                            pygame.mouse.set_pos(self.__camera.getWidth() / 2, self.__camera.getHeight() / 2)
-                            pygame.event.set_grab(not self.__paused)
-                            pygame.mouse.get_rel()# Prevents mouse movement whilst paused from being used
+                        self.__handleMouseCapture()
 
                     elif event.key == pygame.K_F11:
                         self.__toggleFullscreen()
+                        self.__handleMouseCapture()
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 4:# Scroll Up
@@ -322,7 +325,8 @@ class Simulation(object):
                     self.__camera.setHeightOffset(event.h, self.__distanceScale)
 
                     for layer in self.__layers.values():
-                        layer.setSurface(self.createCameraSizedSurface())
+                        if type(layer) is Layer_3D: layer.setSurface(self.createCameraSizedSurface())
+                        else: layer.setSurface(self.createSurface(event.dict['size']))
                     if not self.__fullscreen:
                         self.__newScreenSurface(event.dict['size'])
 

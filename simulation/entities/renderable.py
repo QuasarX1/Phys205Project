@@ -10,6 +10,7 @@ class Renderable_2D(Moveable):
 
 
 
+"""
 class Renderable_Simple2DRect(Renderable_2D):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0),
                  width: float = 10, height: float = 10, colour: pygame.Color = pygame.Color(255, 255, 255), **kwargs):
@@ -63,6 +64,7 @@ class Renderable_Simple2DRect(Renderable_2D):
 
     def render(self, surface: pygame.Surface):
         pygame.draw.rect(surface, self.__colour, self.__rect_casche)
+"""
 
 
 
@@ -82,7 +84,7 @@ class Renderable_Simple2DPolygon(Renderable_2D):
         self.__scale = new_scale
 
     def render(self, surface: pygame.Surface):
-        pygame.draw.polygon(surface, self.__colour, [self.getLocation() + point * self.__scale for point in self.__points])
+        pygame.draw.polygon(surface, self.__colour, [(self.getLocation() + point * self.__scale) * pygame.Vector2(surface.get_width(), surface.get_height()) for point in self.__points])
 
 
 
@@ -101,7 +103,7 @@ class Renderable_Simple2DCircle(Renderable_2D):
         self.__radius = new_radius
 
     def render(self, surface: pygame.Surface):
-        pygame.draw.circle(surface, self.__colour, self.getLocation(), self.__radius)
+        pygame.draw.circle(surface, self.__colour, self.getLocation() * pygame.Vector3(surface.get_width(), surface.get_height(), 1), self.__radius * surface.get_width())
 
 
         

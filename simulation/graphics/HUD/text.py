@@ -55,7 +55,7 @@ class Text(Renderable_2D):
         pass
 
     def render(self, surface: pygame.Surface):
-        surface.blit(self.__renderedText, (self.getLocation().x, self.getLocation().y))
+        surface.blit(self.__renderedText, (self.getLocation().x * surface.get_width(), self.getLocation().y * surface.get_height()))
 
 
 
