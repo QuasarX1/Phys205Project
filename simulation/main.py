@@ -100,7 +100,8 @@ class Simulation(object):
             self.__layers["HUD"].getEntity("camera_speed").hide()
 
             self.__layers["pause_menu"].addEntity("title", Text("Pause Menu", "freesansbold.ttf", 30, referencePoint = ReferencePoint.top_centre, location = pygame.Vector3(0.5, 0, 0)))
-            
+            self.__layers["pause_menu"].getEntity("title").setUnderline()
+
             self.__layers["pause_menu"].addEntity("resume_button", Button(self, "resume", "freesansbold.ttf", 30, referencePoint = ReferencePoint.top_centre, location = pygame.Vector3(0.5, 0.2, 0)))
             self.__layers["pause_menu"].getEntity("resume_button").onClick += self.resume
 

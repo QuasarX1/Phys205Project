@@ -21,6 +21,7 @@ class Text(Renderable_2D):
         self.__fontFace = font_face
         self.__fontSize = size
         self.__font = None
+        self.__underline = False
         self.__createFont()
         self.__text = text
         self.__colour = colour
@@ -51,6 +52,14 @@ class Text(Renderable_2D):
         self.__createFont()
         self.__renderText()
 
+    def getUnderline(self) -> bool:
+        return self.__font.get_underline()
+
+    def setUnderline(self, underline: bool = True):
+        self.__underline = underline
+        self.__createFont()
+        self.__renderText()
+
     def getColour(self) -> pygame.Color:
         return self.__colour
 
@@ -60,6 +69,7 @@ class Text(Renderable_2D):
 
     def __createFont(self):
         self.__font = pygame.font.Font(self.__fontFace, self.__fontSize)
+        self.__font.set_underline(self.__underline)
 
     def __renderText(self):
         self.__renderedText = self.__font.render(self.__text, 1, self.__colour)
