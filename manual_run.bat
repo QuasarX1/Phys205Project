@@ -1,3 +1,4 @@
 @echo off
-call run.bat
+set /p paramiters=Enter any arguments: 
+call run.bat %paramiters%
 pause

@@ -13,18 +13,18 @@ from simulation.logging.logger import PositionLogger, VelocityLogger, Seperation
 # Look for a command line paramater indication the render status ---------------------------------------------------------------------
 if len(sys.argv) > 1:
     if sys.argv[1] in ("False", "false", "F", "f", "0"):
-        renderOption = False
+        renderOption = RenderMode.no_render
     elif sys.argv[1] in ("True", "true", "T", "t", "1"):
-        renderOption = True
+        renderOption = RenderMode.real_time
     else:
         raise ValueError("The first command line paramiter should indicate whether or not the simulation should be rendered (a boolean).")
 else:
-    renderOption = True# Overide this to change the defult setting
+    renderOption = RenderMode.real_time# Overide this to change the defult setting
 
 
 
 # Create a blank simulation ----------------------------------------------------------------------------------------------------------
-simulation = sim.Simulation(renderMode = RenderMode.real_time, cameraDimentions = pygame.Vector2(0.01, 0.01))
+simulation = sim.Simulation(renderMode = renderOption, cameraDimentions = pygame.Vector2(0.01, 0.01))
 
 
 

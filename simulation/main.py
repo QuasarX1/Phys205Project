@@ -32,7 +32,7 @@ class LinearTickClock(SimulationClock):
         super().__init__(*args, **kwargs)
         self.__counter = 0
 
-    def tick(*args, **kwargs):
+    def tick(self, *args, **kwargs):
         self.__counter += 1
         return 1
 
@@ -379,10 +379,6 @@ class Simulation(object):
                         self.__newScreenSurface(event.dict['size'])
 
                     self.__handleMouseCapture()
-
-                    print(self.__layers["pause_menu"].getEntity("resume_button").getTopLeftPixelCoordinates(self.__screen))
-                    print(self.__layers["pause_menu"].getEntity("toggle_camera_metrics_button").getTopLeftPixelCoordinates(self.__screen))
-                    print()
 
             delta_t = self.__clock.tick(self.__maxFPS) * self.__tickConversion
             simulated_delta_t = self.__timeScale * delta_t
