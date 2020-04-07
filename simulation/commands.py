@@ -27,7 +27,23 @@ commands["resume"] = (commands_resume, "Un-pauses the simulation.")
 
 
 def commands_runtime(simulation, *args, **kwargs):
-    return str(simulation.getRunTime())
+    seconds = simulation.getRunTime()
+
+    result = str(seconds % 60 * 60) + " seconds"
+    if seconds > 60:
+        minutes = seconds // 60
+        result = str(minutes % 60 * 60) + " minutes " + result
+        if minutes > 60:
+            hours = minutes // 60
+            result = str(hours % 24 * 24) + " hours " + result
+            if hours > 24:
+                days = hours // 24
+                result = str(days % 365.25 * 365.25) + " earth days " + result
+                if days > 365.25:
+                    years = hours // 365.25
+                    result = str(years) + " earth years " + result
+
+    return result
 
 commands["runtime"] = (commands_runtime, "Prints the total simulated time so far.")
 
@@ -79,4 +95,4 @@ def commands_help(simulation, *args, **kwargs):
         output = commands[args[0]][1]
         return output
 
-commands["help"] = (commands_help, "help [command?]\nLists all the avalable commands or lists the description of a single command.")
+commands["help"] = (commands_help, "help [command?]\nLists all the available commands or lists the description of a single command.")

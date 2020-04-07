@@ -24,7 +24,7 @@ else:
 
 
 # Create a blank simulation ----------------------------------------------------------------------------------------------------------
-simulation = sim.Simulation(renderMode = RenderMode.real_time, cameraDimentions = pygame.Vector2(500, 500))
+simulation = sim.Simulation(renderMode = RenderMode.real_time, cameraDimentions = pygame.Vector2(0.01, 0.01))
 
 
 

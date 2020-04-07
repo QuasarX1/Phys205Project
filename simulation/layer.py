@@ -35,9 +35,18 @@ class Layer(object):
 
     def show(self):
         self.__canRender = True
+        for entity in self.__entities.values():
+            entity.show()
 
     def hide(self):
         self.__canRender = False
+        for entity in self.__entities.values():
+            entity.hide()
+
+    def setVisability(self, isVisible: bool):
+        self.__canRender = isVisible
+        for entity in self.__entities.values():
+            entity.setVisability(isVisible)
 
     def getSurface(self):
         return self.surface
@@ -107,7 +116,7 @@ class Layer(object):
         for entity in self.__entities.values():
             entity.post_update()
 
-    def render(self, pixelsPerMeter = 1, surfaceOveride: pygame.Surface = None):
+    def render(self, surfaceOveride: pygame.Surface = None):
         """
         --!! WARNING !!-- This method throws a "NotImplementedError" - it MUST be overridden in a subclass
 
@@ -153,14 +162,20 @@ class Layer_2D(Layer):
             pygame.Surface surfaceOveride -> Specify a different surface to render to instead of the defult one (None)
         """
         if self.isRenderable():
-            self.surface.fill(self.backgroundColour)
-
             if surfaceOveride is None:
-                for entity in self._Layer__entities.values():
-                    entity.render(self.surface)
+                surface = self.surface
             else:
-                for entity in self._Layer__entities.values():
-                    entity.render(surfaceOveride)
+                surface = surfaceOveride
+
+            surface.fill(self.backgroundColour)
+
+            for entity in self._Layer__entities.values():
+                if entity.isVisable():
+                    entity.render(surface)
+
+            return True
+        else:
+            return False
 
 class Layer_3D(Layer):
     """
@@ -199,15 +214,20 @@ class Layer_3D(Layer):
             pygame.Surface surfaceOveride -> Specify a different surface to render to instead of the defult one (None)
         """
         if self.isRenderable():
-            self.surface.fill(self.backgroundColour)
-
-            
             if surfaceOveride is None:
-                for entity in self._Layer__entities.values():
-                    entity.render(self.surface, camera, pixelsPerMeter)
+                surface = self.surface
             else:
-                for entity in self._Layer__entities.values():
-                    entity.render(surfaceOveride, camera, pixelsPerMeter)
+                surface = surfaceOveride
+
+            surface.fill(self.backgroundColour)
+
+            for entity in self._Layer__entities.values():
+                if entity.isVisable():
+                    entity.render(surface, camera, pixelsPerMeter)
+
+            return True
+        else:
+            return False
 
 from simulation.entities.renderable import Renderable_2D, Renderable_3D
 from simulation.graphics.camera import Camera

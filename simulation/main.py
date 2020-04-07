@@ -9,6 +9,8 @@ from simulation.layer import Layer, Layer_2D, Layer_3D
 from simulation.entities.entity import Entity
 from simulation.graphics.camera import Camera, CameraForceDisplay, CameraSpeedDisplay
 from simulation.graphics.transformations import vector_to_array, array_to_vector, rotationMatrix, applyTransformation
+from simulation.graphics.HUD.text import Text, ReferencePoint
+from simulation.graphics.HUD.button import Button
 
 pygame.init()
 pygame.font.init()
@@ -57,7 +59,8 @@ class Simulation(object):
         # Events
         self.onItterationEnd: Event = Event()
         self.onRenderEnd: Event = Event()
-        self.onWindoDimentionChange: Event = Event()
+        #self.onWindoDimentionChange: Event = Event()
+        self.onClick: Event = Event()
 
         # Rendering Attributes
         self.__fullscreen = False
@@ -65,16 +68,12 @@ class Simulation(object):
 
         self.__distanceScale: float = None# pixels : simulated meters
         self.__calculatePixelsPerMeter(displayWindowDimentions[0])
-
         self.__camera.setHeightOffset(displayWindowDimentions[1], self.__distanceScale)
 
         self.__renderMode: RenderMode = renderMode
         self.__displayOutput: bool = self.__renderMode == RenderMode.real_time
         
         self.__maxFPS:int = maxFPS# Only relivant for use with the pygame clock
-
-        self.__layers: dict = {"background": Layer_2D(self.createCameraSizedSurface()), "HUD": Layer_2D(self.createCameraSizedSurface())}# Layers for entity storage
-        self.__protectedLayerNames = ("background", "HUD")
         
         if self.__displayOutput:
             self.__screen: pygame.Surface = None
@@ -85,11 +84,28 @@ class Simulation(object):
                 ))
             pygame.display.set_caption("Exoplanet Simulation")
 
-            #TODO: add a toggalable option on the pause menu for these
-            self.__layers["HUD"].addEntity("camera_force", CameraForceDisplay(self.__camera))
-            self.__layers["HUD"].addEntity("camera_speed", CameraSpeedDisplay(self.__camera, location = pygame.Vector3(0, 0.1, 0)))
         else:
             self.__screen: pygame.Surface = self.createCameraSizedSurface()
+
+        self.__layers: dict = {"background": Layer_3D(self.createCameraSizedSurface(), backgroundColour = pygame.Color(0, 0, 0)),
+                               "HUD": Layer_2D(self.createSurface()),
+                               "pause_menu": Layer_2D(self.createSurface(), pygame.Color(0, 0, 0, 175))}# Layers for entity storage
+        self.__protectedLayerNames = ("background", "HUD", "pause_menu")
+
+        if self.__displayOutput:
+            self.__layers["HUD"].addEntity("camera_force", CameraForceDisplay(self.__camera))
+            self.__layers["HUD"].getEntity("camera_force").hide()
+
+            self.__layers["HUD"].addEntity("camera_speed", CameraSpeedDisplay(self.__camera, location = pygame.Vector3(0, 0.1, 0)))
+            self.__layers["HUD"].getEntity("camera_speed").hide()
+
+            self.__layers["pause_menu"].addEntity("title", Text("Pause Menu", "freesansbold.ttf", 30, referencePoint = ReferencePoint.top_centre, location = pygame.Vector3(0.5, 0, 0)))
+            
+            self.__layers["pause_menu"].addEntity("resume_button", Button(self, "resume", "freesansbold.ttf", 30, referencePoint = ReferencePoint.top_centre, location = pygame.Vector3(0.5, 0.2, 0)))
+            self.__layers["pause_menu"].getEntity("resume_button").onClick += self.resume
+
+            self.__layers["pause_menu"].addEntity("toggle_camera_metrics_button", Button(self, "toggle camera metrics", "freesansbold.ttf", 30, referencePoint = ReferencePoint.top_centre, location = pygame.Vector3(0.5, 0.4, 0)))
+            self.__layers["pause_menu"].getEntity("toggle_camera_metrics_button").onClick += self.__toggleCameraMetrics
 
         # Clock Options
         self.__timeScale: float = timeScale# simulated seconds : real seconds
@@ -120,6 +136,10 @@ class Simulation(object):
             str path_to_xml -> The filepath to the XML document to be loaded
         """
         raise NotImplementedError("This has not yet been implemented.")#TODO: add this using DOM from https://www.tutorialspoint.com/python/python_xml_processing.htm
+
+    def __toggleCameraMetrics(self):
+        self.__layers["HUD"].getEntity("camera_force").setVisability(not self.__layers["HUD"].getEntity("camera_force").isVisable())
+        self.__layers["HUD"].getEntity("camera_speed").setVisability(not self.__layers["HUD"].getEntity("camera_speed").isVisable())
 
     def __calculatePixelsPerMeter(self, windowWidth):
         self.__distanceScale = windowWidth / self.__camera.getWidth()
@@ -152,7 +172,9 @@ class Simulation(object):
                 int(self.__camera.getHeight() * self.__distanceScale)
             ))
 
-    def createSurface(self, dimentions: tuple):
+    def createSurface(self, dimentions: tuple = None):
+        if dimentions is None:
+            dimentions = self.__screen.get_size()
         return pygame.Surface(dimentions, flags = pygame.SRCALPHA)
         
     def getCamera(self) -> Camera:
@@ -229,14 +251,25 @@ class Simulation(object):
     def getDistanceScale(self):
         return self.__distanceScale
 
+    def getDisplaySurface(self):
+        return self.__screen
+
     def pause(self):
         self.__paused = True
+        self.__layers["pause_menu"].show()
 
     def resume(self):
         self.__paused = False
+        self.__layers["pause_menu"].hide()
+
+        self.__handleMouseCapture()
 
     def togglePauseState(self):
         self.__paused = not self.__paused
+        self.__layers["pause_menu"].setVisability(self.__paused)
+
+        if not self.__paused:
+            self.__handleMouseCapture()
 
     def isPaused(self):
         return self.__paused
@@ -254,35 +287,45 @@ class Simulation(object):
         Paramiters:
             float delta_t -> The time in seconds that has passed since the last update
         """
-        for layer in self.__layers.values():
-            layer.pre_update()#TODO: consider running these as paralell threads
+        for layerName in self.__layers.keys():
+            if layerName != "pause_menu":
+                self.__layers[layerName].pre_update()#TODO: consider running these as paralell threads
 
-        for layer in self.__layers.values():
-            layer.update(delta_t, self)#TODO: consider running these as paralell threads
+        for layerName in self.__layers.keys():
+            if layerName != "pause_menu":
+                self.__layers[layerName].update(delta_t, self)#TODO: consider running these as paralell threads
 
-        for layer in self.__layers.values():
-            layer.post_update()#TODO: consider running these as paralell threads
+        for layerName in self.__layers.keys():
+            if layerName != "pause_menu":
+                self.__layers[layerName].post_update()#TODO: consider running these as paralell threads
 
     def render(self):
         """
         Renders each layer in order provided the simulation is specified as being renderable.
         """
         if self.isRenderable():
-            self.__screen.fill((0, 0, 0))
+            self.__screen.fill((0, 100, 255))
 
-            self.__layers["background"].render()
-            self.__screen.blit(self.__layers["background"].surface, (0, 0))
+            if self.__layers["background"].render(self.__camera):
+                self.__screen.blit(self.__layers["background"].surface, (0, -self.__camera.getHeightOffset()))
 
             for layerName in self.__layers.keys():
                 if layerName not in self.__protectedLayerNames:
                     layer = self.__layers[layerName]
                     if layer.isRenderable():
-                        if type(layer) is Layer_3D: layer.render(self.__camera, self.__distanceScale)
-                        else: layer.render()
-                        self.__screen.blit(layer.surface, (0, 0))
+                        success = False
+                        if type(layer) is Layer_3D:
+                            if layer.render(self.__camera, self.__distanceScale):
+                                self.__screen.blit(layer.surface, (0, -self.__camera.getHeightOffset()))
+                        else:
+                            if layer.render():
+                                self.__screen.blit(layer.surface, (0, 0))
 
-            self.__layers["HUD"].render()
-            self.__screen.blit(self.__layers["HUD"].surface, (0, 0))
+            if self.__layers["HUD"].render():
+                self.__screen.blit(self.__layers["HUD"].surface, (0, 0))
+
+            if self.__layers["pause_menu"].render():
+                self.__screen.blit(self.__layers["pause_menu"].surface, (0, 0))
 
             if self.__displayOutput:
                 pygame.display.flip()
@@ -295,7 +338,7 @@ class Simulation(object):
         self.__running = True
 
         if not self.__displayOutput:
-            self.__paused = False
+            self.pause()
 
         if not self.__paused:
             self.__handleMouseCapture()
@@ -312,13 +355,17 @@ class Simulation(object):
 
                     elif event.key == pygame.K_F11:
                         self.__toggleFullscreen()
-                        self.__handleMouseCapture()
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 4:# Scroll Up
                         self.__camera.setNetForce(self.__camera.getNetForce() + 10)
                     elif event.button == 5:# Scroll Down
                         self.__camera.setNetForce(self.__camera.getNetForce() - 10)
+
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if event.button == 1:
+                        if self.onClick.getTotalSubscribers() > 0:
+                            self.onClick.run(self.__screen)
 
                 elif event.type == pygame.VIDEORESIZE:
                     self.__calculatePixelsPerMeter(event.w)
@@ -329,6 +376,12 @@ class Simulation(object):
                         else: layer.setSurface(self.createSurface(event.dict['size']))
                     if not self.__fullscreen:
                         self.__newScreenSurface(event.dict['size'])
+
+                    self.__handleMouseCapture()
+
+                    print(self.__layers["pause_menu"].getEntity("resume_button").getTopLeftPixelCoordinates(self.__screen))
+                    print(self.__layers["pause_menu"].getEntity("toggle_camera_metrics_button").getTopLeftPixelCoordinates(self.__screen))
+                    print()
 
             delta_t = self.__clock.tick(self.__maxFPS) * self.__tickConversion
             simulated_delta_t = self.__timeScale * delta_t
@@ -342,6 +395,8 @@ class Simulation(object):
 
                 if self.onItterationEnd.getTotalSubscribers() > 0:
                     self.onItterationEnd.run(self, simulated_delta_t)
+            else:
+                self.__layers["pause_menu"].update(delta_t, self)
 
             self.render()
 
