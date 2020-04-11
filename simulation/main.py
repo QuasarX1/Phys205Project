@@ -5,10 +5,11 @@ import os
 from enum import Enum
 from QuasarCode.edp import Event
 from simulation.commands import commands
-from simulation.layer import Layer, Layer_2D, Layer_3D
+from simulation.layer import Layer, Layer_2D, Layer_3D, Layer_Mixed
 from simulation.entities.entity import Entity
 from simulation.graphics.camera import Camera, CameraForceDisplay, CameraSpeedDisplay
 from simulation.graphics.transformations import vector_to_array, array_to_vector, rotationMatrix, applyTransformation
+from simulation.entities.prefabs import Croshair, Croshair_3D
 from simulation.graphics.HUD.text import Text, ReferencePoint
 from simulation.graphics.HUD.button import Button
 
@@ -88,7 +89,7 @@ class Simulation(object):
             self.__screen: pygame.Surface = self.createCameraSizedSurface()
 
         self.__layers: dict = {"background": Layer_3D(self.createCameraSizedSurface(), backgroundColour = pygame.Color(0, 0, 0)),
-                               "HUD": Layer_2D(self.createSurface()),
+                               "HUD": Layer_Mixed(self.createSurface()),
                                "pause_menu": Layer_2D(self.createSurface(), pygame.Color(0, 0, 0, 175))}# Layers for entity storage
         self.__protectedLayerNames = ("background", "HUD", "pause_menu")
 
@@ -98,6 +99,11 @@ class Simulation(object):
 
             self.__layers["HUD"].addEntity("camera_speed", CameraSpeedDisplay(self.__camera, location = pygame.Vector3(0, 0.1, 0)))
             self.__layers["HUD"].getEntity("camera_speed").hide()
+
+            self.__layers["HUD"].addEntity("croshair", Croshair())
+
+            self.__layers["HUD"].addEntity("3D_croshair", Croshair_3D())
+            self.__layers["HUD"].getEntity("3D_croshair").hide()
 
             self.__layers["pause_menu"].addEntity("title", Text("Pause Menu", "freesansbold.ttf", 30, referencePoint = ReferencePoint.top_centre, location = pygame.Vector3(0.5, 0, 0)))
             self.__layers["pause_menu"].getEntity("title").setUnderline()
@@ -139,6 +145,8 @@ class Simulation(object):
         raise NotImplementedError("This has not yet been implemented.")#TODO: add this using DOM from https://www.tutorialspoint.com/python/python_xml_processing.htm
 
     def __toggleCameraMetrics(self):
+        self.__layers["HUD"].getEntity("croshair").setVisability(not self.__layers["HUD"].getEntity("croshair").isVisable())
+        self.__layers["HUD"].getEntity("3D_croshair").setVisability(not self.__layers["HUD"].getEntity("3D_croshair").isVisable())
         self.__layers["HUD"].getEntity("camera_force").setVisability(not self.__layers["HUD"].getEntity("camera_force").isVisable())
         self.__layers["HUD"].getEntity("camera_speed").setVisability(not self.__layers["HUD"].getEntity("camera_speed").isVisable())
 
@@ -318,7 +326,7 @@ class Simulation(object):
                         if type(layer) is Layer_3D:
                             if layer.render(self.__camera, self.__distanceScale):
                                 self.__screen.blit(layer.surface, (0, -self.__camera.getHeightOffset()))
-                        else:
+                        else:# 2D and Mixed layers are rendered relitive to the whole screen
                             if layer.render():
                                 self.__screen.blit(layer.surface, (0, 0))
 
@@ -353,6 +361,9 @@ class Simulation(object):
                     if event.key == pygame.K_ESCAPE:
                         self.togglePauseState()
                         self.__handleMouseCapture()
+
+                    elif event.key == pygame.K_F3:
+                        self.__toggleCameraMetrics()
 
                     elif event.key == pygame.K_F11:
                         self.__toggleFullscreen()

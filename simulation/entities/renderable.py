@@ -10,6 +10,37 @@ class Renderable_2D(Moveable):
 
 
 
+class Renderable_2DLine(Renderable_2D):
+    def __init__(self, length: float = 1, point1: pygame.Vector3 = pygame.Vector3(0, 0, 0), point2: pygame.Vector3 = pygame.Vector3(1, 0, 0), colour: pygame.Color = pygame.Color(255, 255, 255), point1_is_midpoint: bool = False, **kwargs):
+        facing = (point2 - point1).normalize()
+        super().__init__(location = point1, facing = facing, vertical = pygame.Vector3(0, 0, 1).cross(facing), **kwargs)
+        self.__length = length
+        self.__colour = colour
+        self.__fromMidpoint = point1_is_midpoint
+
+    def getLength(self) -> float:
+        return self.__length
+
+    def setLength(self, new_length: float):
+        self.__length = new_length
+
+    def render(self, surface: pygame.Surface):
+        if self.__fromMidpoint:
+            startPoint = (self.getLocation() - self.getFacing() * self.__length / 2).elementwise() * pygame.Vector3(surface.get_width(), surface.get_height(), 1)
+            endpoint = (self.getLocation() + self.getFacing() * self.__length / 2).elementwise() * pygame.Vector3(surface.get_width(), surface.get_height(), 1)
+            pygame.draw.line(surface,
+                             self.__colour,
+                             (startPoint.x, startPoint.y),
+                             (endpoint.x, endpoint.y))
+        else:
+            endpoint = self.getLocation() + self.getFacing() * self.__length
+            pygame.draw.line(surface,
+                             self.__colour,
+                             (self.getLocation().x, self.getLocation().y),
+                             (endpoint.x, endpoint.y))
+
+
+
 """
 class Renderable_Simple2DRect(Renderable_2D):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0),
@@ -137,12 +168,10 @@ class Renderable_3DWireframe(Renderable_3D):
         self.__scale = new_scale
 
     def render(self, surface: pygame.Surface, camera: Camera, pixelsPerMeter = 1):
-        translation = camera.getLocation()
-        translation = pygame.Vector2(translation.x + camera.getWidth() / 2, translation.y + camera.getHeight() / 2)
         for edge in self.__edges:
             if camera.isInView(self.getLocation() + self.__vertices[edge[0]] * self.__scale) or camera.isInView(self.getLocation() + self.__vertices[edge[1]] * self.__scale):
-                startPosition = (camera.calculatePerspective(self.getLocation() + self.__vertices[edge[0]] * self.__scale) + translation) * pixelsPerMeter# - camera.getHeightOffset() * pygame.Vector2(0, 1)
-                endPosition = (camera.calculatePerspective(self.getLocation() + self.__vertices[edge[1]] * self.__scale) + translation) * pixelsPerMeter# - camera.getHeightOffset() * pygame.Vector2(0, 1)
+                startPosition = (camera.calculatePerspective(self.getLocation() + self.__vertices[edge[0]] * self.__scale)).elementwise() * pixelsPerMeter
+                endPosition = (camera.calculatePerspective(self.getLocation() + self.__vertices[edge[1]] * self.__scale)).elementwise() * pixelsPerMeter
            
                 pygame.draw.line(surface,
                                  self.__colour,
@@ -155,3 +184,9 @@ class Renderable_3DSolid(Renderable_3DWireframe):
     def __init__(self, vertices: list, edges: list, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), scale = 1, colour: pygame.Color = pygame.Color(255, 255, 255), **kwargs):
         super().__init__(vertices = vertices, edges = edges, location = location, facing = facing, vertical = vertical, scale = scale, colour = colour, **kwargs)
     #TODO: compute rendering or not of faces
+
+
+
+
+    
+from simulation.entities.prefabs import UnitCube_Wireframe, Sphere

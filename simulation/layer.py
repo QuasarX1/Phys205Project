@@ -7,6 +7,8 @@ class Renderable_3D(object):# Foreward declaration of Renderable_3D
     pass
 class Camera(object):# Foreward declaration of Camera
     pass
+class Camera_2D(object):# Foreward declaration of Camera
+    pass
 
 class Layer(object):
     """
@@ -127,6 +129,8 @@ class Layer(object):
         """
         raise NotImplementedError("This method must be overridden in an inheriting class.")
 
+
+
 class Layer_2D(Layer):
     """
     A layer specificly for 2D rendered entities (that inherit from "Renderable_2D").
@@ -176,6 +180,8 @@ class Layer_2D(Layer):
             return True
         else:
             return False
+
+
 
 class Layer_3D(Layer):
     """
@@ -229,5 +235,72 @@ class Layer_3D(Layer):
         else:
             return False
 
+
+
+class Layer_Mixed(Layer):
+    """
+    A layer for any rendered entities (less optimised than either Layer_2D and Layer_3D).
+
+    Constructor:
+        pygame.Surface surface -> The surface on which to render the layer
+                                  Can be omitted if the layer is to be registered to a simulation (pygame.Surface((1, 1), pygame.SRCALPHA))
+        pygame.Color backgroundColour -> The background colour used to fill the pygame.Surface between renders (pygame.Color(0, 0, 0, 0))
+        bool canRander -> Can the layer be rendered? (True)
+    """
+    def __init__(self, surface: pygame.Surface = pygame.Surface((1, 1), pygame.SRCALPHA), backgroundColour: pygame.Color = pygame.Color(0, 0, 0, 0), canRender: bool = True, **kwargs):
+        super().__init__(surface = surface, backgroundColour = backgroundColour, canRender = canRender)
+        #self.__camera = Camera(pygame.Vector2(surface.get_width(), surface.get_height()), 0.000000001)
+        #self.__camera.isInView = lambda *args, **kwargs: True
+        self.__camera = Camera_2D(pygame.Vector2(surface.get_width(), surface.get_height()))
+
+    def setSurface(self, new_surface):
+        self.__camera = Camera_2D(pygame.Vector2(new_surface.get_width(), new_surface.get_height()))
+        self.__camera.isInView = lambda *args, **kwargs: True
+        super().setSurface(new_surface)
+
+    def addEntity(self, name: str, entity: Renderable_3D):
+        """
+        Registers a new Renderable_3D entity with the simulation.
+
+        Paramiters:
+            str name -> The name the new entity should be registered with
+            Renderable_3D entity -> The entity to register
+        """
+        if not issubclass(type(entity), Renderable_2D) and not issubclass(type(entity), Renderable_3D):
+            raise TypeError("The entities added to a layer renderables.")
+
+        if name not in self._Layer__entities.keys():
+            self._Layer__entities[name] = entity
+        else:
+            raise KeyError("An entity already exists with the name {}.".format(name))
+
+    def render(self, surfaceOveride: pygame.Surface = None):
+        """
+        Renders all entities in the layer provide the layer is allowed to be rendered.
+        Rendering is done with respect to the camera's position and orientation.
+
+        Paramiters:
+            Camera camera -> The camera object for the simulation
+            pygame.Surface surfaceOveride -> Specify a different surface to render to instead of the defult one (None)
+        """
+        if self.isRenderable():
+            if surfaceOveride is None:
+                surface = self.surface
+            else:
+                surface = surfaceOveride
+
+            surface.fill(self.backgroundColour)
+
+            for entity in self._Layer__entities.values():
+                if entity.isVisable():
+                    if issubclass(type(entity), Renderable_2D):
+                        entity.render(surface)
+                    else:
+                        entity.render(surface, self.__camera, pygame.Vector2(self.getSurface().get_width(), self.getSurface().get_height()))
+
+            return True
+        else:
+            return False
+
 from simulation.entities.renderable import Renderable_2D, Renderable_3D
-from simulation.graphics.camera import Camera
+from simulation.graphics.camera import Camera, Camera_2D

@@ -1,6 +1,6 @@
 import pygame
 import numpy as np
-from simulation.entities.renderable import Renderable_3DWireframe, Renderable_3DSolid
+from simulation.entities.renderable import Renderable_2D, Renderable_2DLine, Renderable_3DWireframe, Renderable_3DSolid
 
 class UnitCube_Wireframe(Renderable_3DWireframe):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), scale = 1, colour: pygame.Color = pygame.Color(255, 255, 255), **kwargs) -> Renderable_3DWireframe:
@@ -25,6 +25,9 @@ class UnitCube_Wireframe(Renderable_3DWireframe):
             colour = colour,
             **kwargs)
 
+    def render(self, *args, **kwargs):
+        super().render(*args, **kwargs)
+
 
 
 class TriangularPyrimid_Wireframe(Renderable_3DWireframe):
@@ -45,6 +48,9 @@ class TriangularPyrimid_Wireframe(Renderable_3DWireframe):
             scale = scale,
             colour = colour,
             **kwargs)
+
+    def update(self, delta_t, simulation):
+        pass
 
 
 
@@ -84,3 +90,48 @@ class Sphere(Renderable_3DSolid):
 
     def setRadius(self, new_radius: float):
         self.setScaleFactor(new_radius)
+
+    def update(self, delta_t, simulation):
+        pass
+
+
+
+class Croshair(Renderable_2D):
+    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0.5, 0.5, 0), scale = 0.05, colour: pygame.Color = pygame.Color(255, 255, 255), **kwargs):
+        super().__init__(location = location, facing = pygame.Vector3(1, 0, 0), vertical = pygame.Vector3(0, 1, 0), **kwargs)
+        self.__lines = [Renderable_2DLine(scale, pygame.Vector3(0, 0, 0) + location, pygame.Vector3(1, 0, 0) + location, point1_is_midpoint = True, colour = colour), Renderable_2DLine(scale, pygame.Vector3(0, 0, 0) + location, pygame.Vector3(0, 1, 0) + location, point1_is_midpoint = True, colour = colour)]
+
+    def setLocation(self, new_location):
+        self.__lines[0].move(new_location - self.getLocation())
+        self.__lines[1].move(new_location - self.getLocation())
+        super().setLocation(new_location)
+
+    def render(self, surface: pygame.Surface):
+        self.__lines[0].render(surface)
+        self.__lines[1].render(surface)
+
+    def update(self, delta_t, simulation):
+        pass
+
+
+
+class Croshair_3D(Renderable_3DWireframe):
+    def __init__(self, location: pygame.Vector3 = pygame.Vector3(0.5, 0.5, 0), facing: pygame.Vector3 = pygame.Vector3(0, 0, 1), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), scale = 0.05, colour: pygame.Color = pygame.Color(255, 255, 255), **kwargs) -> Renderable_3DWireframe:
+        vertices = [pygame.Vector3(0, 0, 0),# Centre
+                    pygame.Vector3(1, 0, 0),# x
+                    pygame.Vector3(0, 1, 0),# y
+                    pygame.Vector3(0, 0, 1)]# z
+
+        edges = [(0, 1), (0, 2), (0, 3)]
+
+        super().__init__(
+            vertices = vertices, edges = edges,
+            location = location,
+            facing = facing,
+            vertical = vertical,
+            scale = scale,
+            colour = colour,
+            **kwargs)
+
+    def update(self, delta_t, simulation):
+        pass

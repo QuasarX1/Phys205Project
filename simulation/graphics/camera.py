@@ -4,6 +4,33 @@ from simulation.entities.moveable import Moveable
 from simulation.physics_engine.newtonian.freeBody import FreeBody
 from simulation.graphics.HUD.text import Text, UpdatingText
 
+
+
+class Line(object):
+    def __init__(self, p1, p2):
+        try:
+            self.dl_by_dx = np.sqrt(1 + ((p2.y - p1.y) / (p2.x - p1.x))**2 + ((p2.z - p1.z) / (p2.x - p1.x))**2)
+        except ZeroDivisionError:
+            self.dl_by_dx = np.inf
+        try:
+            self.dl_by_dy = np.sqrt(1 + ((p2.x - p1.x) / (p2.y - p1.y))**2 + ((p2.z - p1.z) / (p2.y - p1.y))**2)
+        except ZeroDivisionError:
+            self.dl_by_dy = np.inf
+        try:
+            self.dl_by_dz = np.sqrt(1 + ((p2.x - p1.x) / (p2.z - p1.z))**2 + ((p2.y - p1.y) / (p2.z - p1.z))**2)
+        except ZeroDivisionError:
+            self.dl_by_dz = np.inf
+
+class Ray(Line):
+    def __init__(self, p1, p2):
+        super().__init__(p1, p2)
+        self.projectionVector = pygame.Vector2(self.dl_by_dz / self.dl_by_dx, self.dl_by_dz / self.dl_by_dy)
+
+    def projection(self, delta_z):
+        return delta_z * self.projectionVector
+
+
+
 class Camera(FreeBody, Moveable):
     def __init__(self, dimentions: pygame.Vector2 = pygame.Vector2(500, 500), field_of_vision: float = np.pi / 2, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(0, 0, 1), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), *args, **kwargs):
         super().__init__(mass = 1, moment_of_inertia = 0, location = location, facing = facing, vertical = vertical, *args, **kwargs)
@@ -58,9 +85,9 @@ class Camera(FreeBody, Moveable):
         self.__renderHeightOffset = (self.__height * distanceScale - windowHeight) / 2
 
     def calculatePerspective(self, location: pygame.Vector3):
-        ratio = self.__focus_distance / (location - self.getFocus()).dot(self.getFacing())
-
-        return pygame.Vector2(location.dot(self.getHorisontal()) * ratio, location.dot(self.getVertical()) * ratio)
+        translation = pygame.Vector2(self.getLocation().x + self.getWidth() / 2, self.getLocation().y + self.getHeight() / 2)
+        ray = Ray(self.getFocus(), location)
+        return ray.projection(self.__focus_distance) + translation
 
     def isInView(self, point: pygame.Vector3):
         locationToPoint = point - self.getLocation()
@@ -122,6 +149,17 @@ class Camera(FreeBody, Moveable):
             self.rotate_altitude((mouseDeltaY / self.__focus_distance) * 180 / np.pi)
         if mouseDeltaX != 0:
             self.rotate_azimuth((-mouseDeltaX / self.__focus_distance) * 180 / np.pi)
+
+
+
+class Camera_2D(Camera):
+    
+    def __init__(self, dimentions: pygame.Vector2 = pygame.Vector2(500, 500), location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(0, 0, 1), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), *args, **kwargs):
+        super().__init__(dimentions = dimentions, field_of_vision = 0.000000001, location = location, facing = facing, vertical = vertical, *args, **kwargs)
+        self.isInView = lambda *args, **kwargs: True#TODO: overload ths instead with an actual check
+
+    def calculatePerspective(self, location: pygame.Vector3):
+        return super().calculatePerspective(location) - pygame.Vector2(self.getLocation().x + self.getWidth() / 2, self.getLocation().y + self.getHeight() / 2)
 
 
 
