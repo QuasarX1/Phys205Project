@@ -3,7 +3,12 @@ import numpy as np
 from simulation.physics_engine.optics.blackbody import radiance as blackbody_luminosity
 
 def blackbody_visable_colour(temperature):
-    #return pygame.Color(255, 255, 255)#TODO: REMOVE THIS!!!!!!!!!!!!!
+    '''
+    Uses six known RGB values and their relative wavelengths to map out an average Red, Green and Blue intensities
+
+    This is done by using the star's temperature and the respective wavelength of each colour to get an colour intensity. 
+    Then, by using their respective RGB values, which are noted to the right of each line, are summed up and divided by the total relative value
+    '''
     redIntensity = blackbody_luminosity(700 * 10**-9, temperature) #    [255,0,0] 
     orangeIntensity = blackbody_luminosity(640 * 10**-9, temperature) # [255,165,0]
     yellowIntensity = blackbody_luminosity(580 * 10**-9, temperature) #   [255,255,0]
