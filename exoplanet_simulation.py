@@ -6,6 +6,7 @@ import simulation as sim
 from simulation.main import RenderMode
 from star import Star
 from planet import Planet
+from simulation.entities.prefabs import UnitCube_Wireframe
 from simulation.logging.logger import PositionLogger, VelocityLogger, SeperationLogger
 
 
@@ -30,12 +31,13 @@ simulation = sim.Simulation(renderMode = renderOption, timeScale = 3600.0 * 24.0
 
 
 # Position the Camera ----------------------------------------------------------------------------------------------------------------
-#simulation.getCamera().setLocation(pygame.Vector3(0, 200, 0))
+#simulation.getCamera().setLocation(pygame.Vector3(0, 500, 0))
 #simulation.getCamera().setFacing(pygame.Vector3(0, -1, 0))
 #simulation.getCamera().setVertical(pygame.Vector3(0, 0, 1))
 
 simulation.getCamera().setLocation(pygame.Vector3(0, 0, -4 * 10**7))
-
+#simulation.getCamera().setLocation(pygame.Vector3(-4 * 10**7, 0, 0))
+#simulation.getCamera().setFacing(pygame.Vector3(1, 0, 0))
 
 
 # Create and add display layers ------------------------------------------------------------------------------------------------------
@@ -49,17 +51,17 @@ simulation.addLayer("simulation_layer", simulation_layer)
 
 
 # Add massive bodies to a simulation layer ------------------------------------------------------------------------------------------
-target_star = Star(radius = 6371 * 10**3,
+target_star = Star(radius = 6.371 * 10**6,
                    temperature = 5700,
                    mass = 6 * 10**24,#1.9891 * 10**30,#500000,
                    initial_velocity = pygame.Vector3(0, 0, 0),
                    location = pygame.Vector3(0, 0, 0))
 simulation_layer.addEntity("target_star", target_star)
 
-test_planet = Planet(radius = 1737 * 10 **3,
+test_planet = Planet(radius = 1.737 * 10**6,
                      mass = 7.4 * 10**22,#1.9891 * 10**30,#500000,
                      initial_velocity = pygame.Vector3(0, 0, 1040),
-                     location = pygame.Vector3(384000 * 10**3, 0, 0),
+                     location = pygame.Vector3(3.84 * 10**8, 0, 0),
                      colour = pygame.Color(0, 255, 0))
 simulation_layer.addEntity("test_planet", test_planet)
 

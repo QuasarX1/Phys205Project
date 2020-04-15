@@ -148,7 +148,7 @@ class Camera(FreeBody, Moveable):
     def update(self, delta_t, simulation):
         self.manual_update_FreeBody(delta_t, simulation) 
         
-        if self.getVelocity().magnitude() < 10:
+        if self.getVelocity().magnitude() < 30:
             self.setVelocity(pygame.Vector3(0, 0, 0))
 
         mouseDeltaX, mouseDeltaY = pygame.mouse.get_rel()
@@ -160,7 +160,6 @@ class Camera(FreeBody, Moveable):
 
 
 class Camera_2D(Camera):
-    
     def __init__(self, dimentions: pygame.Vector2 = pygame.Vector2(500, 500), *args, **kwargs):
         super().__init__(dimentions = dimentions, field_of_vision = 0.000000001, location = pygame.Vector3(0, 0, 0), facing = pygame.Vector3(0, 0, 1), vertical = pygame.Vector3(0, 1, 0), *args, **kwargs)
         self.isInView = lambda *args, **kwargs: True#TODO: overload ths instead with an actual check

@@ -255,7 +255,7 @@ class Layer_Mixed(Layer):
 
     def setSurface(self, new_surface):
         self.__camera = Camera_2D(pygame.Vector2(new_surface.get_width(), new_surface.get_height()))
-        self.__camera.isInView = lambda *args, **kwargs: True
+        #self.__camera.isInView = lambda *args, **kwargs: True
         super().setSurface(new_surface)
 
     def addEntity(self, name: str, entity: Renderable_3D):
