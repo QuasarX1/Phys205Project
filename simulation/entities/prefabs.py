@@ -28,6 +28,9 @@ class UnitCube_Wireframe(Renderable_3DWireframe):
     def render(self, *args, **kwargs):
         super().render(*args, **kwargs)
 
+    def update(self, delta_t, simulation):
+        pass
+
 
 
 class TriangularPyrimid_Wireframe(Renderable_3DWireframe):
@@ -134,4 +137,7 @@ class Croshair_3D(Renderable_3DWireframe):
             **kwargs)
 
     def update(self, delta_t, simulation):
-        pass
+        if self.isVisable():
+            camera = simulation.getCamera()
+            self.setFacing(camera.getFacing())
+            self.setVertical(camera.getVertical())

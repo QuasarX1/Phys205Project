@@ -53,7 +53,7 @@ class Simulation(object):
         float distanceScale -> Number of pixels used to represent 1 meter. (1)
     """
 
-    def __init__(self, renderMode: RenderMode = RenderMode.real_time, timeScale: float = 3600.0 * 24.0,
+    def __init__(self, renderMode: RenderMode = RenderMode.real_time, timeScale: float = 1,
                  cameraDimentions: tuple = (1, 1), displayWindowDimentions = (500, 500), maxFPS = 60, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -67,7 +67,7 @@ class Simulation(object):
         self.__fullscreen = False
         self.__camera: Camera = Camera(dimentions = cameraDimentions)
 
-        self.__distanceScale: float = None# pixels : simulated meters
+        self.__distanceScale: float = None# pixels : simulated meters #TODO: should this be called meters per pixel?!
         self.__calculatePixelsPerMeter(displayWindowDimentions[0])
         self.__camera.setHeightOffset(displayWindowDimentions[1], self.__distanceScale)
 
@@ -364,6 +364,10 @@ class Simulation(object):
 
                     elif event.key == pygame.K_F3:
                         self.__toggleCameraMetrics()
+
+                    elif event.key == pygame.K_F4:
+                        if event.mod & pygame.KMOD_ALT:
+                            pygame.event.post(pygame.event.Event(pygame.QUIT))
 
                     elif event.key == pygame.K_F11:
                         self.__toggleFullscreen()

@@ -29,7 +29,7 @@ class Moveable(Entity):
         self.__vertical = new_direction.normalize()
 
     def getHorisontal(self):
-        return self.__facing.cross(self.__vertical).normalize()
+        return self.__vertical.cross(self.__facing).normalize()
 
     def move(self, displacement_vector: pygame.Vector3):
         self.__centre += displacement_vector
@@ -64,7 +64,7 @@ class Moveable(Entity):
         """
         axis = self.getHorisontal()
         self.__facing.rotate_ip(angle, axis)# function signiture back to front on docs for 2.0
-        self.__facing.rotate_ip(angle, axis)# function signiture back to front on docs for 2.0
+        self.__vertical.rotate_ip(angle, axis)# function signiture back to front on docs for 2.0
 
     def rotate_roll(self, angle):
         """

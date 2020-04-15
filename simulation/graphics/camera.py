@@ -8,17 +8,21 @@ from simulation.graphics.HUD.text import Text, UpdatingText
 
 class Line(object):
     def __init__(self, p1, p2):
-        try:
-            self.dl_by_dx = np.sqrt(1 + ((p2.y - p1.y) / (p2.x - p1.x))**2 + ((p2.z - p1.z) / (p2.x - p1.x))**2)
-        except ZeroDivisionError:
+        dx = p2.x - p1.x
+        dy = p2.y - p1.y
+        dz = p2.z - p1.z
+
+        if dx != 0:
+            self.dl_by_dx = np.sqrt(1 + (dy / dx)**2 + (dz / dx)**2) * dx / np.abs(dx)
+        else:
             self.dl_by_dx = np.inf
-        try:
-            self.dl_by_dy = np.sqrt(1 + ((p2.x - p1.x) / (p2.y - p1.y))**2 + ((p2.z - p1.z) / (p2.y - p1.y))**2)
-        except ZeroDivisionError:
+        if dy != 0:
+            self.dl_by_dy = np.sqrt(1 + (dx / dy)**2 + (dz / dy)**2) * dy / np.abs(dy)
+        else:
             self.dl_by_dy = np.inf
-        try:
-            self.dl_by_dz = np.sqrt(1 + ((p2.x - p1.x) / (p2.z - p1.z))**2 + ((p2.y - p1.y) / (p2.z - p1.z))**2)
-        except ZeroDivisionError:
+        if dz != 0:
+            self.dl_by_dz = np.sqrt(1 + (dx / dz)**2 + (dy / dz)**2) * dz / np.abs(dz)
+        else:
             self.dl_by_dz = np.inf
 
 class Ray(Line):
@@ -86,7 +90,10 @@ class Camera(FreeBody, Moveable):
 
     def calculatePerspective(self, location: pygame.Vector3):
         translation = pygame.Vector2(self.getLocation().x + self.getWidth() / 2, self.getLocation().y + self.getHeight() / 2)
-        ray = Ray(self.getFocus(), location)
+        #ray = Ray(self.getFocus(), location)
+        location = location - self.getLocation()
+        ray = Ray(pygame.Vector3(0, 0, -self.__focus_distance),
+                  pygame.Vector3(location.dot(self.getHorisontal()), location.dot(self.getVertical()), location.dot(self.getFacing())))
         return ray.projection(self.__focus_distance) + translation
 
     def isInView(self, point: pygame.Vector3):
@@ -125,9 +132,9 @@ class Camera(FreeBody, Moveable):
             vertical -= 1
 
         strafe = 0
-        if keys[pygame.K_d]:
-            strafe += 1
         if keys[pygame.K_a]:
+            strafe += 1
+        if keys[pygame.K_d]:
             strafe -= 1
 
         if forewards != 0 or vertical != 0 or strafe != 0:
@@ -148,14 +155,14 @@ class Camera(FreeBody, Moveable):
         if mouseDeltaY != 0:
             self.rotate_altitude((mouseDeltaY / self.__focus_distance) * 180 / np.pi)
         if mouseDeltaX != 0:
-            self.rotate_azimuth((-mouseDeltaX / self.__focus_distance) * 180 / np.pi)
+            self.rotate_azimuth((mouseDeltaX / self.__focus_distance) * 180 / np.pi)
 
 
 
 class Camera_2D(Camera):
     
-    def __init__(self, dimentions: pygame.Vector2 = pygame.Vector2(500, 500), location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(0, 0, 1), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), *args, **kwargs):
-        super().__init__(dimentions = dimentions, field_of_vision = 0.000000001, location = location, facing = facing, vertical = vertical, *args, **kwargs)
+    def __init__(self, dimentions: pygame.Vector2 = pygame.Vector2(500, 500), *args, **kwargs):
+        super().__init__(dimentions = dimentions, field_of_vision = 0.000000001, location = pygame.Vector3(0, 0, 0), facing = pygame.Vector3(0, 0, 1), vertical = pygame.Vector3(0, 1, 0), *args, **kwargs)
         self.isInView = lambda *args, **kwargs: True#TODO: overload ths instead with an actual check
 
     def calculatePerspective(self, location: pygame.Vector3):
