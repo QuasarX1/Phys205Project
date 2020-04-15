@@ -7,7 +7,7 @@ from QuasarCode.edp import Event
 from simulation.commands import commands
 from simulation.layer import Layer, Layer_2D, Layer_3D, Layer_Mixed
 from simulation.entities.entity import Entity
-from simulation.graphics.camera import Camera, CameraForceDisplay, CameraSpeedDisplay
+from simulation.graphics.camera import Camera, CameraPositionDisplay, CameraForceDisplay, CameraSpeedDisplay
 from simulation.graphics.transformations import vector_to_array, array_to_vector, rotationMatrix, applyTransformation
 from simulation.entities.prefabs import Croshair, Croshair_3D
 from simulation.graphics.HUD.text import Text, ReferencePoint
@@ -94,10 +94,13 @@ class Simulation(object):
         self.__protectedLayerNames = ("background", "HUD", "pause_menu")
 
         if self.__displayOutput:
-            self.__layers["HUD"].addEntity("camera_force", CameraForceDisplay(self.__camera))
+            self.__layers["HUD"].addEntity("camera_position", CameraPositionDisplay(self.__camera))
+            self.__layers["HUD"].getEntity("camera_position").hide()
+
+            self.__layers["HUD"].addEntity("camera_force", CameraForceDisplay(self.__camera, location = pygame.Vector3(0, 0.1, 0)))
             self.__layers["HUD"].getEntity("camera_force").hide()
 
-            self.__layers["HUD"].addEntity("camera_speed", CameraSpeedDisplay(self.__camera, location = pygame.Vector3(0, 0.1, 0)))
+            self.__layers["HUD"].addEntity("camera_speed", CameraSpeedDisplay(self.__camera, location = pygame.Vector3(0, 0.2, 0)))
             self.__layers["HUD"].getEntity("camera_speed").hide()
 
             self.__layers["HUD"].addEntity("croshair", Croshair())

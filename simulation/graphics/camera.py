@@ -169,6 +169,17 @@ class Camera_2D(Camera):
 
 
 
+class CameraPositionDisplay(UpdatingText):
+    def __init__(self, camera: Camera,
+                 location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0),
+                 vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), colour: pygame.Color = pygame.Color(255, 255, 255), *args, **kwargs):
+        self.__camera = camera
+        super().__init__(function = lambda self: "{:.2f} {:.2f} {:.2f}".format(self.getReferencedObject("camera").getLocation().x, self.getReferencedObject("camera").getLocation().y, self.getReferencedObject("camera").getLocation().z),
+                         font_face = "freesansbold.ttf", size = 30, objectReferences = {"camera":camera},
+                         location = location, facing = facing, vertical = vertical, colour = colour, *args, **kwargs)
+
+
+
 class CameraForceDisplay(UpdatingText):
     def __init__(self, camera: Camera,
                  location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0),
