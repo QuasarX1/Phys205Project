@@ -60,9 +60,10 @@ class PositionLogger(ActionLogger):
     def __init__(self, entity: Moveable, trigger = lambda self, sim, delta_t: False, zero_time_on_action: bool = False, show_graphs = True, file_save_path = None, *args, **kwargs):
         self.__showGraphs = show_graphs
         self.__filepath = file_save_path
-        os.mkdir(os.path.join(self.__filepath, "Position_Log_Component_Displacement"))
-        os.mkdir(os.path.join(self.__filepath, "Position_Log_X_Z_Plane"))
-        os.mkdir(os.path.join(self.__filepath, "Position_Log_Distance_Over_Time"))
+        if self.__filepath is not None:
+            os.mkdir(os.path.join(self.__filepath, "Position_Log_Component_Displacement"))
+            os.mkdir(os.path.join(self.__filepath, "Position_Log_X_Z_Plane"))
+            os.mkdir(os.path.join(self.__filepath, "Position_Log_Distance_Over_Time"))
         self.__positions = [copy.copy(entity.getLocation())]
         super().__init__(entities = {"entity":entity}, trigger = trigger, action = self.__customAction, zero_time_on_action = zero_time_on_action, *args, **kwargs)
 
@@ -131,9 +132,10 @@ class VelocityLogger(ActionLogger):
     def __init__(self, entity: FreeBody, trigger = (lambda self, sim, delta_t: False), zero_time_on_action: bool = False, show_graphs = True, file_save_path = None, *args, **kwargs):
         self.__showGraphs = show_graphs
         self.__filepath = file_save_path
-        os.mkdir(os.path.join(self.__filepath, "Velocity_Log_Component_Velocity"))
-        os.mkdir(os.path.join(self.__filepath, "Velocity_Log_X_Z_Velocity_Plane"))
-        os.mkdir(os.path.join(self.__filepath, "Velocity_Log_Speed_Over_Time"))
+        if self.__filepath is not None:
+            os.mkdir(os.path.join(self.__filepath, "Velocity_Log_Component_Velocity"))
+            os.mkdir(os.path.join(self.__filepath, "Velocity_Log_X_Z_Velocity_Plane"))
+            os.mkdir(os.path.join(self.__filepath, "Velocity_Log_Speed_Over_Time"))
         self.__velocities = [copy.copy(entity.getVelocity())]
         super().__init__(entities = {"entity":entity}, trigger = trigger, action = self.__customAction, zero_time_on_action = zero_time_on_action, *args, **kwargs)
 
@@ -201,9 +203,10 @@ class SeperationLogger(ActionLogger):
     def __init__(self, entity: Moveable, referenceEntity: Moveable, trigger = lambda self, sim, delta_t: False, zero_time_on_action: bool = False, show_graphs = True, file_save_path = None, *args, **kwargs):
         self.__showGraphs = show_graphs
         self.__filepath = file_save_path
-        os.mkdir(os.path.join(self.__filepath, "Seperation_Log_Component_Displacement"))
-        os.mkdir(os.path.join(self.__filepath, "Seperation_Log_X_Z_Plane"))
-        os.mkdir(os.path.join(self.__filepath, "Seperation_Log_Distance_Over_Time"))
+        if self.__filepath is not None:
+            os.mkdir(os.path.join(self.__filepath, "Seperation_Log_Component_Displacement"))
+            os.mkdir(os.path.join(self.__filepath, "Seperation_Log_X_Z_Plane"))
+            os.mkdir(os.path.join(self.__filepath, "Seperation_Log_Distance_Over_Time"))
         self.__positions = {"entity":[copy.copy(entity.getLocation())], "reference_entity":[copy.copy(referenceEntity.getLocation())]}
         super().__init__(entities = {"entity":entity, "reference_entity":referenceEntity}, trigger = trigger, action = self.__customAction, zero_time_on_action = zero_time_on_action, *args, **kwargs)
 
