@@ -30,16 +30,16 @@ def commands_runtime(simulation, *args, **kwargs):
     seconds = simulation.getRunTime()
 
     result = str(seconds % 60) + " seconds"
-    if seconds > 60:
+    if seconds >= 60:
         minutes = seconds // 60
         result = str(minutes % 60) + " minutes " + result
-        if minutes > 60:
+        if minutes >= 60:
             hours = minutes // 60
             result = str(hours % 24) + " hours " + result
-            if hours > 24:
+            if hours >= 24:
                 days = hours // 24
                 result = str(days % 365.25) + " earth days " + result
-                if days > 365.25:
+                if days >= 365.25:
                     years = hours // 365.25
                     result = str(years) + " earth years " + result
 

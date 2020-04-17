@@ -2,6 +2,7 @@ import pygame
 import numpy as np
 from matplotlib import pyplot as plt
 import sys
+import uuid
 import simulation as sim
 from simulation.main import RenderMode
 from star import Star
@@ -38,6 +39,8 @@ else:
 #simulation = sim.Simulation(renderMode = renderOption, timeScale = 3600.0 * 24.0, cameraDimentions = pygame.Vector2(0.01, 0.01))
 simulation = sim.Simulation(renderMode = renderOption, timeScale = 3600.0 * 24.0, cameraDimentions = pygame.Vector2(500, 500))
 #simulation = sim.Simulation(renderMode = renderOption, timeScale = 3944700, cameraDimentions = pygame.Vector2(500, 500))
+
+runID = str(uuid.uuid4())
 
 
 
@@ -109,10 +112,18 @@ if renderOption == RenderMode.real_time:
 else:
     if filepath is None:
         filepath = input("Where should any graphs be saved?\n>>> ")
-    #simulation.onItterationEnd += PositionLogger(test_planet, lambda self, sim, delta_t: len(self._getTime()) > 8, False, show_graphs = False, file_save_path = filepath).log
+
+    simulation.onItterationEnd += PositionLogger(name = "test_planet_position_logger",
+                                                 runID = runID,
+                                                 entity = test_planet,
+                                                 trigger = lambda self, sim, delta_t: len(self._getTime()) > 8,
+                                                 zero_time_on_action = False,
+                                                 show_graphs = False,
+                                                 file_save_path = filepath).log
+
     #simulation.onItterationEnd += VelocityLogger(test_planet, lambda self, sim, delta_t: len(self._getTime()) > 100000, False, show_graphs = False, file_save_path = filepath).log
     #simulation.onItterationEnd += SeperationLogger(test_planet, target_star, lambda self, sim, delta_t: len(self._getTime()) > 100000, False, show_graphs = False, file_save_path = filepath).log
-    simulation.onItterationEnd += SeperationLogger(test_planet, target_star, lambda self, sim, delta_t: self._getTime()[-1] > 31557600 * 600, False, show_graphs = False, file_save_path = filepath).log
+    #simulation.onItterationEnd += SeperationLogger(test_planet, target_star, lambda self, sim, delta_t: self._getTime()[-1] > 31557600 * 600, False, show_graphs = False, file_save_path = filepath).log
     #simulation.onItterationEnd += SeperationLogger(test_planet, target_star, lambda self, sim, delta_t: self._getTime()[-1] > 31557600 / 8, False, show_graphs = False, file_save_path = filepath).log
     
 

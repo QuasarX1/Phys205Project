@@ -1,4 +1,3 @@
-
 def final_velocity_without_displacement(initial_velocity, acceleration, time):
     return initial_velocity + acceleration * time
 
