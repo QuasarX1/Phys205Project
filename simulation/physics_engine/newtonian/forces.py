@@ -25,7 +25,7 @@ def massFromRadiusForceBetweenTwoLargeBodies(mass, force, radius):
     #return (bob.G * ((mass1 * mass2)/force))**1/2
     return 1/(-G * (mass / (force * radius**2)))
 
-def centrifrugalForce(mass1, initial_velocity, radiusFromForceBetweenTwoLargeBodies):
+def centrifrugalForce(mass1, initial_velocity, radiusFromForceBetweenTwoLargeBodies):#TODO: remove?
     return (mass1 * initial_velocity**2 / radiusFromForceMassBetweenTwoLargeBodies)
 
 '''

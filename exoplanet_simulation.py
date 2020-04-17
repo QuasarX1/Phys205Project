@@ -19,15 +19,25 @@ if len(sys.argv) > 1:
         renderOption = RenderMode.real_time
     else:
         raise ValueError("The first command line paramiter should indicate whether or not the simulation should be rendered (a boolean).")
+
+    if len(sys.argv) > 2:
+        filepath = sys.argv[2]
+
+    else:
+        filepath = None
+
 else:
-    renderOption = RenderMode.real_time# Overide this to change the defult setting
+    # Overide these to change the defult settings
+    renderOption = RenderMode.real_time
+    #renderOption = RenderMode.no_render
+    filepath = None
 
 
 
 # Create a blank simulation ----------------------------------------------------------------------------------------------------------
 #simulation = sim.Simulation(renderMode = renderOption, timeScale = 3600.0 * 24.0, cameraDimentions = pygame.Vector2(0.01, 0.01))
-#simulation = sim.Simulation(renderMode = renderOption, timeScale = 3600.0 * 24.0, cameraDimentions = pygame.Vector2(500, 500))
-simulation = sim.Simulation(renderMode = renderOption, timeScale = 3600, cameraDimentions = pygame.Vector2(500, 500))
+simulation = sim.Simulation(renderMode = renderOption, timeScale = 3600.0 * 24.0, cameraDimentions = pygame.Vector2(500, 500))
+#simulation = sim.Simulation(renderMode = renderOption, timeScale = 3944700, cameraDimentions = pygame.Vector2(500, 500))
 
 
 
@@ -39,7 +49,10 @@ simulation = sim.Simulation(renderMode = renderOption, timeScale = 3600, cameraD
 #simulation.getCamera().setLocation(pygame.Vector3(-4 * 10**7, 0, 0))
 #simulation.getCamera().setFacing(pygame.Vector3(1, 0, 0))
 
-simulation.getCamera().setLocation(pygame.Vector3(0, 0, -4 * 10**7))
+#simulation.getCamera().setLocation(pygame.Vector3(0, 0, -1.496 * 10**9))
+
+# Nessessary for Earth-Sun Distance
+simulation.getCamera().setLocation(pygame.Vector3(0, 0, -1.496 * 10**11))
 
 
 # Create and add display layers ------------------------------------------------------------------------------------------------------
@@ -53,49 +66,26 @@ simulation.addLayer("simulation_layer", simulation_layer)
 
 
 # Add massive bodies to a simulation layer ------------------------------------------------------------------------------------------
-target_star = Star(radius = 6.371 * 10**6,
+target_star = Star(radius = 6.96 * 10**8,
                    temperature = 5700,
-                   mass = 6 * 10**24,#1.9891 * 10**30,#500000,
+                   mass = 1.989 * 10**28,
                    initial_velocity = pygame.Vector3(0, 0, 0),
                    location = pygame.Vector3(0, 0, 0))
 simulation_layer.addEntity("target_star", target_star)
 
-test_planet = Planet(radius = 1.737 * 10**6,
-                     mass = 7.4 * 10**22,#1.9891 * 10**30,#500000,
-                     initial_velocity = pygame.Vector3(0, 0, 1040),
-                     location = pygame.Vector3(3.84 * 10**8, 0, 0),
-                     colour = pygame.Color(0, 255, 0))
-simulation_layer.addEntity("test_planet", test_planet)
-
-#second_planet = Planet(radius = 1737 * 10 **3,
-#                       mass = 7.4 * 10**22,#1.9891 * 10**30,#500000,
-#                       initial_velocity = pygame.Vector3(0, 0, -1040),
-#                       location = pygame.Vector3(-384000 * 10**3, 0, 0),
-#                       colour = pygame.Color(0, 0, 255))
-#simulation_layer.addEntity("second_planet", second_planet)
-
-
-
-
-#import numpy as np
-#from simulation.physics_engine.constants import G
-#r = 100
-#v = 2 * np.pi * r
-#M = 4 * np.pi**2 * r**3 / G
-
-#target_star = Star(radius = 50,
-#                   temperature = 5700,
-#                   mass = M,
-#                   initial_velocity = pygame.Vector3(0, 0, 0),
-#                   location = pygame.Vector3(0, 0, 0))
-#simulation_layer.addEntity("target_star", target_star)
-
-#test_planet = Planet(radius = 10,
-#                     mass = 1,
-#                     initial_velocity = pygame.Vector3(0, 0, v),
-#                     location = pygame.Vector3(r, 0, 0),
+#test_planet = Planet(radius = 1.737 * 10**6,
+#                     mass = 5.972 * 10**24,
+#                     initial_velocity = pygame.Vector3(0, 0, 3 * 10**3),
+#                     location = pygame.Vector3(1.496 * 10**11, 0, 0),
 #                     colour = pygame.Color(0, 255, 0))
 #simulation_layer.addEntity("test_planet", test_planet)
+
+test_planet = Planet(radius = 1.737 * 10**6,
+                     mass = 5.972 * 10**24,
+                     initial_velocity = pygame.Vector3(0, 0, 2.997930184 * 10**3),
+                     location = pygame.Vector3(1.496 * 10**11, 0, 0),
+                     colour = pygame.Color(0, 255, 0))
+simulation_layer.addEntity("test_planet", test_planet)
 
 
 
@@ -115,14 +105,15 @@ test_planet.bindEntity_by_name("target_star", simulation_layer)
 if renderOption == RenderMode.real_time:
     #simulation.onItterationEnd += PositionLogger(test_planet, lambda self, sim, delta_t: len(self._getTime()) > 1000, False).log
     #simulation.onItterationEnd += VelocityLogger(test_planet, lambda self, sim, delta_t: len(self._getTime()) > 1000, False).log
-    simulation.onItterationEnd += SeperationLogger(test_planet, target_star, lambda self, sim, delta_t: len(self._getTime()) > 1000, False).log
+    simulation.onItterationEnd += SeperationLogger(test_planet, target_star, lambda self, sim, delta_t: len(self._getTime()) > 2000, False).log
 else:
-    path = input("Where should any graphs be saved?\n>>> ")
-    #simulation.onItterationEnd += PositionLogger(test_planet, lambda self, sim, delta_t: len(self._getTime()) > 1000, False, show_graphs = False, file_save_path = path).log
-    #simulation.onItterationEnd += VelocityLogger(test_planet, lambda self, sim, delta_t: len(self._getTime()) > 1000, False, show_graphs = False, file_save_path = path).log
-    #simulation.onItterationEnd += SeperationLogger(test_planet, target_star, lambda self, sim, delta_t: len(self._getTime()) > 1000, False, show_graphs = False, file_save_path = path).log
-    #simulation.onItterationEnd += SeperationLogger(test_planet, target_star, lambda self, sim, delta_t: self._getTime()[-1] > 31557600, False, show_graphs = False, file_save_path = path).log
-    simulation.onItterationEnd += SeperationLogger(test_planet, target_star, lambda self, sim, delta_t: self._getTime()[-1] > 31557600 / 8, False, show_graphs = False, file_save_path = path).log
+    if filepath is None:
+        filepath = input("Where should any graphs be saved?\n>>> ")
+    #simulation.onItterationEnd += PositionLogger(test_planet, lambda self, sim, delta_t: len(self._getTime()) > 8, False, show_graphs = False, file_save_path = filepath).log
+    #simulation.onItterationEnd += VelocityLogger(test_planet, lambda self, sim, delta_t: len(self._getTime()) > 100000, False, show_graphs = False, file_save_path = filepath).log
+    #simulation.onItterationEnd += SeperationLogger(test_planet, target_star, lambda self, sim, delta_t: len(self._getTime()) > 100000, False, show_graphs = False, file_save_path = filepath).log
+    simulation.onItterationEnd += SeperationLogger(test_planet, target_star, lambda self, sim, delta_t: self._getTime()[-1] > 31557600 * 600, False, show_graphs = False, file_save_path = filepath).log
+    #simulation.onItterationEnd += SeperationLogger(test_planet, target_star, lambda self, sim, delta_t: self._getTime()[-1] > 31557600 / 8, False, show_graphs = False, file_save_path = filepath).log
     
 
 

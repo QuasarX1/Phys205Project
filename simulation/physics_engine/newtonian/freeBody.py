@@ -80,7 +80,7 @@ class FreeBody(Moveable):
     def pre_update(self):
         for entity in self.__gravitationallyBoundEntities:
             radius = self.getLocation() - entity.getLocation()
-            self.__forces.append(forceBetweenTwoLargeBodies(entity.getMass(), self.getMass(), radius.length_squared()) * radius)
+            self.__forces.append(forceBetweenTwoLargeBodies(entity.getMass(), self.getMass(), radius.magnitude()) * radius.normalize())
 
     def update(self, delta_t, simulation):
         self.manual_update_FreeBody(delta_t, simulation)
@@ -94,8 +94,8 @@ class FreeBody(Moveable):
         self.move(displacement_without_final_velocity(self.__velocity, delta_t, a))
         self.__velocity = final_velocity_without_displacement(self.__velocity, a, delta_t)
 
-        if self.__velocity.magnitude() < 0.01:
-            self.__velocity = pygame.Vector3(0, 0, 0)
+        #if self.__velocity.magnitude() < 0.01:
+        #    self.__velocity = pygame.Vector3(0, 0, 0)
 
     def post_update(self):
         self.__forces = []

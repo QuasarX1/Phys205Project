@@ -29,16 +29,16 @@ commands["resume"] = (commands_resume, "Un-pauses the simulation.")
 def commands_runtime(simulation, *args, **kwargs):
     seconds = simulation.getRunTime()
 
-    result = str(seconds % 60 * 60) + " seconds"
+    result = str(seconds % 60) + " seconds"
     if seconds > 60:
         minutes = seconds // 60
-        result = str(minutes % 60 * 60) + " minutes " + result
+        result = str(minutes % 60) + " minutes " + result
         if minutes > 60:
             hours = minutes // 60
-            result = str(hours % 24 * 24) + " hours " + result
+            result = str(hours % 24) + " hours " + result
             if hours > 24:
                 days = hours // 24
-                result = str(days % 365.25 * 365.25) + " earth days " + result
+                result = str(days % 365.25) + " earth days " + result
                 if days > 365.25:
                     years = hours // 365.25
                     result = str(years) + " earth years " + result

@@ -10,8 +10,9 @@ from simulation.entities.entity import Entity
 from simulation.graphics.camera import Camera, CameraPositionDisplay, CameraForceDisplay, CameraSpeedDisplay
 from simulation.graphics.transformations import vector_to_array, array_to_vector, rotationMatrix, applyTransformation
 from simulation.entities.prefabs import Croshair, Croshair_3D
-from simulation.graphics.HUD.text import Text, ReferencePoint
+from simulation.graphics.HUD.text import Text, ReferencePoint, UpdatingText
 from simulation.graphics.HUD.button import Button
+from simulation.commands import commands_runtime
 
 pygame.init()
 pygame.font.init()
@@ -57,6 +58,11 @@ class Simulation(object):
                  cameraDimentions: tuple = (1, 1), displayWindowDimentions = (500, 500), maxFPS = 60, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        # Pre-set the simulation state
+        self.__running: bool = False
+        self.__paused: bool = True
+        self.__total_delta_t: float = 0
+
         # Events
         self.onItterationEnd: Event = Event()
         self.onRenderEnd: Event = Event()
@@ -94,6 +100,9 @@ class Simulation(object):
         self.__protectedLayerNames = ("background", "HUD", "pause_menu")
 
         if self.__displayOutput:
+            self.__layers["HUD"].addEntity("time", UpdatingText(lambda self: commands_runtime(self.getReferencedObject("simulation")), "freesansbold.ttf", 15, {"simulation": self}, referencePoint = ReferencePoint.bottom_left, location = pygame.Vector3(0, 0.95, 0)))
+            self.__layers["HUD"].getEntity("time").hide()
+
             self.__layers["HUD"].addEntity("camera_position", CameraPositionDisplay(self.__camera))
             self.__layers["HUD"].getEntity("camera_position").hide()
 
@@ -130,11 +139,6 @@ class Simulation(object):
             self.__clock: SimulationClock = LinearTickClock()
             self.__tickConversion: float = 1.0# Seconds per Tick
 
-        # Pre-set the simulation state
-        self.__running: bool = False
-        self.__paused: bool = True
-        self.__total_delta_t: float = 0
-
     @staticmethod
     def create_from_xml(path_to_xml: str):
         """
@@ -150,6 +154,8 @@ class Simulation(object):
     def __toggleCameraMetrics(self):
         self.__layers["HUD"].getEntity("croshair").setVisability(not self.__layers["HUD"].getEntity("croshair").isVisable())
         self.__layers["HUD"].getEntity("3D_croshair").setVisability(not self.__layers["HUD"].getEntity("3D_croshair").isVisable())
+        self.__layers["HUD"].getEntity("time").setVisability(not self.__layers["HUD"].getEntity("time").isVisable())
+        self.__layers["HUD"].getEntity("camera_position").setVisability(not self.__layers["HUD"].getEntity("camera_position").isVisable())
         self.__layers["HUD"].getEntity("camera_force").setVisability(not self.__layers["HUD"].getEntity("camera_force").isVisable())
         self.__layers["HUD"].getEntity("camera_speed").setVisability(not self.__layers["HUD"].getEntity("camera_speed").isVisable())
 
@@ -346,8 +352,9 @@ class Simulation(object):
             if self.onRenderEnd.getTotalSubscribers() > 0:
                     self.onRenderEnd.run(self, simulated_delta_t)
 
-    def __run(self):
+    def __run(self, autorun = True):
         self.__running = True
+        self.__paused = not autorun
 
         if not self.__displayOutput:
             self.pause()
@@ -417,13 +424,13 @@ class Simulation(object):
 
             
 
-    def __run_threaded(self) -> threading.Thread:
+    def __run_threaded(self, autorun = True) -> threading.Thread:
         """
         Runs the simulation untill it terminates or is manualy terminated.
 
         NOTE: This should not be used for live rendered simulations!
         """
-        simulationThread = threading.Thread(target = self.__run)
+        simulationThread = threading.Thread(target = self.__run, kwargs = {"autorun": autorun})
         simulationThread.start()
         return simulationThread
 
@@ -437,7 +444,7 @@ class Simulation(object):
         In order to pause updating, press 'Escape' - this will also release the mouse pointer.
         """
         if self.__displayOutput:# Is the output live?
-            self.__run()
+            self.__run(autorun = False)
 
         else:# Terminal controll required
             simulationThread = self.__run_threaded()
