@@ -11,9 +11,6 @@ from simulation.physics_engine.newtonian.freeBody import FreeBody
 
 class Logger(object):
     def __init__(self, entities: dict, **kwargs):
-        print("Logger")
-        print(kwargs)
-        print()
         super().__init__(**kwargs)
         self.__entities = entities
         self.__time = [0]
@@ -40,9 +37,6 @@ class Logger(object):
 
 class ActionLogger(Logger):
     def __init__(self, entities: dict, trigger = lambda self, sim, delta_t: False, action = lambda self, sim: 0, zero_time_on_action: bool = False, **kwargs):
-        print("ActionLogger")
-        print(kwargs)
-        print()
         super().__init__(entities = entities, **kwargs)
         self.__trigger = trigger
         self.__zero_time_on_action = zero_time_on_action
@@ -65,10 +59,6 @@ class ActionLogger(Logger):
 
 class GraphingLogger(ActionLogger):
     def __init__(self, name: str, runID: str, show_graphs = True, file_save_path = None, **kwargs):
-        print("GraphingLogger")
-        print(kwargs)
-        print(name)
-        print()
         self.__showGraphs = show_graphs
         self.__filepath = file_save_path
         self.__runID = runID
@@ -97,9 +87,6 @@ class GraphingLogger(ActionLogger):
 
 class PositionLogger(GraphingLogger):
     def __init__(self, entity: Moveable, name = "Position_Logger", runID = "run", **kwargs):
-        print("PositionLogger")
-        print(kwargs)
-        print()
         self.__positions = [copy.copy(entity.getLocation())]
         super().__init__(name = name, runID = runID, entities = {"entity":entity}, action = self.__customAction, **kwargs)
 
@@ -107,8 +94,6 @@ class PositionLogger(GraphingLogger):
             os.mkdir(os.path.join(self.getFilepath(), "Component_Displacement"))
             os.mkdir(os.path.join(self.getFilepath(), "X_Z_Plane"))
             os.mkdir(os.path.join(self.getFilepath(), "Distance_Over_Time"))
-
-        
 
     def log(self, sim: Simulation, delta_t: float):
         self.__positions.append(copy.copy(self._getEntities()["entity"].getLocation()))
@@ -174,21 +159,32 @@ class PositionLogger(GraphingLogger):
 
 
 class VelocityLogger(ActionLogger):
-    def __init__(self, entity: FreeBody, trigger = (lambda self, sim, delta_t: False), zero_time_on_action: bool = False, show_graphs = True, file_save_path = None, *args, **kwargs):
-        self.__showGraphs = show_graphs
-        self.__filepath = file_save_path
-        if self.__filepath is not None:
-            try:
-                shutil.rmtree(os.path.join(self.__filepath, "graphing_output"))
-            except: pass
-
-            os.mkdir(os.path.join(self.__filepath, "graphing_output"))
-            os.mkdir(os.path.join(self.__filepath, "graphing_output/Velocity_Log_Component_Velocity"))
-            os.mkdir(os.path.join(self.__filepath, "graphing_output/Velocity_Log_X_Z_Velocity_Plane"))
-            os.mkdir(os.path.join(self.__filepath, "graphing_output/Velocity_Log_Speed_Over_Time"))
-
+    def __init__(self, entity: FreeBody, name = "Velocity_Logger", runID = "run", **kwargs):
         self.__velocities = [copy.copy(entity.getVelocity())]
-        super().__init__(entities = {"entity":entity}, trigger = trigger, action = self.__customAction, zero_time_on_action = zero_time_on_action, *args, **kwargs)
+        super().__init__(name = name, runID = runID, entities = {"entity":entity}, action = self.__customAction, **kwargs)
+
+        if self.getFilepath() is not None:
+            os.mkdir(os.path.join(self.getFilepath(), "Component_Velocity"))
+            os.mkdir(os.path.join(self.getFilepath(), "X_Z_Velocity_Plane"))
+            os.mkdir(os.path.join(self.getFilepath(), "Speed_Over_Time"))
+        
+        
+        
+        
+        #self.__showGraphs = show_graphs
+        #self.__filepath = file_save_path
+        #if self.__filepath is not None:
+        #    try:
+        #        shutil.rmtree(os.path.join(self.__filepath, "graphing_output"))
+        #    except: pass
+
+        #    os.mkdir(os.path.join(self.__filepath, "graphing_output"))
+        #    os.mkdir(os.path.join(self.__filepath, "graphing_output/Velocity_Log_Component_Velocity"))
+        #    os.mkdir(os.path.join(self.__filepath, "graphing_output/Velocity_Log_X_Z_Velocity_Plane"))
+        #    os.mkdir(os.path.join(self.__filepath, "graphing_output/Velocity_Log_Speed_Over_Time"))
+
+        #self.__velocities = [copy.copy(entity.getVelocity())]
+        #super().__init__(entities = {"entity":entity}, trigger = trigger, action = self.__customAction, zero_time_on_action = zero_time_on_action, *args, **kwargs)
 
     def log(self, sim: Simulation, delta_t: float):
         self.__velocities.append(copy.copy(self._getEntities()["entity"].getVelocity()))
@@ -200,6 +196,8 @@ class VelocityLogger(ActionLogger):
 
     def __customAction(self, sim: Simulation):
         sim.pause()
+
+        filepath = self.getFilepath()
 
         speed = []
         x = []
@@ -219,9 +217,9 @@ class VelocityLogger(ActionLogger):
         plt.xlabel("Time (s)")
         plt.ylabel("Component Velocity ($ms^{-1}$)")
         plt.legend()
-        if self.__filepath is not None:
-            plt.savefig(os.path.join(self.__filepath, "graphing_output/Velocity_Log_Component_Velocity/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
-        if self.__showGraphs:
+        if filepath is not None:
+            plt.savefig(os.path.join(filepath, "Component_Velocity/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+        if self.getShowGraphs():
             plt.show()
         else:
             plt.clf()
@@ -229,9 +227,9 @@ class VelocityLogger(ActionLogger):
         plt.plot(x, z)
         plt.xlabel("X Velocity (m)")
         plt.ylabel("Z Velocity (m)")
-        if self.__filepath is not None:
-            plt.savefig(os.path.join(self.__filepath, "graphing_output/Velocity_Log_X_Z_Velocity_Plane/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
-        if self.__showGraphs:
+        if filepath is not None:
+            plt.savefig(os.path.join(filepath, "X_Z_Velocity_Plane/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+        if self.getShowGraphs():
             plt.show()
         else:
             plt.clf()
@@ -239,9 +237,9 @@ class VelocityLogger(ActionLogger):
         plt.plot(t, speed)
         plt.xlabel("Time (s)")
         plt.ylabel("Speed ($ms^{-1}$)")
-        if self.__filepath is not None:
-            plt.savefig(os.path.join(self.__filepath, "graphing_output/Velocity_Log_Speed_Over_Time/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
-        if self.__showGraphs:
+        if filepath is not None:
+            plt.savefig(os.path.join(filepath, "graphing_output/Velocity_Log_Speed_Over_Time/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+        if self.getShowGraphs():
             plt.show()
         else:
             plt.clf()
@@ -251,21 +249,30 @@ class VelocityLogger(ActionLogger):
 
 
 class SeperationLogger(ActionLogger):
-    def __init__(self, entity: Moveable, referenceEntity: Moveable, trigger = lambda self, sim, delta_t: False, zero_time_on_action: bool = False, show_graphs = True, file_save_path = None, *args, **kwargs):
-        self.__showGraphs = show_graphs
-        self.__filepath = file_save_path
-        if self.__filepath is not None:
-            try:
-                shutil.rmtree(os.path.join(self.__filepath, "graphing_output"))
-            except: pass
-
-            os.mkdir(os.path.join(self.__filepath, "graphing_output"))
-            os.mkdir(os.path.join(self.__filepath, "graphing_output/Seperation_Log_Component_Displacement"))
-            os.mkdir(os.path.join(self.__filepath, "graphing_output/Seperation_Log_X_Z_Plane"))
-            os.mkdir(os.path.join(self.__filepath, "graphing_output/Seperation_Log_Distance_Over_Time"))
-
+    def __init__(self, entity: Moveable, referenceEntity: Moveable, name = "Seperation_Logger", runID = "run", **kwargs):
         self.__positions = {"entity":[copy.copy(entity.getLocation())], "reference_entity":[copy.copy(referenceEntity.getLocation())]}
-        super().__init__(entities = {"entity":entity, "reference_entity":referenceEntity}, trigger = trigger, action = self.__customAction, zero_time_on_action = zero_time_on_action, *args, **kwargs)
+        super().__init__(name = name, runID = runID, entities = {"entity":entity, "reference_entity":referenceEntity}, action = self.__customAction, **kwargs)
+
+        if self.getFilepath() is not None:
+            os.mkdir(os.path.join(self.getFilepath(), "Component_Displacement"))
+            os.mkdir(os.path.join(self.getFilepath(), "X_Z_Plane"))
+            os.mkdir(os.path.join(self.getFilepath(), "Distance_Over_Time"))
+    
+    #def __init__(self, entity: Moveable, referenceEntity: Moveable, trigger = lambda self, sim, delta_t: False, zero_time_on_action: bool = False, show_graphs = True, file_save_path = None, *args, **kwargs):
+    #    self.__showGraphs = show_graphs
+    #    self.__filepath = file_save_path
+    #    if self.__filepath is not None:
+    #        try:
+    #            shutil.rmtree(os.path.join(self.__filepath, "graphing_output"))
+    #        except: pass
+
+    #        os.mkdir(os.path.join(self.__filepath, "graphing_output"))
+    #        os.mkdir(os.path.join(self.__filepath, "graphing_output/Seperation_Log_Component_Displacement"))
+    #        os.mkdir(os.path.join(self.__filepath, "graphing_output/Seperation_Log_X_Z_Plane"))
+    #        os.mkdir(os.path.join(self.__filepath, "graphing_output/Seperation_Log_Distance_Over_Time"))
+
+    #    self.__positions = {"entity":[copy.copy(entity.getLocation())], "reference_entity":[copy.copy(referenceEntity.getLocation())]}
+    #    super().__init__(entities = {"entity":entity, "reference_entity":referenceEntity}, trigger = trigger, action = self.__customAction, zero_time_on_action = zero_time_on_action, *args, **kwargs)
 
     def log(self, sim: Simulation, delta_t: float):
         self.__positions["entity"].append(copy.copy(self._getEntities()["entity"].getLocation()))
@@ -279,6 +286,8 @@ class SeperationLogger(ActionLogger):
 
     def __customAction(self, sim: Simulation):
         sim.pause()
+
+        filepath = self.getFilepath()
 
         distance = []
         displacement_x = []
@@ -302,9 +311,9 @@ class SeperationLogger(ActionLogger):
         plt.xlabel("Time (s)")
         plt.ylabel("Seperation Component Displacement (m)")
         plt.legend()
-        if self.__filepath is not None:
-            plt.savefig(os.path.join(self.__filepath, "graphing_output/Seperation_Log_Component_Displacement/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
-        if self.__showGraphs:
+        if self.filepath is not None:
+            plt.savefig(os.path.join(self.filepath, "Component_Displacement/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+        if self.getShowGraphs():
             plt.show()
         else:
             plt.clf()
@@ -312,9 +321,9 @@ class SeperationLogger(ActionLogger):
         plt.plot(displacement_x, displacement_z)
         plt.xlabel("X Displacement (m)")
         plt.ylabel("Z Displacement (m)")
-        if self.__filepath is not None:
-            plt.savefig(os.path.join(self.__filepath, "graphing_output/Seperation_Log_X_Z_Plane/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
-        if self.__showGraphs:
+        if self.filepath is not None:
+            plt.savefig(os.path.join(self.filepath, "X_Z_Plane/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+        if self.getShowGraphs():
             plt.show()
         else:
             plt.clf()
@@ -322,9 +331,9 @@ class SeperationLogger(ActionLogger):
         plt.plot(t, distance)
         plt.xlabel("Time (s)")
         plt.ylabel("Distance (m)")
-        if self.__filepath is not None:
-            plt.savefig(os.path.join(self.__filepath, "graphing_output/Seperation_Log_Distance_Over_Time/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
-        if self.__showGraphs:
+        if self.filepath is not None:
+            plt.savefig(os.path.join(self.filepath, "Distance_Over_Time/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+        if self.getShowGraphs():
             plt.show()
         else:
             plt.clf()
