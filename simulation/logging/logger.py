@@ -15,6 +15,8 @@ class Logger(object):
         self.__entities = entities
         self.__time = [0]
 
+    simulationoutputFolderInitialised = False
+
     def _getEntities(self):
         return self.__entities
     
@@ -63,14 +65,21 @@ class GraphingLogger(ActionLogger):
         self.__filepath = file_save_path
         self.__runID = runID
         if self.__filepath is not None:
+            if not Logger.simulationoutputFolderInitialised:
+                try:
+                    shutil.rmtree(os.path.join(self.__filepath, "graphing_output/{}".format(runID)))
+                except: pass
+                try:
+                    os.mkdir(os.path.join(self.__filepath, "graphing_output"))
+                except: pass
+                try:
+                    os.mkdir(os.path.join(self.__filepath, "graphing_output/{}".format(runID)))
+                except: pass
+            self.__filepath = os.path.join(self.__filepath, "graphing_output/{}/{}".format(runID, name))
             try:
-                shutil.rmtree(os.path.join(self.__filepath, "graphing_output/{}".format(runID)))
-            except: pass
-            try:
-                os.mkdir(os.path.join(self.__filepath, "graphing_output"))
-            except: pass
-            self.__filepath = os.path.join(self.__filepath, "graphing_output/{}".format(runID))
-            os.mkdir(self.__filepath)
+                os.mkdir(self.__filepath)
+            except:
+                raise ValueError("A logger with the same name already exists!")
 
         super().__init__(**kwargs)
 

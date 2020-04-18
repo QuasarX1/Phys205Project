@@ -103,10 +103,18 @@ else:
     if filepath is None:
         filepath = input("Where should any graphs be saved?\n>>> ")
 
+    #simulation.onItterationEnd += PositionLogger(name = "earth_position_logger",
+    #                                             runID = runID,
+    #                                             entity = earth,
+    #                                             trigger = lambda self, sim, delta_t: len(self._getTime()) > 8,
+    #                                             zero_time_on_action = False,
+    #                                             show_graphs = False,
+    #                                             file_save_path = filepath).log
+
     simulation.onItterationEnd += PositionLogger(name = "earth_position_logger",
                                                  runID = runID,
                                                  entity = earth,
-                                                 trigger = lambda self, sim, delta_t: len(self._getTime()) > 8,
+                                                 trigger = lambda self, sim, delta_t: self._getTime()[-1] >= 60*60*24*365.25,
                                                  zero_time_on_action = False,
                                                  show_graphs = False,
                                                  file_save_path = filepath).log
