@@ -64,7 +64,7 @@ class Sphere(Renderable_3DSolid):
         
         vertices = [pygame.Vector3(0.0, -1.0, 0.0)]
         for y in np.linspace(-1.0, 1.0, planes)[1:-1]:#TODO: alter step
-            planeRadius = 1 - y**2
+            planeRadius = np.sqrt(1 - y**2)
             for phi in np.linspace(0, 2 * np.pi, angles, endpoint = False):#TODO: alter step in radians
                 vertices.append(pygame.Vector3(np.cos(phi) * planeRadius, y, np.sin(phi) * planeRadius))
         vertices.append(pygame.Vector3(0.0, 1.0, 0.0))
@@ -74,12 +74,12 @@ class Sphere(Renderable_3DSolid):
             edges.append((0, i))
 
         for index in range(1, len(vertices) - 1 - angles):
-            edges.append((index, angles * (index // angles) + index % angles + 1))
+            edges.append((index, (angles * ((index - 1) // angles)) + (index % angles + 1)))
             edges.append((index, index + angles))
 
         for i in range(angles):
             index += 1
-            edges.append((index, angles * (index // angles) + index % angles + 1))
+            edges.append((index, (angles * ((index - 1) // angles)) + (index % angles + 1)))
 
         numOfVertices = len(vertices)
         lastVertex = numOfVertices - 1

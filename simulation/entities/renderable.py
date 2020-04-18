@@ -167,6 +167,7 @@ class Renderable_3DWireframe(Renderable_3D):
     def setScaleFactor(self, new_scale: float):
         self.__scale = new_scale
 
+    
     def render(self, surface: pygame.Surface, camera: Camera, pixelsPerMeter = 1):
         newVertices = []
         for i in range(len(self.__vertices)):
@@ -180,19 +181,6 @@ class Renderable_3DWireframe(Renderable_3D):
                                  self.__colour,
                                  (startPosition.x, surface.get_height() - startPosition.y),
                                  (endPosition.x, surface.get_height() - endPosition.y))
-
-    """
-    def render(self, surface: pygame.Surface, camera: Camera, pixelsPerMeter = 1):
-        for edge in self.__edges:
-            if camera.isInView(self.getLocation() + self.__vertices[edge[0]] * self.__scale) or camera.isInView(self.getLocation() + self.__vertices[edge[1]] * self.__scale):
-                startPosition = (camera.calculatePerspective(self.getLocation() + self.__vertices[edge[0]] * self.__scale)).elementwise() * pixelsPerMeter
-                endPosition = (camera.calculatePerspective(self.getLocation() + self.__vertices[edge[1]] * self.__scale)).elementwise() * pixelsPerMeter
-           
-                pygame.draw.line(surface,
-                                 self.__colour,
-                                 (startPosition.x, startPosition.y),
-                                 (endPosition.x, endPosition.y))
-    """
 
 
 

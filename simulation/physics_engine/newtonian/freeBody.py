@@ -97,5 +97,7 @@ class FreeBody(Moveable):
         #if self.__velocity.magnitude() < 0.01:
         #    self.__velocity = pygame.Vector3(0, 0, 0)
 
+        self.rotate_azimuth(delta_t * self.__angularVelocity)
+
     def post_update(self):
         self.__forces = []
