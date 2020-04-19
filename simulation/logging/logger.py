@@ -10,12 +10,38 @@ from simulation.entities.moveable import Moveable
 from simulation.physics_engine.newtonian.freeBody import FreeBody
 
 class Logger(object):
-    def __init__(self, entities: dict, **kwargs):
+    def __init__(self, entities: dict, name: str, runID: str, file_save_path = None, **kwargs):
         super().__init__(**kwargs)
         self.__entities = entities
         self.__time = [0]
+        self.__filepath = file_save_path
+        self.__runID = runID
+        self.__name = name
 
-    simulationoutputFolderInitialised = False
+        self._initialiseOutputFolder()
+
+    _simulationOutputFolderInitialised = False
+
+    def _initialiseOutputFolder(self):
+        if self.__filepath is not None:
+            if not Logger._simulationOutputFolderInitialised:
+                try:
+                    shutil.rmtree(os.path.join(self.__filepath, "logging_output/{}".format(self.__runID)))
+                except: pass
+                try:
+                    os.mkdir(os.path.join(self.__filepath, "logging_output"))
+                except: pass
+                try:
+                    os.mkdir(os.path.join(self.__filepath, "logging_output/{}".format(self.__runID)))
+                except: pass
+
+                Logger._simulationOutputFolderInitialised = True
+
+            self.__filepath = os.path.join(self.__filepath, "logging_output/{}/{}".format(self.__runID, self.__name))
+            try:
+                os.mkdir(self.__filepath)
+            except:
+                raise ValueError("A logger with the same name already exists!")
 
     def _getEntities(self):
         return self.__entities
@@ -35,6 +61,15 @@ class Logger(object):
     def resetLog(self, set_time_to_zero: bool = False):
         self.__time = [self.__time[-1] if not set_time_to_zero else 0]
 
+    def getFilepath(self):
+        return self.__filepath
+
+    def getRunID(self):
+        return self.__runID
+
+    def getName(self):
+        return self.__name
+
 
 
 class ActionLogger(Logger):
@@ -43,6 +78,7 @@ class ActionLogger(Logger):
         self.__trigger = trigger
         self.__zero_time_on_action = zero_time_on_action
         self.__action = action
+        self.__actionCounter = 0
 
     def log(self, sim: Simulation, delta_t: float):
         super().log(sim, delta_t)
@@ -56,48 +92,36 @@ class ActionLogger(Logger):
 
     def action(self, sim: Simulation):
         self.__action(sim)
+        self.__actionCounter += 1
+
+    def getActionCounter(self):
+        return self.__actionCounter
 
 
 
 class GraphingLogger(ActionLogger):
-    def __init__(self, name: str, runID: str, show_graphs = True, file_save_path = None, **kwargs):
+    def __init__(self, show_graphs = True, **kwargs):
         self.__showGraphs = show_graphs
-        self.__filepath = file_save_path
-        self.__runID = runID
-        if self.__filepath is not None:
-            if not Logger.simulationoutputFolderInitialised:
-                try:
-                    shutil.rmtree(os.path.join(self.__filepath, "graphing_output/{}".format(runID)))
-                except: pass
-                try:
-                    os.mkdir(os.path.join(self.__filepath, "graphing_output"))
-                except: pass
-                try:
-                    os.mkdir(os.path.join(self.__filepath, "graphing_output/{}".format(runID)))
-                except: pass
-            self.__filepath = os.path.join(self.__filepath, "graphing_output/{}/{}".format(runID, name))
-            try:
-                os.mkdir(self.__filepath)
-            except:
-                raise ValueError("A logger with the same name already exists!")
 
         super().__init__(**kwargs)
-
-    def getFilepath(self):
-        return self.__filepath
 
     def getShowGraphs(self):
         return self.__showGraphs
 
-    def getRunID(self):
-        return self.__runID
+    @staticmethod
+    def createChunkOfDataTrigger(number_of_data_points: int):
+        return lambda self, sim, delta_t: len(self._getTime()) >= number_of_data_points
+
+    @staticmethod
+    def createTimePeriodTrigger(time_period: float):
+        return lambda self, sim, delta_t: self._getTime()[-1] - self.getActionCounter() * time_period >= time_period
 
 
 
 class PositionLogger(GraphingLogger):
-    def __init__(self, entity: Moveable, name = "Position_Logger", runID = "run", **kwargs):
+    def __init__(self, entity: Moveable, name = "Position_Logger", **kwargs):
         self.__positions = [copy.copy(entity.getLocation())]
-        super().__init__(name = name, runID = runID, entities = {"entity":entity}, action = self.__customAction, **kwargs)
+        super().__init__(name = name, entities = {"entity":entity}, action = self.__customAction, **kwargs)
 
         if self.getFilepath() is not None:
             os.mkdir(os.path.join(self.getFilepath(), "Component_Displacement"))
@@ -113,8 +137,6 @@ class PositionLogger(GraphingLogger):
         self.__positions = [self.__positions[-1]]
 
     def __customAction(self, sim: Simulation):
-        sim.pause()
-
         filepath = self.getFilepath()
 
         distance = []
@@ -162,8 +184,6 @@ class PositionLogger(GraphingLogger):
             plt.show()
         else:
             plt.clf()
-        
-        sim.resume()
 
 
 
@@ -204,8 +224,6 @@ class VelocityLogger(ActionLogger):
         self.__velocities = [self.__velocities[-1]]
 
     def __customAction(self, sim: Simulation):
-        sim.pause()
-
         filepath = self.getFilepath()
 
         speed = []
@@ -252,8 +270,6 @@ class VelocityLogger(ActionLogger):
             plt.show()
         else:
             plt.clf()
-        
-        sim.resume()
 
 
 
@@ -294,8 +310,6 @@ class SeperationLogger(ActionLogger):
         self.__positions["reference_entity"] = [self.__positions["reference_entity"][-1]]
 
     def __customAction(self, sim: Simulation):
-        sim.pause()
-
         filepath = self.getFilepath()
 
         distance = []
@@ -346,5 +360,3 @@ class SeperationLogger(ActionLogger):
             plt.show()
         else:
             plt.clf()
-        
-        sim.resume()

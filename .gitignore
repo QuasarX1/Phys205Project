@@ -350,4 +350,4 @@ MigrationBackup/
 .ionide/
 
 # Graphing Output
-graphing_output/
+logging_output/

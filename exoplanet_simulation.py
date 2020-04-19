@@ -8,7 +8,7 @@ from simulation.main import RenderMode
 from star import Star
 from planet import Planet
 from simulation.entities.prefabs import UnitCube_Wireframe
-from simulation.logging.logger import PositionLogger, VelocityLogger, SeperationLogger
+from simulation.logging.logger import GraphingLogger, PositionLogger, VelocityLogger, SeperationLogger
 
 
 
@@ -30,13 +30,18 @@ if len(sys.argv) > 1:
 else:
     # Overide these to change the defult settings
     renderOption = RenderMode.real_time
-    #renderOption = RenderMode.no_render
     filepath = None
+
+if renderOption == RenderMode.real_time:
+    showGraphs = True
+else:
+    showGraphs = False
 
 
 
 # Create a blank simulation ----------------------------------------------------------------------------------------------------------
 #simulation = sim.Simulation(renderMode = renderOption, timeScale = 3600.0 * 24.0, cameraDimentions = pygame.Vector2(0.01, 0.01))
+#simulation = sim.Simulation(renderMode = renderOption, timeScale = 3600.0 * 24.0, cameraDimentions = pygame.Vector2(500, 500))
 simulation = sim.Simulation(renderMode = renderOption, timeScale = 3600.0 * 24.0, cameraDimentions = pygame.Vector2(500, 500))
 #simulation = sim.Simulation(renderMode = renderOption, timeScale = 3944700, cameraDimentions = pygame.Vector2(500, 500))
 
@@ -63,22 +68,15 @@ simulation.addLayer("simulation_layer", simulation_layer)
 # Add massive bodies to a simulation layer ------------------------------------------------------------------------------------------
 sun = Star(radius = 6.96 * 10**8,# The Sun's equatorial radius in m
            temperature = 5700,# Surface tempriture in K
-           mass = 1.989 * 10**28,# Mass of the Sun in Kg
+           mass = 1.989 * 10**30,# Mass of the Sun in Kg
            initial_velocity = pygame.Vector3(0, 0, 0),
            initial_angular_velocity = 360 / (60 * 60 * 24 * 25.05),# roatates (siderialy) once at the equator every 25.05 Earth days
            location = pygame.Vector3(0, 0, 0))
 simulation_layer.addEntity("sun", sun)
 
-#earth = Planet(radius = 1.737 * 10**6,
-#                     mass = 5.972 * 10**24,
-#                     initial_velocity = pygame.Vector3(0, 0, 3 * 10**3),
-#                     location = pygame.Vector3(1.496 * 10**11, 0, 0),
-#                     colour = pygame.Color(0, 255, 0))
-#simulation_layer.addEntity("earth", earth)
-
 earth = Planet(radius = 1.737 * 10**6,# Earth's equatorial radius in m
                mass = 5.972 * 10**24,# Earth's mass in Kg
-               initial_velocity = pygame.Vector3(0, 0, 2.997930184 * 10**3),# The Earth's orbital velocity in m/s
+               initial_velocity = pygame.Vector3(0, 0, 2.997930184 * 10**4),# The Earth's orbital velocity in m/s
                initial_angular_velocity = 360 / (60 * 60 * 23.56),# roatates (siderialy) once at the equator every 23.56 hours
                location = pygame.Vector3(1.496 * 10**11, 0, 0),# The distance between the Earth and the Sun in m
                colour = pygame.Color(0, 255, 0))# Arbitrary colour
@@ -94,37 +92,15 @@ earth.bindEntity_by_name("sun", simulation_layer)
 
 
 # Set up logging for important quantities --------------------------------------------------------------------------------------------
-if renderOption == RenderMode.real_time:
-    pass
-    #simulation.onItterationEnd += PositionLogger(earth, lambda self, sim, delta_t: len(self._getTime()) > 1000, False).log
-    #simulation.onItterationEnd += VelocityLogger(earth, lambda self, sim, delta_t: len(self._getTime()) > 1000, False).log
-    #simulation.onItterationEnd += SeperationLogger(earth, target_star, lambda self, sim, delta_t: len(self._getTime()) > 2000, False).log
-else:
-    if filepath is None:
-        filepath = input("Where should any graphs be saved?\n>>> ")
+simulation.onItterationEnd += PositionLogger(name = "earth_position_logger",
+                                             runID = runID,
+                                             entity = earth,
+                                             trigger = GraphingLogger.createTimePeriodTrigger(60*60*24*365.25),
+                                             zero_time_on_action = False,
+                                             show_graphs = showGraphs,
+                                             file_save_path = filepath).log
 
-    #simulation.onItterationEnd += PositionLogger(name = "earth_position_logger",
-    #                                             runID = runID,
-    #                                             entity = earth,
-    #                                             trigger = lambda self, sim, delta_t: len(self._getTime()) > 8,
-    #                                             zero_time_on_action = False,
-    #                                             show_graphs = False,
-    #                                             file_save_path = filepath).log
-
-    simulation.onItterationEnd += PositionLogger(name = "earth_position_logger",
-                                                 runID = runID,
-                                                 entity = earth,
-                                                 trigger = lambda self, sim, delta_t: self._getTime()[-1] >= 60*60*24*365.25,
-                                                 zero_time_on_action = False,
-                                                 show_graphs = False,
-                                                 file_save_path = filepath).log
-
-    #simulation.onItterationEnd += VelocityLogger(earth, lambda self, sim, delta_t: len(self._getTime()) > 100000, False, show_graphs = False, file_save_path = filepath).log
-    #simulation.onItterationEnd += SeperationLogger(earth, target_star, lambda self, sim, delta_t: len(self._getTime()) > 100000, False, show_graphs = False, file_save_path = filepath).log
-    #simulation.onItterationEnd += SeperationLogger(earth, target_star, lambda self, sim, delta_t: self._getTime()[-1] > 31557600 * 600, False, show_graphs = False, file_save_path = filepath).log
-    #simulation.onItterationEnd += SeperationLogger(earth, target_star, lambda self, sim, delta_t: self._getTime()[-1] > 31557600 / 8, False, show_graphs = False, file_save_path = filepath).log
     
-
 
 # Run the simulation------------------------------------------------------------------------------------------------------------------
 simulation.run()
