@@ -1,5 +1,5 @@
-import pygame
 import numpy as np
+import pygame
 
 def vector_to_array(vector: pygame.Vector3):
     return np.array([[vector.x], [vector.y], [vector.z]])

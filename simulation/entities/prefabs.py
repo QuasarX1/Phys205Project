@@ -1,5 +1,6 @@
-import pygame
 import numpy as np
+import pygame
+
 from simulation.entities.renderable import Renderable_2D, Renderable_2DLine, Renderable_3DWireframe, Renderable_3DSolid
 
 class UnitCube_Wireframe(Renderable_3DWireframe):

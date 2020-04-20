@@ -1,4 +1,5 @@
 import numpy as np
+
 from simulation.physics_engine.constants import c as speed_of_light
 
 def redshift_doppler(velocity_perpendicular):

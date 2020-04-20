@@ -1,6 +1,6 @@
 import pygame
-from simulation.layer import Layer
-from simulation.entities.moveable import Moveable
+
+from simulation.entities import Moveable
 from simulation.physics_engine.newtonian.forces import accelerationFromForceMass, forceBetweenTwoLargeBodies
 from simulation.physics_engine.newtonian.suvat import displacement_without_final_velocity, final_velocity_without_displacement
 
@@ -49,13 +49,16 @@ class FreeBody(Moveable):
     def addForce(self, force: pygame.Vector3):
         self.__forces.append(force)
 
+    def getBoundEntities(self):
+        return self.__gravitationallyBoundEntities
+
     def bindEntity(self, entity):
         if not isinstance(entity, FreeBody):
             raise TypeError("The entity's type did not inherit FreeBody.")
 
         self.__gravitationallyBoundEntities.append(entity)
 
-    def bindEntity_by_name(self, name: str, layer: Layer):
+    def bindEntity_by_name(self, name: str, layer):
         entity = layer.getEntity(name)
 
         if not isinstance(entity, FreeBody):
@@ -69,7 +72,7 @@ class FreeBody(Moveable):
         
         self.__gravitationallyBoundEntities.remove(entity)
 
-    def unbindEntity_by_name(self, name: str, layer: Layer):
+    def unbindEntity_by_name(self, name: str, layer):
         entity = layer.getEntity(name)
 
         if not issubclass(entity):

@@ -1,8 +1,8 @@
-import pygame
 import numpy as np
+import pygame
+
 from simulation.entities.moveable import Moveable
 from simulation.physics_engine.newtonian.freeBody import FreeBody
-from simulation.graphics.HUD.text import Text, UpdatingText
 
 
 
@@ -24,6 +24,8 @@ class Line(object):
             self.dl_by_dz = np.sqrt(1 + (dx / dz)**2 + (dy / dz)**2) * dz / np.abs(dz)
         else:
             self.dl_by_dz = np.inf
+
+
 
 class Ray(Line):
     def __init__(self, p1, p2):
@@ -168,6 +170,9 @@ class Camera_2D(Camera):
         return super().calculatePerspective(location) - pygame.Vector2(self.getLocation().x + self.getWidth() / 2, self.getLocation().y + self.getHeight() / 2)
 
 
+
+
+from simulation.graphics.HUD import Text, UpdatingText
 
 class CameraPositionDisplay(UpdatingText):
     def __init__(self, camera: Camera,

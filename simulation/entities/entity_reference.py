@@ -1,4 +1,3 @@
-from simulation import Simulation
 from simulation.entities.entity import Entity
 
 class Entity_Reference(object):
@@ -6,5 +5,5 @@ class Entity_Reference(object):
         self.layer_name = layer_name
         self.entity_name = entity_name
 
-    def getObject(self, sim: Simulation) -> Entity:
+    def getObject(self, sim) -> Entity:
         return sim.getEntity(self.layer_name, self.entity_name)

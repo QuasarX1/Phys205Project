@@ -1,5 +1,6 @@
 import pygame
 from QuasarCode.edp import Event
+
 from simulation.graphics.HUD.text import Text, ReferencePoint
 
 class Button(Text):

@@ -1,6 +1,8 @@
-import pygame
-import numpy as np
+
 import copy
+import numpy as np
+import pygame
+
 from simulation.entities.entity import Entity
 
 class Moveable(Entity):

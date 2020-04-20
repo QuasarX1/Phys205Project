@@ -1,10 +1,11 @@
-import numpy as np
 import copy
-import os
 import datetime
-import shutil
 from matplotlib import pyplot as plt
-from simulation import Simulation
+import numpy as np
+import os
+import shutil
+
+from simulation.main import Simulation
 from simulation.entities.entity import Entity
 from simulation.entities.moveable import Moveable
 from simulation.physics_engine.newtonian.freeBody import FreeBody
@@ -73,8 +74,8 @@ class Logger(object):
 
 
 class ActionLogger(Logger):
-    def __init__(self, entities: dict, trigger = lambda self, sim, delta_t: False, action = lambda self, sim: 0, zero_time_on_action: bool = False, **kwargs):
-        super().__init__(entities = entities, **kwargs)
+    def __init__(self, trigger = lambda self, sim, delta_t: False, action = lambda self, sim: 0, zero_time_on_action: bool = False, **kwargs):
+        super().__init__(**kwargs)
         self.__trigger = trigger
         self.__zero_time_on_action = zero_time_on_action
         self.__action = action
@@ -119,55 +120,73 @@ class GraphingLogger(ActionLogger):
 
 
 class PositionLogger(GraphingLogger):
-    def __init__(self, entity: Moveable, name = "Position_Logger", **kwargs):
-        self.__positions = [copy.copy(entity.getLocation())]
-        super().__init__(name = name, entities = {"entity":entity}, action = self.__customAction, **kwargs)
+    def __init__(self, entities: dict, name = "Position_Logger", **kwargs):
+        self.__positions = {}
+
+        for key in entities.keys():
+            if not issubclass(type(entities[key]), Moveable):
+                raise TypeError("The entity named \"{}\" was not of type \"Moveable\"".format(key))
+            self.__positions[key] = [copy.copy(entities[key].getLocation())]
+
+        super().__init__(name = name, entities = entities, action = self.__customAction, **kwargs)
 
         if self.getFilepath() is not None:
             os.mkdir(os.path.join(self.getFilepath(), "Component_Displacement"))
+            for key in entities.keys():
+                os.mkdir(os.path.join(self.getFilepath(), "Component_Displacement/{}".format(key)))
             os.mkdir(os.path.join(self.getFilepath(), "X_Z_Plane"))
             os.mkdir(os.path.join(self.getFilepath(), "Distance_Over_Time"))
 
     def log(self, sim: Simulation, delta_t: float):
-        self.__positions.append(copy.copy(self._getEntities()["entity"].getLocation()))
+        for key in self.__positions.keys():
+            self.__positions[key].append(copy.copy(self._getEntities()[key].getLocation()))
         super().log(sim, delta_t)
 
     def resetLog(self, set_time_to_zero: bool = False):
         super().resetLog(set_time_to_zero)
-        self.__positions = [self.__positions[-1]]
+        for key in self.__positions.keys():
+            self.__positions[key] = [self.__positions[key][-1]]
 
     def __customAction(self, sim: Simulation):
         filepath = self.getFilepath()
 
-        distance = []
-        x = []
-        y = []
-        z = []
+        distance = {}
+        x = {}
+        y = {}
+        z = {}
         t = self._getTime()
 
-        for position in self.__positions:
-            distance.append(position.magnitude())
-            x.append(position.x)
-            y.append(position.y)
-            z.append(position.z)
+        for key in self.__positions.keys():
+            distance[key] = []
+            x[key] = []
+            y[key] = []
+            z[key] = []
+            for position in self.__positions[key]:
+                distance[key].append(position.magnitude())
+                x[key].append(position.x)
+                y[key].append(position.y)
+                z[key].append(position.z)
         
-        plt.plot(t, x, color = "blue", label = "X Position")
-        plt.plot(t, y, color = "orange", label = "Y Position")
-        plt.plot(t, z, color = "green", label = "Z Position")
-        plt.xlabel("Time (s)")
-        plt.ylabel("Component Displacement (m)")
-        plt.legend()
-        if filepath is not None:
-            plt.savefig(os.path.join(filepath, "Component_Displacement/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
-        if self.getShowGraphs():
-            plt.show()
-        else:
-            plt.clf()
+        for key in self.__positions.keys():
+            plt.plot(t, x[key], color = "blue", label = "{} X Position".format(key))
+            plt.plot(t, y[key], color = "orange", label = "{} Y Position".format(key))
+            plt.plot(t, z[key], color = "green", label = "{} Z Position".format(key))
+            plt.xlabel("Time (s)")
+            plt.ylabel("Component Displacement (m)")
+            plt.legend()
+            if filepath is not None:
+                plt.savefig(os.path.join(filepath, "Component_Displacement/{}/{}.png".format(key, datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+            if self.getShowGraphs():
+                plt.show()
+            else:
+                plt.clf()
         
         
-        plt.plot(x, z)
+        for key in self.__positions.keys():
+            plt.plot(x[key], z[key], label = key)
         plt.xlabel("X Displacement (m)")
         plt.ylabel("Z Displacement (m)")
+        plt.legend()
         if filepath is not None:
             plt.savefig(os.path.join(filepath, "X_Z_Plane/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
         if self.getShowGraphs():
@@ -175,9 +194,12 @@ class PositionLogger(GraphingLogger):
         else:
             plt.clf()
         
-        plt.plot(t, distance)
+
+        for key in self.__positions.keys():
+            plt.plot(t, distance[key], label = key)
         plt.xlabel("Time (s)")
         plt.ylabel("Distance (m)")
+        plt.legend()
         if filepath is not None:
             plt.savefig(os.path.join(filepath, "Distance_Over_Time/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
         if self.getShowGraphs():

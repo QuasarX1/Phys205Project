@@ -302,5 +302,5 @@ class Layer_Mixed(Layer):
         else:
             return False
 
-from simulation.entities.renderable import Renderable_2D, Renderable_3D
-from simulation.graphics.camera import Camera, Camera_2D
+from simulation.entities import Renderable_2D, Renderable_3D
+from simulation.graphics import Camera, Camera_2D

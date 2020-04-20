@@ -1,4 +1,5 @@
 import numpy as np
+
 from simulation.physics_engine.constants import c as speed_of_light, h as planksConstant, k as boltzmann_constant, sb as stefan_boltzmann_constant, w as weins_constant
 
 def peak_wavelength(surface_temperature):

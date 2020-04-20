@@ -1,5 +1,6 @@
-import pygame
 import numpy as np
+import pygame
+
 from simulation.physics_engine.optics.blackbody import radiance as blackbody_luminosity
 
 def blackbody_visable_colour(temperature):

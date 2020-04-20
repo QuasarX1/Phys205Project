@@ -1,5 +1,6 @@
-import pygame
 from enum import Enum
+import pygame
+
 from simulation.entities.renderable import Renderable_2D
 
 class ReferencePoint(Enum):

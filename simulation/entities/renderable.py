@@ -1,4 +1,5 @@
 import pygame
+
 from simulation.entities.moveable import Moveable
 
 class Renderable_2D(Moveable):
