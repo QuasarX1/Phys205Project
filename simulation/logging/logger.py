@@ -187,7 +187,7 @@ class PositionLogger(GraphingLogger):
 
 
 
-class VelocityLogger(ActionLogger):
+class VelocityLogger(GraphingLogger):
     def __init__(self, entity: FreeBody, name = "Velocity_Logger", runID = "run", **kwargs):
         self.__velocities = [copy.copy(entity.getVelocity())]
         super().__init__(name = name, runID = runID, entities = {"entity":entity}, action = self.__customAction, **kwargs)
@@ -265,7 +265,7 @@ class VelocityLogger(ActionLogger):
         plt.xlabel("Time (s)")
         plt.ylabel("Speed ($ms^{-1}$)")
         if filepath is not None:
-            plt.savefig(os.path.join(filepath, "graphing_output/Velocity_Log_Speed_Over_Time/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+            plt.savefig(os.path.join(filepath, "Speed_Over_Time/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
         if self.getShowGraphs():
             plt.show()
         else:
@@ -273,7 +273,7 @@ class VelocityLogger(ActionLogger):
 
 
 
-class SeperationLogger(ActionLogger):
+class SeperationLogger(GraphingLogger):
     def __init__(self, entity: Moveable, referenceEntity: Moveable, name = "Seperation_Logger", runID = "run", **kwargs):
         self.__positions = {"entity":[copy.copy(entity.getLocation())], "reference_entity":[copy.copy(referenceEntity.getLocation())]}
         super().__init__(name = name, runID = runID, entities = {"entity":entity, "reference_entity":referenceEntity}, action = self.__customAction, **kwargs)

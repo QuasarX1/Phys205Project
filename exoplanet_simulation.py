@@ -100,6 +100,14 @@ simulation.onItterationEnd += PositionLogger(name = "earth_position_logger",
                                              show_graphs = showGraphs,
                                              file_save_path = filepath).log
 
+simulation.onItterationEnd += VelocityLogger(name = "earth_velocity_logger",
+                                             runID = runID,
+                                             entity = earth,
+                                             trigger = GraphingLogger.createTimePeriodTrigger(60*60*24*365.25),
+                                             zero_time_on_action = False,
+                                             show_graphs = showGraphs,
+                                             file_save_path = filepath).log
+
     
 
 # Run the simulation------------------------------------------------------------------------------------------------------------------
