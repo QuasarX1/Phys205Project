@@ -65,6 +65,9 @@ class Logger(object):
     def getFilepath(self):
         return self.__filepath
 
+    def setFilepath(self, new_filepath):
+        self.__filepath = new_filepath
+
     def getRunID(self):
         return self.__runID
 
@@ -128,7 +131,7 @@ class PositionLogger(GraphingLogger):
                 raise TypeError("The entity named \"{}\" was not of type \"Moveable\"".format(key))
             self.__positions[key] = [copy.copy(entities[key].getLocation())]
 
-        super().__init__(name = name, entities = entities, action = self.__customAction, **kwargs)
+        super().__init__(name = name, entities = entities, action = self._customAction, **kwargs)
 
         if self.getFilepath() is not None:
             os.mkdir(os.path.join(self.getFilepath(), "Component_Displacement"))
@@ -136,6 +139,9 @@ class PositionLogger(GraphingLogger):
                 os.mkdir(os.path.join(self.getFilepath(), "Component_Displacement/{}".format(key)))
             os.mkdir(os.path.join(self.getFilepath(), "X_Z_Plane"))
             os.mkdir(os.path.join(self.getFilepath(), "Distance_Over_Time"))
+
+    def _getPositions(self):
+        return self.__positions
 
     def log(self, sim: Simulation, delta_t: float):
         for key in self.__positions.keys():
@@ -147,7 +153,7 @@ class PositionLogger(GraphingLogger):
         for key in self.__positions.keys():
             self.__positions[key] = [self.__positions[key][-1]]
 
-    def __customAction(self, sim: Simulation):
+    def _customAction(self, sim: Simulation):
         filepath = self.getFilepath()
 
         distance = {}
@@ -167,6 +173,7 @@ class PositionLogger(GraphingLogger):
                 y[key].append(position.y)
                 z[key].append(position.z)
         
+        plt.figure()
         for key in self.__positions.keys():
             plt.plot(t, x[key], color = "blue", label = "{} X Position".format(key))
             plt.plot(t, y[key], color = "orange", label = "{} Y Position".format(key))
@@ -178,12 +185,17 @@ class PositionLogger(GraphingLogger):
                 plt.savefig(os.path.join(filepath, "Component_Displacement/{}/{}.png".format(key, datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
             if self.getShowGraphs():
                 plt.show()
-            else:
-                plt.clf()
+            plt.clf()
+            plt.close()
         
         
+        plt.figure(figsize = (7, 7))
         for key in self.__positions.keys():
-            plt.plot(x[key], z[key], label = key)
+            entity = self._getEntities()[key]
+            if hasattr(entity, "getColour"):
+                plt.plot(x[key], z[key], label = key, color = tuple([value / 255 for value in entity.getColour()]))
+            else:
+                plt.plot(x[key], z[key], label = key)
         plt.xlabel("X Displacement (m)")
         plt.ylabel("Z Displacement (m)")
         plt.legend()
@@ -191,12 +203,17 @@ class PositionLogger(GraphingLogger):
             plt.savefig(os.path.join(filepath, "X_Z_Plane/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
         if self.getShowGraphs():
             plt.show()
-        else:
-            plt.clf()
+        plt.clf()
+        plt.close()
         
 
+        plt.figure()
         for key in self.__positions.keys():
-            plt.plot(t, distance[key], label = key)
+            entity = self._getEntities()[key]
+            if hasattr(entity, "getColour"):
+                plt.plot(t, distance[key], label = key, color = tuple([value / 255 for value in entity.getColour()]))
+            else:
+                plt.plot(t, distance[key], label = key)
         plt.xlabel("Time (s)")
         plt.ylabel("Distance (m)")
         plt.legend()
@@ -204,181 +221,191 @@ class PositionLogger(GraphingLogger):
             plt.savefig(os.path.join(filepath, "Distance_Over_Time/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
         if self.getShowGraphs():
             plt.show()
-        else:
-            plt.clf()
+        plt.clf()
+        plt.close()
 
 
 
 class VelocityLogger(GraphingLogger):
-    def __init__(self, entity: FreeBody, name = "Velocity_Logger", runID = "run", **kwargs):
-        self.__velocities = [copy.copy(entity.getVelocity())]
-        super().__init__(name = name, runID = runID, entities = {"entity":entity}, action = self.__customAction, **kwargs)
+    def __init__(self, entities: dict, name = "Velocity_Logger", **kwargs):
+        self.__velocities = {}
+
+        for key in entities.keys():
+            if not issubclass(type(entities[key]), FreeBody):
+                raise TypeError("The entity named \"{}\" was not of type \"FreeBody\"".format(key))
+            self.__velocities[key] = [copy.copy(entities[key].getVelocity())]
+
+        super().__init__(name = name, entities = entities, action = self._customAction, **kwargs)
 
         if self.getFilepath() is not None:
             os.mkdir(os.path.join(self.getFilepath(), "Component_Velocity"))
+            for key in entities.keys():
+                os.mkdir(os.path.join(self.getFilepath(), "Component_Velocity/{}".format(key)))
             os.mkdir(os.path.join(self.getFilepath(), "X_Z_Velocity_Plane"))
             os.mkdir(os.path.join(self.getFilepath(), "Speed_Over_Time"))
-        
-        
-        
-        
-        #self.__showGraphs = show_graphs
-        #self.__filepath = file_save_path
-        #if self.__filepath is not None:
-        #    try:
-        #        shutil.rmtree(os.path.join(self.__filepath, "graphing_output"))
-        #    except: pass
-
-        #    os.mkdir(os.path.join(self.__filepath, "graphing_output"))
-        #    os.mkdir(os.path.join(self.__filepath, "graphing_output/Velocity_Log_Component_Velocity"))
-        #    os.mkdir(os.path.join(self.__filepath, "graphing_output/Velocity_Log_X_Z_Velocity_Plane"))
-        #    os.mkdir(os.path.join(self.__filepath, "graphing_output/Velocity_Log_Speed_Over_Time"))
-
-        #self.__velocities = [copy.copy(entity.getVelocity())]
-        #super().__init__(entities = {"entity":entity}, trigger = trigger, action = self.__customAction, zero_time_on_action = zero_time_on_action, *args, **kwargs)
 
     def log(self, sim: Simulation, delta_t: float):
-        self.__velocities.append(copy.copy(self._getEntities()["entity"].getVelocity()))
+        for key in self.__positions.keys():
+            self.__velocities[key].append(copy.copy(self._getEntities()[key]["entity"].getVelocity()))
         super().log(sim, delta_t)
 
     def resetLog(self, set_time_to_zero: bool = False):
         super().resetLog(set_time_to_zero)
-        self.__velocities = [self.__velocities[-1]]
+        for key in self.__positions.keys():
+            self.__velocities[key] = [self.__velocities[key][-1]]
 
-    def __customAction(self, sim: Simulation):
+    def _customAction(self, sim: Simulation):
         filepath = self.getFilepath()
 
-        speed = []
-        x = []
-        y = []
-        z = []
+        speed = {}
+        x = {}
+        y = {}
+        z = {}
         t = self._getTime()
 
-        for velocity in self.__velocities:
-            speed.append(np.abs(velocity.magnitude()))
-            x.append(velocity.x)
-            y.append(velocity.y)
-            z.append(velocity.z)
+        for key in self.__velocities.keys():
+            speed[key] = []
+            x[key] = []
+            y[key] = []
+            z[key] = []
+            for velocity in self.__velocities[key]:
+                speed[key].append(velocity.magnitude())
+                x[key].append(velocity.x)
+                y[key].append(velocity.y)
+                z[key].append(velocity.z)
         
-        plt.plot(t, x, color = "blue", label = "X Velocity")
-        plt.plot(t, y, color = "orange", label = "Y Velocity")
-        plt.plot(t, z, color = "green", label = "Z Velocity")
-        plt.xlabel("Time (s)")
-        plt.ylabel("Component Velocity ($ms^{-1}$)")
-        plt.legend()
-        if filepath is not None:
-            plt.savefig(os.path.join(filepath, "Component_Velocity/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
-        if self.getShowGraphs():
-            plt.show()
-        else:
+        plt.figure()
+        for key in self.__velocities.keys():
+            plt.plot(t, x[key], color = "blue", label = "{} X Velocity".format(key))
+            plt.plot(t, y[key], color = "orange", label = "{} Y Velocity".format(key))
+            plt.plot(t, z[key], color = "green", label = "{} Z Velocity".format(key))
+            plt.xlabel("Time (s)")
+            plt.ylabel("Component Velocity ($ms^{-1}$)")
+            plt.legend()
+            if filepath is not None:
+                plt.savefig(os.path.join(filepath, "Component_Velocity/{}/{}.png".format(key, datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+            if self.getShowGraphs():
+                plt.show()
             plt.clf()
+            plt.close()
         
-        plt.plot(x, z)
+
+        plt.figure(figsize = (7, 7))
+        for key in self.__velocities.keys():
+            entity = self._getEntities()[key]
+            if hasattr(entity, "getColour"):
+                plt.plot(x[key], z[key], label = key, color = tuple([value / 255 for value in entity.getColour()]))
+            else:
+                plt.plot(x[key], z[key], label = key)
         plt.xlabel("X Velocity (m)")
         plt.ylabel("Z Velocity (m)")
+        plt.legend()
         if filepath is not None:
             plt.savefig(os.path.join(filepath, "X_Z_Velocity_Plane/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
         if self.getShowGraphs():
             plt.show()
-        else:
-            plt.clf()
+        plt.clf()
+        plt.close()
         
-        plt.plot(t, speed)
+
+        plt.figure()
+        for key in self.__velocities.keys():
+            entity = self._getEntities()[key]
+            if hasattr(entity, "getColour"):
+                plt.plot(t, speed[key], label = key, color = tuple([value / 255 for value in entity.getColour()]))
+            else:
+                plt.plot(t, speed[key], label = key)
         plt.xlabel("Time (s)")
         plt.ylabel("Speed ($ms^{-1}$)")
+        plt.legend()
         if filepath is not None:
             plt.savefig(os.path.join(filepath, "Speed_Over_Time/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
         if self.getShowGraphs():
             plt.show()
-        else:
-            plt.clf()
+        plt.clf()
+        plt.close()
 
 
 
-class SeperationLogger(GraphingLogger):
-    def __init__(self, entity: Moveable, referenceEntity: Moveable, name = "Seperation_Logger", runID = "run", **kwargs):
-        self.__positions = {"entity":[copy.copy(entity.getLocation())], "reference_entity":[copy.copy(referenceEntity.getLocation())]}
-        super().__init__(name = name, runID = runID, entities = {"entity":entity, "reference_entity":referenceEntity}, action = self.__customAction, **kwargs)
+class SeperationLogger(PositionLogger):
+    def __init__(self, entities: dict, referenceEntity: Moveable, name = "Position_Logger", **kwargs):
+        entities["reference_entity"] = referenceEntity
+        super().__init__(entities = entities, name = name, **kwargs)
 
-        if self.getFilepath() is not None:
-            os.mkdir(os.path.join(self.getFilepath(), "Component_Displacement"))
-            os.mkdir(os.path.join(self.getFilepath(), "X_Z_Plane"))
-            os.mkdir(os.path.join(self.getFilepath(), "Distance_Over_Time"))
-    
-    #def __init__(self, entity: Moveable, referenceEntity: Moveable, trigger = lambda self, sim, delta_t: False, zero_time_on_action: bool = False, show_graphs = True, file_save_path = None, *args, **kwargs):
-    #    self.__showGraphs = show_graphs
-    #    self.__filepath = file_save_path
-    #    if self.__filepath is not None:
-    #        try:
-    #            shutil.rmtree(os.path.join(self.__filepath, "graphing_output"))
-    #        except: pass
-
-    #        os.mkdir(os.path.join(self.__filepath, "graphing_output"))
-    #        os.mkdir(os.path.join(self.__filepath, "graphing_output/Seperation_Log_Component_Displacement"))
-    #        os.mkdir(os.path.join(self.__filepath, "graphing_output/Seperation_Log_X_Z_Plane"))
-    #        os.mkdir(os.path.join(self.__filepath, "graphing_output/Seperation_Log_Distance_Over_Time"))
-
-    #    self.__positions = {"entity":[copy.copy(entity.getLocation())], "reference_entity":[copy.copy(referenceEntity.getLocation())]}
-    #    super().__init__(entities = {"entity":entity, "reference_entity":referenceEntity}, trigger = trigger, action = self.__customAction, zero_time_on_action = zero_time_on_action, *args, **kwargs)
-
-    def log(self, sim: Simulation, delta_t: float):
-        self.__positions["entity"].append(copy.copy(self._getEntities()["entity"].getLocation()))
-        self.__positions["reference_entity"].append(copy.copy(self._getEntities()["reference_entity"].getLocation()))
-        super().log(sim, delta_t)
-
-    def resetLog(self, set_time_to_zero: bool = False):
-        super().resetLog(set_time_to_zero)
-        self.__positions["entity"] = [self.__positions["entity"][-1]]
-        self.__positions["reference_entity"] = [self.__positions["reference_entity"][-1]]
-
-    def __customAction(self, sim: Simulation):
+    def _customAction(self, sim: Simulation):
         filepath = self.getFilepath()
+        positions = self._getPositions()
 
-        distance = []
-        displacement_x = []
-        displacement_y = []
-        displacement_z = []
+        distance = {}
+        displacement_x = {}
+        displacement_y = {}
+        displacement_z = {}
         t = self._getTime()
 
-        for i in range(len(t)):
-            entityLocation = self.__positions["entity"][i]
-            referenceLocation = self.__positions["reference_entity"][i]
+        validKeys = [key for key in positions.keys() if key != "reference_entity"]
 
-            displacement = entityLocation - referenceLocation
-            distance.append(displacement.magnitude())
-            displacement_x.append(displacement.x)
-            displacement_y.append(displacement.y)
-            displacement_z.append(displacement.z)
+        for key in validKeys:
+            distance[key] = []
+            displacement_x[key] = []
+            displacement_y[key] = []
+            displacement_z[key] = []
+            for i in range(len(t)):
+                entityLocation = positions[key][i]
+                referenceLocation = positions["reference_entity"][i]
 
-        plt.plot(t, displacement_x, color = "blue", label = "X Displacement")
-        plt.plot(t, displacement_y, color = "orange", label = "Y Displacement")
-        plt.plot(t, displacement_z, color = "green", label = "Z Displacement")
-        plt.xlabel("Time (s)")
-        plt.ylabel("Seperation Component Displacement (m)")
-        plt.legend()
-        if self.filepath is not None:
-            plt.savefig(os.path.join(self.filepath, "Component_Displacement/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
-        if self.getShowGraphs():
-            plt.show()
-        else:
+                displacement = entityLocation - referenceLocation
+                distance[key].append(displacement.magnitude())
+                displacement_x[key].append(displacement.x)
+                displacement_y[key].append(displacement.y)
+                displacement_z[key].append(displacement.z)
+
+        plt.figure()
+        for key in validKeys:
+            plt.plot(t, displacement_x[key], color = "blue", label = "{} X Displacement".format(key))
+            plt.plot(t, displacement_y[key], color = "orange", label = "{} Y Displacement".format(key))
+            plt.plot(t, displacement_z[key], color = "green", label = "{} Z Displacement".format(key))
+            plt.xlabel("Time (s)")
+            plt.ylabel("Seperation Component Displacement (m)")
+            plt.legend()
+            if filepath is not None:
+                plt.savefig(os.path.join(filepath, "Component_Displacement/{}/{}.png".format(key, datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+            if self.getShowGraphs():
+                plt.show()
             plt.clf()
+            plt.close()
         
-        plt.plot(displacement_x, displacement_z)
+
+        plt.figure(figsize = (7, 7))
+        for key in validKeys:
+            entity = self._getEntities()[key]
+            if hasattr(entity, "getColour"):
+                plt.plot(displacement_x[key], displacement_z[key], label = key, color = tuple([value / 255 for value in entity.getColour()]))
+            else:
+                plt.plot(displacement_x[key], displacement_z[key], label = key)
         plt.xlabel("X Displacement (m)")
         plt.ylabel("Z Displacement (m)")
-        if self.filepath is not None:
-            plt.savefig(os.path.join(self.filepath, "X_Z_Plane/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+        plt.legend()
+        if filepath is not None:
+            plt.savefig(os.path.join(filepath, "X_Z_Plane/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
         if self.getShowGraphs():
             plt.show()
-        else:
-            plt.clf()
+        plt.clf()
+        plt.close()
 
-        plt.plot(t, distance)
+
+        plt.figure()
+        for key in validKeys:
+            entity = self._getEntities()[key]
+            if hasattr(entity, "getColour"):
+                plt.plot(t, distance[key], label = key, color = tuple([value / 255 for value in entity.getColour()]))
+            else:
+                plt.plot(t, distance[key], label = key)
         plt.xlabel("Time (s)")
         plt.ylabel("Distance (m)")
-        if self.filepath is not None:
-            plt.savefig(os.path.join(self.filepath, "Distance_Over_Time/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+        plt.legend()
+        if filepath is not None:
+            plt.savefig(os.path.join(filepath, "Distance_Over_Time/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
         if self.getShowGraphs():
             plt.show()
-        else:
-            plt.clf()
+        plt.clf()
+        plt.close()

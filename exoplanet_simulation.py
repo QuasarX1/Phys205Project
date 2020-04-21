@@ -11,7 +11,7 @@ import uuid
 import simulation as sim
 from simulation import Simulation
 from simulation import RenderMode
-from simulation.entities.astro_bodies import Star, Planet, Sun, Mercury, Earth
+from simulation.entities.astro_bodies import Star, Planet, Sun, Mercury, Venus, Earth
 from simulation.entities.prefabs import UnitCube_Wireframe
 from simulation.logging import GraphingLogger, PositionLogger, VelocityLogger, SeperationLogger
 
@@ -76,6 +76,9 @@ simulation_layer.addEntity("sun", sun)
 
 mercury = Mercury(sun)
 simulation_layer.addEntity("mercury", mercury)
+
+venus = Venus(sun)
+simulation_layer.addEntity("venus", venus)
 
 earth = Earth(sun)
 simulation_layer.addEntity("earth", earth)
@@ -168,6 +171,9 @@ simulation_layer.addEntity("earth", earth)
 
 
 # Set up logging for important quantities --------------------------------------------------------------------------------------------
+logging_time_period = 60*60*24*365.25 * 1
+trigger_function = GraphingLogger.createTimePeriodTrigger(logging_time_period)
+
 #simulation.onItterationEnd += PositionLogger(name = "earth_position_logger",
 #                                             runID = runID,
 #                                             entity = earth,
@@ -184,18 +190,19 @@ simulation_layer.addEntity("earth", earth)
 #                                             show_graphs = showGraphs,
 #                                             file_save_path = filepath).log
 
-simulation.onItterationEnd += PositionLogger(name = "position_logger",
+simulation.onItterationEnd += SeperationLogger(name = "position_logger",
                                              runID = runID,
-                                             entities = {"sun": sun, "mercury": mercury, "earth": earth},
-                                             trigger = GraphingLogger.createTimePeriodTrigger(60*60*24*365.25),
+                                             entities = {"mercury": mercury, "venus": venus, "earth": earth},
+                                             trigger = trigger_function,
                                              zero_time_on_action = False,
                                              show_graphs = showGraphs,
-                                             file_save_path = filepath).log
+                                             file_save_path = filepath,
+                                             referenceEntity = sun).log
 
 simulation.onItterationEnd += PositionLogger(name = "sun_position_logger",
                                              runID = runID,
                                              entities = {"sun": sun},
-                                             trigger = GraphingLogger.createTimePeriodTrigger(60*60*24*365.25),
+                                             trigger = trigger_function,
                                              zero_time_on_action = False,
                                              show_graphs = showGraphs,
                                              file_save_path = filepath).log
