@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<simulation xmlns="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/layout_schema"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/layout_schema simulation_layout_schema.xsd"
+            render_capability="true">
+
+  <camera width="500" height="500" field_of_vision="0.5">
+    <location x="0" y="0" z="-200" />
+    <facing x="0" y="0" z="1" />
+    <vertical x="0" y="1" z="0" />
+  </camera>
+
+  <layer_3D render_capability="true">
+    <star name="target_star" tempriture="100" radius="100">
+      <location x="-200" y="0" z="0" />
+      <facing x="1" y="0" z="0" />
+      <vertical x="0" y="1" z="0" />
+      <free_body mass="10000000000000000000" moment_of_inertia="0" angular_velocity="0">
+        <velocity x="0" y="0" z="0" />
+        <bound_entity_name>test_star</bound_entity_name>
+      </free_body>
+    </star>
+
+    <star name="test_star" tempriture="100" radius="100">
+      <location x="200" y="0" z="0" />
+      <facing x="1" y="0" z="0" />
+      <vertical x="0" y="1" z="0" />
+      <free_body mass="10000000000000000000" moment_of_inertia="0" angular_velocity="0">
+        <velocity x="0" y="0" z="0" />
+        <bound_entity_name>target_star</bound_entity_name>
+      </free_body>
+    </star>
+  </layer_3D>
+  
+</simulation>
