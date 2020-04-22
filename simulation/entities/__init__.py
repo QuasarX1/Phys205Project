@@ -2,3 +2,4 @@ from simulation.entities.entity import Entity
 from simulation.entities.entity_reference import Entity_Reference
 from simulation.entities.moveable import Moveable
 from simulation.entities.renderable import Renderable_2D, Renderable_2DLine, Renderable_Simple2DPolygon, Renderable_Simple2DCircle, Renderable_3D, Renderable_3DWireframe, Renderable_3DSolid
+import simulation.entities.astro_bodies

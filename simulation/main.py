@@ -53,7 +53,7 @@ class Simulation(object):
     """
 
     def __init__(self, renderMode: RenderMode = RenderMode.real_time, timeScale: float = 1,
-                 cameraDimentions: tuple = (1, 1), displayWindowDimentions = (500, 500), maxFPS = 60, *args, **kwargs):
+                 cameraDimentions: pygame.Vector2 = pygame.Vector2(1, 1), displayWindowDimentions = (500, 500), maxFPS = 60, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # Pre-set the simulation state
