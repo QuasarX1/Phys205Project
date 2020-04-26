@@ -11,7 +11,7 @@ import uuid
 import simulation as sim
 from simulation import Simulation
 from simulation import RenderMode
-from simulation.entities.astro_bodies import Star, Planet, Sun, Mercury, Venus, Earth, Mars, Jupiter
+from simulation.entities.astro_bodies import Star, Planet, Sun, Mercury, Venus, Earth, Mars, Jupiter, Saturn
 from simulation.entities.prefabs import UnitCube_Wireframe
 from simulation.logging import GraphingLogger, PositionLogger, VelocityLogger, SeperationLogger
 
@@ -88,6 +88,9 @@ simulation_layer.addEntity("mars", mars)
 
 jupiter = Jupiter(sun)
 simulation_layer.addEntity("jupiter", jupiter)
+
+saturn = Saturn(sun)
+simulation_layer.addEntity("saturn", saturn)
 
 
 '''
