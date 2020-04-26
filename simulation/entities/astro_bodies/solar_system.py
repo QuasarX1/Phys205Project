@@ -63,5 +63,5 @@ class Mars(Planet):
                          initial_velocity = pygame.Vector3(0, 0, 2.4007 * 10**4) if initial_velocity is None else initial_velocity,# Orbital velocity in m/s
                          initial_angular_velocity = 360 / (88642.6848),# Roatates (siderialy) once at the equator every 23.56 hours
                          location = pygame.Vector3(2.1739 * 10**11, 0, 0) if location is None else location,# Distance from the Sun in m
-                         colour = pygame.Color(100, 4-, 0),# Arbitrary colour
+                         colour = pygame.Color(100, 40, 0),# Arbitrary colour
                          **kwargs)
