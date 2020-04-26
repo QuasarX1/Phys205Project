@@ -83,7 +83,8 @@ simulation_layer.addEntity("venus", venus)
 earth = Earth(sun)
 simulation_layer.addEntity("earth", earth)
 
-
+mars = Mars(sun)
+simulation_layer.addEntity("mars", mars)
 
 
 '''
