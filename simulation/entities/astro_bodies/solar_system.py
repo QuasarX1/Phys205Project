@@ -99,3 +99,15 @@ class Uranus(Planet):
                          location = pygame.Vector3(2.962 * 10**12, 0, 0) if location is None else location,# Distance from the Sun in m
                          colour = pygame.Color(0, 255, 170),# Arbitrary colour
                          **kwargs)
+
+
+class Neptune(Planet):
+    def __init__(self, sun, location = None, initial_velocity = None, **kwargs):
+        super().__init__(radius = 2.462 * 10**7,# Equatorial radius in m
+                         mass = 1.024 * 10**26,# Mass in Kg
+                         parentStar = sun,
+                         initial_velocity = pygame.Vector3(0, 0, 5.43 * 10**3) if initial_velocity is None else initial_velocity,# Orbital velocity in m/s
+                         initial_angular_velocity = 360 / (61992),# Roatates (siderialy) once at the equator every 23.56 hours
+                         location = pygame.Vector3(4.476 * 10**12, 0, 0) if location is None else location,# Distance from the Sun in m
+                         colour = pygame.Color(50, 50, 200),# Arbitrary colour
+                         **kwargs)
