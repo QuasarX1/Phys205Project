@@ -8,26 +8,35 @@
 
 <!-- Vectors -->
   <xs:complexType name="Vector2">
-    <xs:attribute name="x" type="xs:float" use="required" />
-    <xs:attribute name="y" type="xs:float" use="required" />
+    <xs:attribute name="x" type="xs:float" default="0.0" />
+    <xs:attribute name="y" type="xs:float" default="0.0" />
   </xs:complexType>
 
   <xs:complexType name="Vector3">
-    <xs:attribute name="x" type="xs:float" use="required" />
-    <xs:attribute name="y" type="xs:float" use="required" />
-    <xs:attribute name="z" type="xs:float" use="required" />
+    <xs:attribute name="x" type="xs:float" default="0.0" />
+    <xs:attribute name="y" type="xs:float" default="0.0" />
+    <xs:attribute name="z" type="xs:float" default="0.0" />
   </xs:complexType>
 
 
-<!--Free Body -->
+<!-- Colour -->
+  <xs:complexType name="Color">
+    <xs:attribute name="r" type="xs:int" default="0" />
+    <xs:attribute name="g" type="xs:int" default="0" />
+    <xs:attribute name="b" type="xs:int" default="0" />
+    <xs:attribute name="a" type="xs:int" default="255" />
+  </xs:complexType>
+
+
+<!-- Free Body -->
   <xs:complexType name="free_body_type">
     <xs:sequence>
-      <xs:element name="velocity" type="Vector3" />
+      <xs:element name="velocity" type="Vector3" minOccurs="1" maxOccurs="1" />
       <xs:element name="bound_entity_name" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
     <xs:attribute name="mass" type="xs:float" use="required" />
-    <xs:attribute name="moment_of_inertia" type="xs:float" use="required" />
-    <xs:attribute name="angular_velocity" type="xs:float" use="required" />
+    <xs:attribute name="moment_of_inertia" type="xs:float" default="0.0" />
+    <xs:attribute name="rotational_period" type="xs:float" default="0.0" />
   </xs:complexType>
 
 
@@ -40,18 +49,88 @@
     <xs:complexContent>
       <xs:extension base="entity_type">
         <xs:sequence>
-          <xs:element name="location" type="Vector3" />
-          <xs:element name="facing" type="Vector3" />
-          <xs:element name="vertical" type="Vector3" />
+          <xs:element name="location" type="Vector3" minOccurs="1" maxOccurs="1" />
+          <xs:element name="facing" type="Vector3" minOccurs="1" maxOccurs="1" />
+          <xs:element name="vertical" type="Vector3" minOccurs="1" maxOccurs="1" />
         </xs:sequence>
+        <xs:attribute name="visable" type="xs:boolean" default="true" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
+
+
+  <xs:complexType name="renderable_2Dline_type">
+    <xs:complexContent>
+      <xs:extension base="moveable_type">
+        <xs:sequence>
+          <xs:element name="point1" type="Vector3" minOccurs="1" maxOccurs="1" />
+          <xs:element name="point2" type="Vector3" minOccurs="1" maxOccurs="1" />
+          <xs:element name="colour" type="Color" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="length" type="xs:float" default="1.0" />
+        <xs:attribute name="point1_is_midpoint" type="xs:boolean" default="false" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  
+    
+  <xs:complexType name="renderable_simple2Dcircle_type">
+    <xs:complexContent>
+      <xs:extension base="moveable_type">
+        <xs:sequence>
+          <xs:element name="colour" type="Color" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="radius" type="xs:float" default="1.0" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  
+  
+  <xs:complexType name="unitcube_wireframe_type">
+    <xs:complexContent>
+      <xs:extension base="moveable_type">
+        <xs:sequence>
+          <xs:element name="colour" type="Color" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="scale" type="xs:float" default="1.0" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  
+  
+  <xs:complexType name="triangularpyrimid_wireframe_type">
+    <xs:complexContent>
+      <xs:extension base="moveable_type">
+        <xs:sequence>
+          <xs:element name="colour" type="Color" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="scale" type="xs:float" default="1.0" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  
+  
+  
+  
+  <!--Renderable_Simple2DPolygon-->
+  
+
+
+
+
+
   <xs:complexType name="sphere_type">
     <xs:complexContent>
       <xs:extension base="moveable_type">
-        <xs:attribute name="radius" type="xs:float" use="required" />
+        <xs:sequence>
+          <xs:element name="colour" type="Color"  minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="radius" type="xs:float" default="1.0" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -73,29 +152,91 @@
     <xs:complexContent>
       <xs:extension base="sphere_type">
         <xs:sequence>
-          <xs:element name="free_body" type="free_body_type" />
+          <xs:element name="free_body" type="free_body_type" minOccurs="1" maxOccurs="1" />
+          <xs:element name="colour" type="Color" minOccurs="0" maxOccurs="0" />
         </xs:sequence>
         <xs:attribute name="tempriture" type="xs:float" use="required" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  
+  
+  
+  <xs:complexType name="planet_type">
+    <xs:complexContent>
+      <xs:extension base="sphere_type">
+        <xs:sequence>
+          <xs:element name="free_body" type="free_body_type" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="parent_star" type="xs:string" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  
+  
+  <xs:complexType name="croshair_type">
+    <xs:complexContent>
+      <xs:extension base="moveable_type">
+        <xs:sequence>
+          <xs:element name="colour" type="Color" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="scale" type="xs:float" default="0.05" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  
+  
+  <xs:complexType name="croshair_3D_type">
+    <xs:complexContent>
+      <xs:extension base="moveable_type">
+        <xs:sequence>
+          <xs:element name="colour" type="Color" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="scale" type="xs:float" default="0.05" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
+  
 
 <!-- Entity Groups -->
   <xs:group name="entities_2D_group">
     <xs:choice>
+      <xs:element name="renderable_2Dline" type="renderable_2Dline_type" />
+      <xs:element name="renderable_simple2Dcircle" type="renderable_simple2Dcircle_type" />
+      <xs:element name="croshair" type="croshair_type" />
     </xs:choice>
   </xs:group>
   
   <xs:group name="entities_3D_group">
     <xs:choice>
       <xs:element name="sphere" type="sphere_type" />
+      <xs:element name="unitcube_wireframe" type="unitcube_wireframe_type" />
+      <xs:element name="triangularpyrimid_wireframe" type="triangularpyrimid_wireframe_type" />
+      <xs:element name="croshair_3D" type="croshair_3D_type" />
       <xs:element name="star" type="star_type" />
+      <xs:element name="planet" type="planet_type" />
+    </xs:choice>
+  </xs:group>
+  
+  <xs:group name="mixed_entities_group">
+    <xs:choice>
+      <xs:element name="renderable_2Dline" type="renderable_2Dline_type" />
+      <xs:element name="renderable_simple2Dcircle" type="renderable_simple2Dcircle_type" />
+      <xs:element name="croshair" type="croshair_type" />
+      <xs:element name="sphere" type="sphere_type" />
+      <xs:element name="unitcube_wireframe" type="unitcube_wireframe_type" />
+      <xs:element name="triangularpyrimid_wireframe" type="triangularpyrimid_wireframe_type" />
+      <xs:element name="croshair_3D" type="croshair_3D_type" />
+      <xs:element name="star" type="star_type" />
+      <xs:element name="planet" type="planet_type" />
     </xs:choice>
   </xs:group>
   
   
-
+<!-- Layer Types -->
   <xs:complexType name="layer_2D_type">
     <xs:sequence>
       <xs:group ref="entities_2D_group" minOccurs="0" maxOccurs="unbounded" />
@@ -112,10 +253,19 @@
     <xs:attribute name="render_capability" type="xs:boolean" default="true" />
   </xs:complexType>
 
+  <xs:complexType name="mixed_layer_type">
+    <xs:sequence>
+      <xs:group ref="mixed_entities_group" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="render_capability" type="xs:boolean" default="true" />
+  </xs:complexType>
+
   <xs:group name="layers_group">
     <xs:choice>
       <xs:element name="layer_2D" type="layer_2D_type" />
       <xs:element name="layer_3D" type="layer_3D_type" />
+      <xs:element name="mixed_layer" type="mixed_layer_type" />
     </xs:choice>
   </xs:group>
 
