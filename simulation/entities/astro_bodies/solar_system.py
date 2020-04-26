@@ -65,3 +65,14 @@ class Mars(Planet):
                          location = pygame.Vector3(2.1739 * 10**11, 0, 0) if location is None else location,# Distance from the Sun in m
                          colour = pygame.Color(100, 40, 0),# Arbitrary colour
                          **kwargs)
+
+class Jupiter(Planet):
+    def __init__(self, sun, location = None, initial_velocity = None, **kwargs):
+        super().__init__(radius = 71.492 * 10**6,# Equatorial radius in m
+                         mass = 1.8982 * 10**27,# Mass in Kg
+                         parentStar = sun,
+                         initial_velocity = pygame.Vector3(0, 0, 12.6 * 10**3) if initial_velocity is None else initial_velocity,# Orbital velocity in m/s
+                         initial_angular_velocity = 360 / (35730),# Roatates (siderialy) once at the equator every 23.56 hours
+                         location = pygame.Vector3(7.7607 * 10**11, 0, 0) if location is None else location,# Distance from the Sun in m
+                         colour = pygame.Color(255, 100, 10),# Arbitrary colour
+                         **kwargs)
