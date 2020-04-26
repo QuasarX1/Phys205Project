@@ -107,7 +107,18 @@ class Neptune(Planet):
                          mass = 1.024 * 10**26,# Mass in Kg
                          parentStar = sun,
                          initial_velocity = pygame.Vector3(0, 0, 5.43 * 10**3) if initial_velocity is None else initial_velocity,# Orbital velocity in m/s
-                         initial_angular_velocity = 360 / (61992),# Roatates (siderialy) once at the equator every 23.56 hours
+                         initial_angular_velocity = 360 / (57924),# Roatates (siderialy) once at the equator every 23.56 hours
                          location = pygame.Vector3(4.476 * 10**12, 0, 0) if location is None else location,# Distance from the Sun in m
                          colour = pygame.Color(50, 50, 200),# Arbitrary colour
+                         **kwargs)
+
+class Pluto(Planet):
+    def __init__(self, sun, location = None, initial_velocity = None, **kwargs):
+        super().__init__(radius = 1.188 * 10**6,# Equatorial radius in m
+                         mass = 1.303 * 10**22,# Mass in Kg
+                         parentStar = sun,
+                         initial_velocity = pygame.Vector3(0, 0, 4.743 * 10**3) if initial_velocity is None else initial_velocity,# Orbital velocity in m/s
+                         initial_angular_velocity = 360 / (552960),# Roatates (siderialy) once at the equator every 23.56 hours
+                         location = pygame.Vector3(5.906 * 10**12, 0, 0) if location is None else location,# Distance from the Sun in m
+                         colour = pygame.Color(40, 0, 0),# Arbitrary colour
                          **kwargs)
