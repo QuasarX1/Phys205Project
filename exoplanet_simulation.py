@@ -187,13 +187,25 @@ simulation_layer.addEntity("earth", earth)
 
 
 # Set up logging for important quantities --------------------------------------------------------------------------------------------
-logging_time_period = 60*60*24*365.25 * 1
-trigger_function = GraphingLogger.createTimePeriodTrigger(logging_time_period)
+logging_time_period_interior = 60*60*24*365.25 * 165
+trigger_function_interior = GraphingLogger.createTimePeriodTrigger(logging_time_period_interior)
+
+logging_time_period_exterior = 60*60*24*365.25 * 165
+trigger_function_exterior = GraphingLogger.createTimePeriodTrigger(logging_time_period_exterior)
 
 simulation.onItterationEnd += SeperationLogger(name = "interior_plannet_orbit_logger",
                                                runID = runID,
-                                               entities = {"mercury": mercury, "venus": venus, "earth": earth},#, "mars": mars},
-                                               trigger = trigger_function,
+                                               entities = {"mercury": mercury, "venus": venus, "earth": earth, "mars": mars},
+                                               trigger = trigger_function_interior,
+                                               zero_time_on_action = False,
+                                               show_graphs = showGraphs,
+                                               file_save_path = filepath,
+                                               referenceEntity = sun).log
+
+simulation.onItterationEnd += SeperationLogger(name = "exterior_plannet_orbit_logger",
+                                               runID = runID,
+                                               entities = {"jupiter": jupiter, "saturn": saturn, "uranus": uranus, "neptune": neptune, "pluto": pluto},
+                                               trigger = trigger_function_exterior,
                                                zero_time_on_action = False,
                                                show_graphs = showGraphs,
                                                file_save_path = filepath,
@@ -211,7 +223,7 @@ simulation.onItterationEnd += SeperationLogger(name = "interior_plannet_orbit_lo
 simulation.onItterationEnd += PositionLogger(name = "sun_position_logger",
                                              runID = runID,
                                              entities = {"sun": sun},
-                                             trigger = trigger_function,
+                                             trigger = trigger_function_exterior,
                                              zero_time_on_action = False,
                                              show_graphs = showGraphs,
                                              file_save_path = filepath).log
