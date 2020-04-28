@@ -13,7 +13,7 @@
     <RootNamespace>experements</RootNamespace>
     <InterpreterId>CondaEnv|CondaEnv|Phys205</InterpreterId>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>--show</CommandLineArguments>
+    <CommandLineArguments>--show --file=Solar_System.xml --timescale=86400</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

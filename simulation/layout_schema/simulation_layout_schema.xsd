@@ -277,6 +277,7 @@
       <xs:group ref="layers_group" minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
     <xs:attribute name="render_capability" type="xs:boolean" default="true" />
+    <xs:attribute name="timescale" type="xs:float" default="86400" /><!-- Default is one Earth year -->
   </xs:complexType>
 
   

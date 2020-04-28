@@ -1,6 +1,6 @@
 import sys
 
-optionalParamiters = ("--file", )
+optionalParamiters = ("--file", "--timescale")
 flags = ("--help", "--show")
 
 def parseCommandlineArgs(argv, flags, optionalParamiters):
@@ -54,12 +54,12 @@ from load_xml import *
 
 kwargs = {}
 flags_kwargs_map = {"--show":"forceVisable"}
-arguments_kwargs_map = {"--file":"xml_document"}
+arguments_kwargs_map = {"--file":("xml_document", str), "--timescale":("forceTimescale", float)}
 for i in range(1, len(flags)):
     kwargs[flags_kwargs_map[flags[i]]] = flagsPresent[i]
 for i, paramiter in enumerate(optionalParamiters):
     if argumentsPresent[i]:
-        kwargs[arguments_kwargs_map[paramiter]] = argumentsDict[paramiter]
+        kwargs[arguments_kwargs_map[paramiter][0]] = arguments_kwargs_map[paramiter][1](argumentsDict[paramiter])
 
 simulation = create_simulation(**kwargs) if "xml_document" in list(kwargs.keys()) else create_simulation(xml_document = local_test_xml_location, **kwargs)
 
