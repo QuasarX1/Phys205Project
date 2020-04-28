@@ -74,6 +74,9 @@ class Logger(object):
     def getName(self):
         return self.__name
 
+    def __call__(self, *args, **kwargs):
+        return self.log(*args, **kwargs)
+
 
 
 class ActionLogger(Logger):
@@ -101,6 +104,14 @@ class ActionLogger(Logger):
     def getActionCounter(self):
         return self.__actionCounter
 
+    @staticmethod
+    def createChunkOfDataTrigger(number_of_data_points: int):
+        return lambda self, sim, delta_t: len(self._getTime()) >= number_of_data_points
+
+    @staticmethod
+    def createTimePeriodTrigger(time_period: float):
+        return lambda self, sim, delta_t: self._getTime()[-1] - self.getActionCounter() * time_period >= time_period
+
 
 
 class GraphingLogger(ActionLogger):
@@ -111,14 +122,6 @@ class GraphingLogger(ActionLogger):
 
     def getShowGraphs(self):
         return self.__showGraphs
-
-    @staticmethod
-    def createChunkOfDataTrigger(number_of_data_points: int):
-        return lambda self, sim, delta_t: len(self._getTime()) >= number_of_data_points
-
-    @staticmethod
-    def createTimePeriodTrigger(time_period: float):
-        return lambda self, sim, delta_t: self._getTime()[-1] - self.getActionCounter() * time_period >= time_period
 
 
 

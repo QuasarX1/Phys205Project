@@ -127,34 +127,97 @@ def create_simulation(xml_document: str = local_test_xml_location, forceVisable:
         simulation = sim.Simulation(renderMode = sim.RenderMode.real_time if forceVisable or bool(simulation_xml.get("render_capability")) else sim.RenderMode.no_render,
                                     timeScale = float(simulation_xml.get("timescale") if forceTimescale is None else forceTimescale))
 
-    for layer_xml in simulation_xml.getchildren()[1 if hasCamera else 0:]:
-        if layer_xml.tag == "comment":
-            continue
+    remainingChildren = simulation_xml.getchildren()[1 if hasCamera else 0:]
+    for i in range(len(remainingChildren)):
+        childTypeString = remainingChildren[i].tag.split("}")[1]
 
-        layerTypeString = layer_xml.tag.split("}")[1]
-        if layerTypeString == "layer_2D":
-            layer = sim.Layer_2D(layer_xml.attrib["render_capability"])
+        if childTypeString in ("layer_2D", "layer_3D", "Layer_Mixed"):
+            layer_xml = remainingChildren[i]
 
-        elif layerTypeString == "layer_3D":
-            layer = sim.Layer_3D(layer_xml.attrib["render_capability"])
+            if childTypeString == "layer_2D":
+                layer = sim.Layer_2D(layer_xml.attrib["render_capability"])
 
-        elif layerTypeString == "Layer_Mixed":
-            layer = sim.Layer_Mixed(layer_xml.attrib["render_capability"])
+            elif childTypeString == "layer_3D":
+                layer = sim.Layer_3D(layer_xml.attrib["render_capability"])
 
-        simulation.addLayer(layer_xml.attrib["name"], layer)
+            elif childTypeString == "Layer_Mixed":
+                layer = sim.Layer_Mixed(layer_xml.attrib["render_capability"])
 
-        bindingDict = {}
-        for entity_xml in layer_xml.getchildren():
-            entityName = entity_xml.attrib["name"]
-            entityCreationResult = _createEntityFromXML(entity_xml, layer)
-            entity = entityCreationResult["entity"]
-            layer.addEntity(entityName, entity)
+            simulation.addLayer(layer_xml.attrib["name"], layer)
 
-            if "bound_entities" in entityCreationResult.keys():
-                bindingDict[entityName] = entityCreationResult["bound_entities"]
+            bindingDict = {}
+            for entity_xml in layer_xml.getchildren():
+                entityName = entity_xml.attrib["name"]
+                entityCreationResult = _createEntityFromXML(entity_xml, layer)
+                entity = entityCreationResult["entity"]
+                layer.addEntity(entityName, entity)
 
-        for key in bindingDict.keys():
-            for entity_name in bindingDict[key]:
-                layer.getEntity(key).bindEntity_by_name(entity_name, layer)
+                if "bound_entities" in entityCreationResult.keys():
+                    bindingDict[entityName] = entityCreationResult["bound_entities"]
+
+            for key in bindingDict.keys():
+                for entity_name in bindingDict[key]:
+                    layer.getEntity(key).bindEntity_by_name(entity_name, layer)
+
+        elif childTypeString in ("position_logger", "velocity_logger", "seperation_logger"):
+            logger_xml = remainingChildren[i]
+
+            logger_kwargs = {"runID":simulation.getRunID()}
+
+            logger_kwargs["entities"] = {}
+            for entity_reference_xml in [child for child in logger_xml.getchildren() if child.tag.split("}")[1] == "logged_entity"]:
+                logger_kwargs["entities"][entity_reference_xml.attrib["entity_name"]] = simulation.getEntity(entity_reference_xml.attrib["layer_name"], entity_reference_xml.attrib["entity_name"])
+
+            if logger_xml.attrib["trigger_type"] == "data_chunk":
+                logger_kwargs["trigger"] = sim.logging.ActionLogger.createChunkOfDataTrigger(int(logger_xml.attrib["trigger_limit"]))
+            elif logger_xml.attrib["trigger_type"] == "time_period":
+                logger_kwargs["trigger"] = sim.logging.ActionLogger.createTimePeriodTrigger(float(logger_xml.attrib["trigger_limit"]))
+                
+            logger_kwargs["zero_time_on_action"] = bool(logger_xml.attrib["zero_time_on_action"])
+
+            logger_kwargs["show_graphs"] = bool(logger_xml.attrib["show_graphs"])
+
+            if "file_save_path" in logger_xml.attrib.keys():
+                logger_kwargs["file_save_path"] = logger_xml.attrib["file_save_path"]
+
+            if childTypeString == "position_logger":
+                simulation.onItterationEnd += sim.logging.PositionLogger(**logger_kwargs)
+
+            elif childTypeString == "velocity_logger":
+                simulation.onItterationEnd += sim.logging.VelocityLogger(**logger_kwargs)
+
+            elif childTypeString == "seperation_logger":
+                simulation.onItterationEnd += sim.logging.SeperationLogger(referenceEntity = simulation.getEntity(logger_xml.reference_entity.attrib["layer_name"], logger_xml.reference_entity.attrib["entity_name"]),
+                                                                           **logger_kwargs)
+
+    #for layer_xml in simulation_xml.getchildren()[1 if hasCamera else 0:]:
+    #    if layer_xml.tag == "comment":
+    #        continue
+
+    #        layerTypeString = layer_xml.tag.split("}")[1]
+    #        if layerTypeString == "layer_2D":
+    #            layer = sim.Layer_2D(layer_xml.attrib["render_capability"])
+
+    #        elif layerTypeString == "layer_3D":
+    #            layer = sim.Layer_3D(layer_xml.attrib["render_capability"])
+
+    #        elif layerTypeString == "Layer_Mixed":
+    #            layer = sim.Layer_Mixed(layer_xml.attrib["render_capability"])
+
+    #        simulation.addLayer(layer_xml.attrib["name"], layer)
+
+    #        bindingDict = {}
+    #        for entity_xml in layer_xml.getchildren():
+    #            entityName = entity_xml.attrib["name"]
+    #            entityCreationResult = _createEntityFromXML(entity_xml, layer)
+    #            entity = entityCreationResult["entity"]
+    #            layer.addEntity(entityName, entity)
+
+    #            if "bound_entities" in entityCreationResult.keys():
+    #                bindingDict[entityName] = entityCreationResult["bound_entities"]
+
+    #        for key in bindingDict.keys():
+    #            for entity_name in bindingDict[key]:
+    #                layer.getEntity(key).bindEntity_by_name(entity_name, layer)
 
     return simulation

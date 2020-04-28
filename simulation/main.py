@@ -4,6 +4,7 @@ import os
 import pygame
 from QuasarCode.edp import Event
 import threading
+import uuid
 
 from simulation import Layer, Layer_2D, Layer_3D, Layer_Mixed, command_options as commands
 from simulation.commands import commands_runtime
@@ -60,6 +61,7 @@ class Simulation(object):
         self.__running: bool = False
         self.__paused: bool = True
         self.__total_delta_t: float = 0
+        self.__runID = str(uuid.uuid4())
 
         # Events
         self.onItterationEnd: Event = Event()
@@ -192,6 +194,9 @@ class Simulation(object):
         if dimentions is None:
             dimentions = self.__screen.get_size()
         return pygame.Surface(dimentions, flags = pygame.SRCALPHA)
+
+    def getRunID(self):
+        return self.__runID
         
     def getCamera(self) -> Camera:
         """

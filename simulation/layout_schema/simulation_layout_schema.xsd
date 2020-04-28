@@ -289,7 +289,20 @@
   <xs:complexType name="action_logger_type">
     <xs:complexContent>
       <xs:extension base="logger_type">
-        <xs:attribute name="trigger" type="xs:boolean" default="false" />
+        <xs:attribute name="trigger_type" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              The type of trigger function to use.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base = "xs:string">
+              <xs:enumeration value="time_period" />
+              <xs:enumeration value="data_chunk" />
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="trigger_limit" type="xs:float" use="required" />
         <xs:attribute name="zero_time_on_action" type="xs:boolean" default="false" />
       </xs:extension>
     </xs:complexContent>
@@ -317,7 +330,7 @@
 
   <xs:complexType name="seperation_logger_type">
     <xs:complexContent>
-      <xs:extension base="logger_type">
+      <xs:extension base="graphing_logger_type">
         <xs:sequence>
           <xs:element name="reference_entity" type="entity_reference" minOccurs="1" maxOccurs="unbounded" />
         </xs:sequence>
@@ -335,6 +348,7 @@
 
   
   
+<!-- Simulation -->
   <xs:complexType name="simulation_type">
     <xs:sequence>
       <xs:element name="camera" type="camera_type" minOccurs="0" />
