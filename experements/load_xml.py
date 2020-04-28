@@ -190,34 +190,4 @@ def create_simulation(xml_document: str = local_test_xml_location, forceVisable:
                 simulation.onItterationEnd += sim.logging.SeperationLogger(referenceEntity = simulation.getEntity(logger_xml.reference_entity.attrib["layer_name"], logger_xml.reference_entity.attrib["entity_name"]),
                                                                            **logger_kwargs)
 
-    #for layer_xml in simulation_xml.getchildren()[1 if hasCamera else 0:]:
-    #    if layer_xml.tag == "comment":
-    #        continue
-
-    #        layerTypeString = layer_xml.tag.split("}")[1]
-    #        if layerTypeString == "layer_2D":
-    #            layer = sim.Layer_2D(layer_xml.attrib["render_capability"])
-
-    #        elif layerTypeString == "layer_3D":
-    #            layer = sim.Layer_3D(layer_xml.attrib["render_capability"])
-
-    #        elif layerTypeString == "Layer_Mixed":
-    #            layer = sim.Layer_Mixed(layer_xml.attrib["render_capability"])
-
-    #        simulation.addLayer(layer_xml.attrib["name"], layer)
-
-    #        bindingDict = {}
-    #        for entity_xml in layer_xml.getchildren():
-    #            entityName = entity_xml.attrib["name"]
-    #            entityCreationResult = _createEntityFromXML(entity_xml, layer)
-    #            entity = entityCreationResult["entity"]
-    #            layer.addEntity(entityName, entity)
-
-    #            if "bound_entities" in entityCreationResult.keys():
-    #                bindingDict[entityName] = entityCreationResult["bound_entities"]
-
-    #        for key in bindingDict.keys():
-    #            for entity_name in bindingDict[key]:
-    #                layer.getEntity(key).bindEntity_by_name(entity_name, layer)
-
     return simulation
