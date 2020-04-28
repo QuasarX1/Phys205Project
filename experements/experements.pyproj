@@ -13,7 +13,7 @@
     <RootNamespace>experements</RootNamespace>
     <InterpreterId>CondaEnv|CondaEnv|Phys205</InterpreterId>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>--show --timescale=86400</CommandLineArguments>
+    <CommandLineArguments>--show --timescale=86400 --file=Solar_System.xml</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -37,6 +37,8 @@
     <InterpreterReference Include="CondaEnv|CondaEnv|Phys205" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Cygni.xml" />
+    <Content Include="Distant_Binary_Stars.xml" />
     <Content Include="Solar_System.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
