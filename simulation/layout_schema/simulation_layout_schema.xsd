@@ -28,6 +28,13 @@
   </xs:complexType>
 
 
+<!-- Entity Reference -->
+  <xs:complexType name="entity_reference">
+    <xs:attribute name="layer_name" type="xs:string" use="required" />
+    <xs:attribute name="entity_name" type="xs:string" use="required" />
+  </xs:complexType>
+
+
 <!-- Free Body -->
   <xs:complexType name="free_body_type">
     <xs:sequence>
@@ -269,12 +276,70 @@
     </xs:choice>
   </xs:group>
 
+
+<!-- Loggers -->
+  <xs:complexType name="logger_type">
+    <xs:sequence>
+      <xs:element name="logged_entity" type="entity_reference" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="file_save_path" type="xs:string" use="optional" />
+  </xs:complexType>
+
+  <xs:complexType name="action_logger_type">
+    <xs:complexContent>
+      <xs:extension base="logger_type">
+        <xs:attribute name="trigger" type="xs:boolean" default="false" />
+        <xs:attribute name="zero_time_on_action" type="xs:boolean" default="false" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="graphing_logger_type">
+    <xs:complexContent>
+      <xs:extension base="action_logger_type">
+        <xs:attribute name="show_graphs" type="xs:boolean" default="true" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="position_logger_type">
+    <xs:complexContent>
+      <xs:extension base="graphing_logger_type" />
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="velocity_logger_type">
+    <xs:complexContent>
+      <xs:extension base="graphing_logger_type" />
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="seperation_logger_type">
+    <xs:complexContent>
+      <xs:extension base="logger_type">
+        <xs:sequence>
+          <xs:element name="reference_entity" type="entity_reference" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:group name="loggers_group">
+    <xs:choice>
+      <xs:element name="position_logger" type="position_logger_type" />
+      <xs:element name="velocity_logger" type="velocity_logger_type" />
+      <xs:element name="seperation_logger" type="seperation_logger_type" />
+    </xs:choice>
+  </xs:group>
+
   
   
   <xs:complexType name="simulation_type">
     <xs:sequence>
       <xs:element name="camera" type="camera_type" minOccurs="0" />
       <xs:group ref="layers_group" minOccurs="0" maxOccurs="unbounded" />
+      <xs:group ref="loggers_group" minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
     <xs:attribute name="render_capability" type="xs:boolean" default="true" />
     <xs:attribute name="timescale" type="xs:float" default="86400" /><!-- Default is one Earth year -->
