@@ -107,14 +107,14 @@ def __load_XML_without_schema(xml_document: str):
     xml_file.close()
     return tree
 
-def create_simulation(xml_document: str = local_test_xml_location):
+def create_simulation(xml_document: str = local_test_xml_location, forceVisable: bool = False):
     #tree = load_XML(xml_document, local_schema_location)
     tree = __load_XML_without_schema(xml_document)
     simulation_xml = tree.getroot()
 
     hasCamera = hasattr(simulation_xml, "camera")
     if hasCamera:
-        simulation = sim.Simulation(cameraDimentions = pygame.Vector2(float(simulation_xml.camera.get("width")), float(simulation_xml.camera.get("height"))), renderMode = sim.RenderMode.real_time if bool(simulation_xml.get("render_capability")) else sim.RenderMode.no_render)
+        simulation = sim.Simulation(cameraDimentions = pygame.Vector2(float(simulation_xml.camera.get("width")), float(simulation_xml.camera.get("height"))), renderMode = sim.RenderMode.real_time if forceVisable or bool(simulation_xml.get("render_capability")) else sim.RenderMode.no_render)
         camera_xml = simulation_xml.camera
         camera = simulation.getCamera()
         camera.setFov(np.pi * float(camera_xml.get("field_of_vision")))
@@ -122,7 +122,7 @@ def create_simulation(xml_document: str = local_test_xml_location):
         camera.setFacing(createPygameVector3(camera_xml.facing))
         camera.setVertical(createPygameVector3(camera_xml.vertical))
     else:
-        simulation = sim.Simulation(renderMode = sim.RenderMode.real_time if bool(simulation_xml.get("render_capability")) else sim.RenderMode.no_render)
+        simulation = sim.Simulation(renderMode = sim.RenderMode.real_time if forceVisable or bool(simulation_xml.get("render_capability")) else sim.RenderMode.no_render)
 
     for layer_xml in simulation_xml.getchildren()[1 if hasCamera else 0:]:
         if layer_xml.tag == "comment":
