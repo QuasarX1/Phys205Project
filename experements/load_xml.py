@@ -3,6 +3,9 @@ import pygame
 import numpy as np
 from locate_simulation_library import simulation as sim, local_schema_location, local_test_xml_location
 
+def xml_bool(value: str):
+    return value == "true"
+
 def createPygameVector2(xml_vector2):
     return pygame.Vector2(float(xml_vector2.attrib["x"]), float(xml_vector2.attrib["y"]))
 
@@ -87,7 +90,7 @@ def _createEntityFromXML(entity_xml, layer):
                                                          point1 = createPygameVector3(entity_xml.facing),
                                                          point2 = createPygameVector3(entity_xml.vertical),
                                                          colour = createPygameColor(entity_xml.colour),
-                                                         point1_is_midpoint = bool(entity_xml.attrib["point1_is_midpoint"]))}
+                                                         point1_is_midpoint = xml_bool(entity_xml.attrib["point1_is_midpoint"]))}
 
 def load_XML(xml_document: str, xml_schema: str):
     xml_file = open(xml_document, "r", encoding='utf-8')
@@ -115,7 +118,7 @@ def create_simulation(xml_document: str = local_test_xml_location, forceVisable:
     hasCamera = hasattr(simulation_xml, "camera")
     if hasCamera:
         simulation = sim.Simulation(cameraDimentions = pygame.Vector2(float(simulation_xml.camera.get("width")), float(simulation_xml.camera.get("height"))),
-                                    renderMode = sim.RenderMode.real_time if forceVisable or bool(simulation_xml.get("render_capability")) else sim.RenderMode.no_render,
+                                    renderMode = sim.RenderMode.real_time if forceVisable or xml_bool(simulation_xml.get("render_capability")) else sim.RenderMode.no_render,
                                     timeScale = float(simulation_xml.get("timescale") if forceTimescale is None else forceTimescale))
         camera_xml = simulation_xml.camera
         camera = simulation.getCamera()
@@ -124,7 +127,7 @@ def create_simulation(xml_document: str = local_test_xml_location, forceVisable:
         camera.setFacing(createPygameVector3(camera_xml.facing))
         camera.setVertical(createPygameVector3(camera_xml.vertical))
     else:
-        simulation = sim.Simulation(renderMode = sim.RenderMode.real_time if forceVisable or bool(simulation_xml.get("render_capability")) else sim.RenderMode.no_render,
+        simulation = sim.Simulation(renderMode = sim.RenderMode.real_time if forceVisable or xml_bool(simulation_xml.get("render_capability")) else sim.RenderMode.no_render,
                                     timeScale = float(simulation_xml.get("timescale") if forceTimescale is None else forceTimescale))
 
     remainingChildren = simulation_xml.getchildren()[1 if hasCamera else 0:]
@@ -162,7 +165,10 @@ def create_simulation(xml_document: str = local_test_xml_location, forceVisable:
         elif childTypeString in ("position_logger", "velocity_logger", "seperation_logger"):
             logger_xml = remainingChildren[i]
 
-            logger_kwargs = {"runID":simulation.getRunID()}
+            logger_kwargs = {"name":logger_xml.attrib["name"],
+                             "runID":simulation.getRunID(),
+                             "zero_time_on_action":xml_bool(logger_xml.attrib["zero_time_on_action"]),
+                             "show_graphs":xml_bool(logger_xml.attrib["show_graphs"])}
 
             logger_kwargs["entities"] = {}
             for entity_reference_xml in [child for child in logger_xml.getchildren() if child.tag.split("}")[1] == "logged_entity"]:
@@ -173,10 +179,6 @@ def create_simulation(xml_document: str = local_test_xml_location, forceVisable:
             elif logger_xml.attrib["trigger_type"] == "time_period":
                 logger_kwargs["trigger"] = sim.logging.ActionLogger.createTimePeriodTrigger(float(logger_xml.attrib["trigger_limit"]))
                 
-            logger_kwargs["zero_time_on_action"] = bool(logger_xml.attrib["zero_time_on_action"])
-
-            logger_kwargs["show_graphs"] = bool(logger_xml.attrib["show_graphs"])
-
             if "file_save_path" in logger_xml.attrib.keys():
                 logger_kwargs["file_save_path"] = logger_xml.attrib["file_save_path"]
 

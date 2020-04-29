@@ -3,7 +3,7 @@
 <simulation xmlns="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/layout_schema"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/layout_schema simulation_layout_schema.xsd"
-            render_capability="true"
+            render_capability="false"
             timescale="86400">
 
   <camera width="500" height="500" field_of_vision="0.5">
@@ -26,7 +26,7 @@
       <location x="5588000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
-      <colour r="0" g="0" b="100" a="255" />
+      <colour r="255" g="150" b="0" a="255" />
       <free_body mass="330100000000000000000000" rotational_period="5067000">
         <velocity x="0" y="0" z="47362" />
       </free_body>
@@ -36,7 +36,7 @@
       <location x="107800000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
-      <colour r="0" g="145" b="0" a="255" />
+      <colour r="135" g="206" b="235" a="255" />
       <free_body mass="4868000000000000000000000" rotational_period="10087200">
         <velocity x="0" y="0" z="35020" />
       </free_body>
@@ -56,7 +56,7 @@
       <location x="217900000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
-      <colour r="200" g="20" b="20" a="255" />
+      <colour r="255" g="0" b="0" a="255" />
       <free_body mass="5972000000000000000000000" rotational_period="90720">
         <velocity x="0" y="0" z="24070" />
       </free_body>
@@ -66,7 +66,7 @@
       <location x="776200000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
-      <colour r="120" g="120" b="0" a="255" />
+      <colour r="255" g="75" b="0" a="255" />
       <free_body mass="18980000000000000000000000000" rotational_period="35784">
         <velocity x="0" y="0" z="13070" />
       </free_body>
@@ -76,7 +76,7 @@
       <location x="1496000000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
-      <colour r="70" g="0" b="70" a="255" />
+      <colour r="150" g="150" b="0" a="255" />
       <free_body mass="5.68300000000000000000000000" rotational_period="38484">
         <velocity x="0" y="0" z="9680" />
       </free_body>
@@ -86,7 +86,7 @@
       <location x="2962000000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
-      <colour r="0" g="0" b="255" a="255" />
+      <colour r="184" g="43" b="70" a="255" />
       <free_body mass="86810000000000000000000000" rotational_period="61992">
         <velocity x="0" y="0" z="6800" />
       </free_body>
@@ -96,7 +96,7 @@
       <location x="4476000000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
-      <colour r="50" g="50" b="50" a="255" />
+      <colour r="0" g="0" b="255" a="255" />
       <free_body mass="102400000000000000000000000" rotational_period="57924">
         <velocity x="0" y="0" z="5430" />
       </free_body>
@@ -106,11 +106,30 @@
       <location x="5906000000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
-      <colour r="40" g="0" b="0" a="255" />
+      <colour r="128" g="0" b="128" a="255" />
       <free_body mass="13030000000000000000000" rotational_period="552960">
         <velocity x="0" y="0" z="4743" />
       </free_body>
     </planet>
   </layer_3D>
+
+  <seperation_logger name="interior_plannet_orbit_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="31557600" zero_time_on_action="false" file_save_path="./">
+    <logged_entity entity_name="mercury" layer_name="simulation_layer" />
+    <logged_entity entity_name="venus" layer_name="simulation_layer" />
+    <logged_entity entity_name="earth" layer_name="simulation_layer" />
+    <logged_entity entity_name="mars" layer_name="simulation_layer" />
+    <reference_entity entity_name="sun" layer_name="simulation_layer" />
+  </seperation_logger>
+
+  <seperation_logger name="exterior_plannet_orbit_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="5207004000" zero_time_on_action="false" file_save_path="./">
+    <logged_entity entity_name="jupiter" layer_name="simulation_layer" />
+    <logged_entity entity_name="saturn" layer_name="simulation_layer" />
+    <logged_entity entity_name="uranus" layer_name="simulation_layer" />
+    <logged_entity entity_name="neptune" layer_name="simulation_layer" />
+    <logged_entity entity_name="pluto" layer_name="simulation_layer" />
+    <reference_entity entity_name="sun" layer_name="simulation_layer" />
+  </seperation_logger>
   
 </simulation>
