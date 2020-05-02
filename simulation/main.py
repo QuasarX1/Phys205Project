@@ -1,4 +1,5 @@
 from enum import Enum
+from lxml import etree, objectify
 import numpy as np
 import os
 import pygame
@@ -6,12 +7,15 @@ from QuasarCode.edp import Event
 import threading
 import uuid
 
-from simulation import Layer, Layer_2D, Layer_3D, Layer_Mixed, command_options as commands
+from simulation import Layer, Layer_2D, Layer_3D, Layer_Mixed, command_options as commands, local_test_xml_location, xml_bool, createPygameVector3, load_XML, load_XML_without_schema
 from simulation.commands import commands_runtime
-from simulation.entities import Entity
-from simulation.entities.prefabs import Croshair, Croshair_3D
+from simulation.entities import Entity, Renderable_Simple2DCircle, Renderable_2DLine
+from simulation.entities.prefabs import Croshair, Croshair_3D, UnitCube_Wireframe, TriangularPyrimid_Wireframe, Sphere
 from simulation.graphics import Camera, CameraPositionDisplay, CameraForceDisplay, CameraSpeedDisplay
 from simulation.graphics.HUD import Text, ReferencePoint, UpdatingText, Button
+from simulation.logging import ActionLogger, PositionLogger, VelocityLogger, SeperationLogger
+
+from simulation.entities.astro_bodies import Star, Planet
 
 pygame.init()
 pygame.font.init()
@@ -20,6 +24,8 @@ class SimulationClock(object):
     def tick(*args, **kwargs):
         raise NotImplementedError("")
 
+
+
 class PygameClockWrapper(SimulationClock):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -27,6 +33,8 @@ class PygameClockWrapper(SimulationClock):
 
     def tick(self, *args, **kwargs):
         return self.__clock.tick(*args, **kwargs)
+
+
 
 class LinearTickClock(SimulationClock):
     def __init__(self, *args, **kwargs):
@@ -37,10 +45,13 @@ class LinearTickClock(SimulationClock):
         self.__counter += 1
         return 1
 
+
+
 class RenderMode(Enum):
     no_render = 0,
     real_time = 1,
     save_file = 2
+
 
 
 class Simulation(object):
@@ -140,7 +151,38 @@ class Simulation(object):
             self.__tickConversion: float = 1.0# Seconds per Tick
 
     @staticmethod
-    def create_from_xml(path_to_xml: str):
+    def __createEntityFromXML(entity_xml, layer):
+        entityTypeString = entity_xml.tag.split("}")[1]
+
+        if entityTypeString == "planet":
+            return Planet.PlanetFromXML(entity_xml, layer)
+
+        elif entityTypeString == "star":
+            return Star.StarFromXML(entity_xml, layer)
+    
+        elif entityTypeString == "croshair_3D":
+            return Croshair_3D.Croshair_3DFromXML(entity_xml, layer)
+
+        elif entityTypeString == "triangularpyrimid_wireframe":
+            return TriangularPyrimid_Wireframe.TriangularPyrimid_WireframeFromXML(entity_xml, layer)
+
+        elif entityTypeString == "unitcube_wireframe":
+            return UnitCube_Wireframe.UnitCube_WireframeFromXML(entity_xml, layer)
+
+        elif entityTypeString == "sphere":
+            return Sphere.SphereFromXML(entity_xml, layer)
+
+        elif entityTypeString == "croshair":
+            return Croshair.CroshairFromXML(entity_xml, layer)
+
+        elif entityTypeString == "renderable_simple2Dcircle":
+            return Renderable_Simple2DCircle.Renderable_Simple2DCircleFromXML(entity_xml, layer)
+
+        elif entityTypeString == "renderable_2Dline":
+            return Renderable_2DLine.Renderable_2DLineFromXML(entity_xml, layer)
+
+    @staticmethod
+    def create_from_xml(path_to_xml: str = local_test_xml_location, forceVisable: bool = False, forceTimescale: float = None):
         """
         Create a simulation from a pre-created XML file.
 
@@ -149,7 +191,88 @@ class Simulation(object):
         Paramiters:
             str path_to_xml -> The filepath to the XML document to be loaded
         """
-        raise NotImplementedError("This has not yet been implemented.")#TODO: add this using DOM from https://www.tutorialspoint.com/python/python_xml_processing.htm
+        #tree = load_XML(xml_document, local_schema_location)
+        tree = load_XML_without_schema(path_to_xml)
+        simulation_xml = tree.getroot()
+
+        hasCamera = hasattr(simulation_xml, "camera")
+        if hasCamera:
+            simulation = Simulation(cameraDimentions = pygame.Vector2(float(simulation_xml.camera.get("width")), float(simulation_xml.camera.get("height"))),
+                                        renderMode = RenderMode.real_time if forceVisable or xml_bool(simulation_xml.get("render_capability")) else RenderMode.no_render,
+                                        timeScale = float(simulation_xml.get("timescale") if forceTimescale is None else forceTimescale))
+            camera_xml = simulation_xml.camera
+            camera = simulation.getCamera()
+            camera.setFov(np.pi * float(camera_xml.get("field_of_vision")))
+            camera.setLocation(createPygameVector3(camera_xml.location))
+            camera.setFacing(createPygameVector3(camera_xml.facing))
+            camera.setVertical(createPygameVector3(camera_xml.vertical))
+        else:
+            simulation = sim.Simulation(renderMode = RenderMode.real_time if forceVisable or xml_bool(simulation_xml.get("render_capability")) else RenderMode.no_render,
+                                        timeScale = float(simulation_xml.get("timescale") if forceTimescale is None else forceTimescale))
+
+        remainingChildren = simulation_xml.getchildren()[1 if hasCamera else 0:]
+        for i in range(len(remainingChildren)):
+            childTypeString = remainingChildren[i].tag.split("}")[1]
+
+            if childTypeString in ("layer_2D", "layer_3D", "Layer_Mixed"):
+                layer_xml = remainingChildren[i]
+
+                if childTypeString == "layer_2D":
+                    layer = Layer_2D(layer_xml.attrib["render_capability"])
+
+                elif childTypeString == "layer_3D":
+                    layer = Layer_3D(layer_xml.attrib["render_capability"])
+
+                elif childTypeString == "Layer_Mixed":
+                    layer = Layer_Mixed(layer_xml.attrib["render_capability"])
+
+                simulation.addLayer(layer_xml.attrib["name"], layer)
+
+                bindingDict = {}
+                for entity_xml in layer_xml.getchildren():
+                    entityName = entity_xml.attrib["name"]
+                    entityCreationResult = Simulation.__createEntityFromXML(entity_xml, layer)
+                    entity = entityCreationResult["entity"]
+                    layer.addEntity(entityName, entity)
+
+                    if "bound_entities" in entityCreationResult.keys():
+                        bindingDict[entityName] = entityCreationResult["bound_entities"]
+
+                for key in bindingDict.keys():
+                    for entity_name in bindingDict[key]:
+                        layer.getEntity(key).bindEntity_by_name(entity_name, layer)
+
+            elif childTypeString in ("position_logger", "velocity_logger", "seperation_logger"):
+                logger_xml = remainingChildren[i]
+
+                logger_kwargs = {"name":logger_xml.attrib["name"],
+                                 "runID":simulation.getRunID(),
+                                 "zero_time_on_action":xml_bool(logger_xml.attrib["zero_time_on_action"]),
+                                 "show_graphs":xml_bool(logger_xml.attrib["show_graphs"])}
+
+                logger_kwargs["entities"] = {}
+                for entity_reference_xml in [child for child in logger_xml.getchildren() if child.tag.split("}")[1] == "logged_entity"]:
+                    logger_kwargs["entities"][entity_reference_xml.attrib["entity_name"]] = simulation.getEntity(entity_reference_xml.attrib["layer_name"], entity_reference_xml.attrib["entity_name"])
+
+                if logger_xml.attrib["trigger_type"] == "data_chunk":
+                    logger_kwargs["trigger"] = ActionLogger.createChunkOfDataTrigger(int(logger_xml.attrib["trigger_limit"]))
+                elif logger_xml.attrib["trigger_type"] == "time_period":
+                    logger_kwargs["trigger"] = ActionLogger.createTimePeriodTrigger(float(logger_xml.attrib["trigger_limit"]))
+                
+                if "file_save_path" in logger_xml.attrib.keys():
+                    logger_kwargs["file_save_path"] = logger_xml.attrib["file_save_path"]
+
+                if childTypeString == "position_logger":
+                    simulation.onItterationEnd += PositionLogger(**logger_kwargs)
+
+                elif childTypeString == "velocity_logger":
+                    simulation.onItterationEnd += VelocityLogger(**logger_kwargs)
+
+                elif childTypeString == "seperation_logger":
+                    simulation.onItterationEnd += SeperationLogger(referenceEntity = simulation.getEntity(logger_xml.reference_entity.attrib["layer_name"], logger_xml.reference_entity.attrib["entity_name"]),
+                                                                               **logger_kwargs)
+
+        return simulation
 
     def __toggleCameraMetrics(self):
         self.__layers["HUD"].getEntity("croshair").setVisability(not self.__layers["HUD"].getEntity("croshair").isVisable())

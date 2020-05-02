@@ -1,6 +1,7 @@
 import pygame
 
 from simulation.entities.moveable import Moveable
+from simulation.custom_xml.xml_loading import xml_bool, createPygameVector2, createPygameVector3, createPygameColor
 
 class Renderable_2D(Moveable):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), **kwargs):
@@ -39,6 +40,14 @@ class Renderable_2DLine(Renderable_2D):
                              self.__colour,
                              (self.getLocation().x, self.getLocation().y),
                              (endpoint.x, endpoint.y))
+
+    @staticmethod
+    def Renderable_2DLineFromXML(entity_xml, layer):
+            return {"entity": Renderable_2DLine(length = float(entity_xml.attrib["length"]),
+                                                             point1 = createPygameVector3(entity_xml.facing),
+                                                             point2 = createPygameVector3(entity_xml.vertical),
+                                                             colour = createPygameColor(entity_xml.colour),
+                                                             point1_is_midpoint = xml_bool(entity_xml.attrib["point1_is_midpoint"]))}
 
 
 
@@ -136,6 +145,14 @@ class Renderable_Simple2DCircle(Renderable_2D):
 
     def render(self, surface: pygame.Surface):
         pygame.draw.circle(surface, self.__colour, self.getLocation() * pygame.Vector3(surface.get_width(), surface.get_height(), 1), self.__radius * surface.get_width())
+
+    @staticmethod
+    def Renderable_Simple2DCircleFromXML(entity_xml, layer):
+            return {"entity": Renderable_Simple2DCircle(location = createPygameVector3(entity_xml.location),
+                                                        facing = createPygameVector3(entity_xml.facing),
+                                                        vertical = createPygameVector3(entity_xml.vertical),
+                                                        colour = createPygameColor(entity_xml.colour),
+                                                        radius = float(entity_xml.attrib["radius"]))}
 
 
         

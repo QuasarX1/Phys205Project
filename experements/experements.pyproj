@@ -25,9 +25,6 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="load_xml.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="locate_simulation_library.py">
       <SubType>Code</SubType>
     </Compile>

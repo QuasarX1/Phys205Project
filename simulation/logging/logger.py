@@ -5,7 +5,6 @@ import numpy as np
 import os
 import shutil
 
-from simulation.main import Simulation
 from simulation.entities.entity import Entity
 from simulation.entities.moveable import Moveable
 from simulation.physics_engine.newtonian.freeBody import FreeBody
@@ -56,7 +55,7 @@ class Logger(object):
     def getTime(self):
         return self.__time.copy()
 
-    def log(self, sim: Simulation, delta_t: float):
+    def log(self, sim, delta_t: float):
         self.__time.append(self.__time[-1] + delta_t)
 
     def resetLog(self, set_time_to_zero: bool = False):
@@ -87,7 +86,7 @@ class ActionLogger(Logger):
         self.__action = action
         self.__actionCounter = 0
 
-    def log(self, sim: Simulation, delta_t: float):
+    def log(self, sim, delta_t: float):
         super().log(sim, delta_t)
 
         if self.__trigger(self, sim, delta_t):
@@ -97,7 +96,7 @@ class ActionLogger(Logger):
     def resetLog(self, set_time_to_zero: bool = False):
         super().resetLog(set_time_to_zero)
 
-    def action(self, sim: Simulation):
+    def action(self, sim):
         self.__action(sim)
         self.__actionCounter += 1
 
@@ -146,7 +145,7 @@ class PositionLogger(GraphingLogger):
     def _getPositions(self):
         return self.__positions
 
-    def log(self, sim: Simulation, delta_t: float):
+    def log(self, sim, delta_t: float):
         for key in self.__positions.keys():
             self.__positions[key].append(copy.copy(self._getEntities()[key].getLocation()))
         super().log(sim, delta_t)
@@ -156,7 +155,7 @@ class PositionLogger(GraphingLogger):
         for key in self.__positions.keys():
             self.__positions[key] = [self.__positions[key][-1]]
 
-    def _customAction(self, sim: Simulation):
+    def _customAction(self, sim):
         filepath = self.getFilepath()
 
         distance = {}
@@ -247,7 +246,7 @@ class VelocityLogger(GraphingLogger):
             os.mkdir(os.path.join(self.getFilepath(), "X_Z_Velocity_Plane"))
             os.mkdir(os.path.join(self.getFilepath(), "Speed_Over_Time"))
 
-    def log(self, sim: Simulation, delta_t: float):
+    def log(self, sim, delta_t: float):
         for key in self.__positions.keys():
             self.__velocities[key].append(copy.copy(self._getEntities()[key]["entity"].getVelocity()))
         super().log(sim, delta_t)
@@ -257,7 +256,7 @@ class VelocityLogger(GraphingLogger):
         for key in self.__positions.keys():
             self.__velocities[key] = [self.__velocities[key][-1]]
 
-    def _customAction(self, sim: Simulation):
+    def _customAction(self, sim):
         filepath = self.getFilepath()
 
         speed = {}
@@ -335,7 +334,7 @@ class SeperationLogger(PositionLogger):
         entities["reference_entity"] = referenceEntity
         super().__init__(entities = entities, name = name, **kwargs)
 
-    def _customAction(self, sim: Simulation):
+    def _customAction(self, sim):
         filepath = self.getFilepath()
         positions = self._getPositions()
 
