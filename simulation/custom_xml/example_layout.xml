@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<simulation xmlns="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/layout_schema"
+<simulation xmlns="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/custom_xml"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/layout_schema simulation_layout_schema.xsd"
+            xsi:schemaLocation="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/custom_xml simulation_layout_schema.xsd"
             render_capability="true"
             timescale="86400">
 

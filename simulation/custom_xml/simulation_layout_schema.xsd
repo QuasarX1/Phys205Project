@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema targetNamespace="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/layout_schema"
+<xs:schema targetNamespace="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/custom_xml"
     elementFormDefault="qualified"
-    xmlns="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/layout_schema"
-    xmlns:mstns="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/layout_schema"
+    xmlns="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/custom_xml"
+    xmlns:mstns="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/custom_xml"
     xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 

@@ -52,7 +52,6 @@ from locate_simulation_library import simulation as sim, local_test_xml_location
 
 kwargs = {}
 flags_kwargs_map = {"--show":"forceVisable"}
-#arguments_kwargs_map = {"--file":("xml_document", str), "--timescale":("forceTimescale", float)}
 arguments_kwargs_map = {"--file":("path_to_xml", str), "--timescale":("forceTimescale", float)}
 for i in range(1, len(flags)):
     kwargs[flags_kwargs_map[flags[i]]] = flagsPresent[i]
@@ -60,7 +59,6 @@ for i, paramiter in enumerate(optionalParamiters):
     if argumentsPresent[i]:
         kwargs[arguments_kwargs_map[paramiter][0]] = arguments_kwargs_map[paramiter][1](argumentsDict[paramiter])
 
-#simulation = create_simulation(**kwargs) if "xml_document" in list(kwargs.keys()) else create_simulation(xml_document = local_test_xml_location, **kwargs)
 simulation = sim.Simulation.create_from_xml(**kwargs) if "path_to_xml" in list(kwargs.keys()) else sim.Simulation.create_from_xml(path_to_xml = local_test_xml_location, **kwargs)
 
 simulation.run()

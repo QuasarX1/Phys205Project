@@ -1,8 +1,8 @@
 from lxml import etree, objectify
 import pygame
 
-local_schema_location = "../simulation/layout_schema/simulation_layout_schema.xsd"
-local_test_xml_location = "../simulation/layout_schema/example_layout.xml"
+local_schema_location = "../simulation/custom_xml/simulation_layout_schema.xsd"
+local_test_xml_location = "../simulation/custom_xml/example_layout.xml"
 
 def xml_bool(value: str):
     return value == "true"
