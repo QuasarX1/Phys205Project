@@ -191,7 +191,7 @@ class Simulation(object):
         Paramiters:
             str path_to_xml -> The filepath to the XML document to be loaded
         """
-        #tree = load_XML(xml_document, local_schema_location)
+        #tree = load_XML(path_to_xml)#, local_schema_location)
         tree = load_XML_without_schema(path_to_xml)
         simulation_xml = tree.getroot()
 
@@ -212,6 +212,8 @@ class Simulation(object):
 
         remainingChildren = simulation_xml.getchildren()[1 if hasCamera else 0:]
         for i in range(len(remainingChildren)):
+            if remainingChildren[i].tag == "comment":
+                continue
             childTypeString = remainingChildren[i].tag.split("}")[1]
 
             if childTypeString in ("layer_2D", "layer_3D", "Layer_Mixed"):
@@ -230,6 +232,8 @@ class Simulation(object):
 
                 bindingDict = {}
                 for entity_xml in layer_xml.getchildren():
+                    if entity_xml.tag == "comment":
+                        continue
                     entityName = entity_xml.attrib["name"]
                     entityCreationResult = Simulation.__createEntityFromXML(entity_xml, layer)
                     entity = entityCreationResult["entity"]

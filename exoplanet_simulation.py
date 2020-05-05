@@ -74,32 +74,32 @@ simulation.addLayer("simulation_layer", simulation_layer)
 sun = Sun()
 simulation_layer.addEntity("sun", sun)
 
-mercury = Mercury(sun)
-simulation_layer.addEntity("mercury", mercury)
+#mercury = Mercury(sun)
+#simulation_layer.addEntity("mercury", mercury)
 
-venus = Venus(sun)
-simulation_layer.addEntity("venus", venus)
+#venus = Venus(sun)
+#simulation_layer.addEntity("venus", venus)
 
 earth = Earth(sun)
 simulation_layer.addEntity("earth", earth)
 
-mars = Mars(sun)
-simulation_layer.addEntity("mars", mars)
+#mars = Mars(sun)
+#simulation_layer.addEntity("mars", mars)
 
-jupiter = Jupiter(sun)
-simulation_layer.addEntity("jupiter", jupiter)
+#jupiter = Jupiter(sun)
+#simulation_layer.addEntity("jupiter", jupiter)
 
-saturn = Saturn(sun)
-simulation_layer.addEntity("saturn", saturn)
+#saturn = Saturn(sun)
+#simulation_layer.addEntity("saturn", saturn)
 
-uranus = Uranus(sun)
-simulation_layer.addEntity("uranus", uranus)
+#uranus = Uranus(sun)
+#simulation_layer.addEntity("uranus", uranus)
 
-neptune = Neptune(sun)
-simulation_layer.addEntity("neptune", neptune)
+#neptune = Neptune(sun)
+#simulation_layer.addEntity("neptune", neptune)
 
-pluto = Pluto(sun)
-simulation_layer.addEntity("pluto", pluto)
+#pluto = Pluto(sun)
+#simulation_layer.addEntity("pluto", pluto)
 
 
 '''
@@ -193,23 +193,32 @@ trigger_function_interior = ActionLogger.createTimePeriodTrigger(logging_time_pe
 logging_time_period_exterior = 60*60*24*365.25 * 165
 trigger_function_exterior = ActionLogger.createTimePeriodTrigger(logging_time_period_exterior)
 
-simulation.onItterationEnd += SeperationLogger(name = "interior_plannet_orbit_logger",
+#simulation.onItterationEnd += SeperationLogger(name = "interior_plannet_orbit_logger",
+#                                               runID = runID,
+#                                               entities = {"mercury": mercury, "venus": venus, "earth": earth, "mars": mars},
+#                                               trigger = trigger_function_interior,
+#                                               zero_time_on_action = False,
+#                                               show_graphs = showGraphs,
+#                                               file_save_path = filepath,
+#                                               referenceEntity = sun)
+
+simulation.onItterationEnd += SeperationLogger(name = "earth_orbit_logger",
                                                runID = runID,
-                                               entities = {"mercury": mercury, "venus": venus, "earth": earth, "mars": mars},
+                                               entities = {"earth": earth},
                                                trigger = trigger_function_interior,
                                                zero_time_on_action = False,
                                                show_graphs = showGraphs,
                                                file_save_path = filepath,
                                                referenceEntity = sun)
 
-simulation.onItterationEnd += SeperationLogger(name = "exterior_plannet_orbit_logger",
-                                               runID = runID,
-                                               entities = {"jupiter": jupiter, "saturn": saturn, "uranus": uranus, "neptune": neptune, "pluto": pluto},
-                                               trigger = trigger_function_exterior,
-                                               zero_time_on_action = False,
-                                               show_graphs = showGraphs,
-                                               file_save_path = filepath,
-                                               referenceEntity = sun)
+#simulation.onItterationEnd += SeperationLogger(name = "exterior_plannet_orbit_logger",
+#                                               runID = runID,
+#                                               entities = {"jupiter": jupiter, "saturn": saturn, "uranus": uranus, "neptune": neptune, "pluto": pluto},
+#                                               trigger = trigger_function_exterior,
+#                                               zero_time_on_action = False,
+#                                               show_graphs = showGraphs,
+#                                               file_save_path = filepath,
+#                                               referenceEntity = sun)
 
 #simulation.onItterationEnd += SeperationLogger(name = "exterior_plannet_orbit_logger",
 #                                               runID = runID,

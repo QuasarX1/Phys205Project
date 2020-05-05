@@ -135,8 +135,10 @@ class Camera(FreeBody, Moveable):
 
         strafe = 0
         if keys[pygame.K_a]:
+            #strafe -= 1
             strafe += 1
         if keys[pygame.K_d]:
+            #strafe += 1
             strafe -= 1
 
         if forewards != 0 or vertical != 0 or strafe != 0:

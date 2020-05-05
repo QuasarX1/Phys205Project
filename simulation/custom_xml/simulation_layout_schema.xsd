@@ -131,14 +131,29 @@
 
 
 
-  <xs:complexType name="sphere_type">
+  <xs:complexType name="base_sphere_type">
     <xs:complexContent>
       <xs:extension base="moveable_type">
+        <xs:attribute name="radius" type="xs:float" default="1.0" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="sphere_type">
+    <xs:complexContent>
+      <xs:extension base="base_sphere_type">
         <xs:sequence>
           <xs:element name="colour" type="Color"  minOccurs="1" maxOccurs="1" />
         </xs:sequence>
-        <xs:attribute name="radius" type="xs:float" default="1.0" />
       </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="base_camera_type">
+    <xs:complexContent>
+      <xs:restriction base="moveable_type">
+        <xs:attribute name="name" type="xs:string" use="required" fixed="camera" />
+      </xs:restriction>
     </xs:complexContent>
   </xs:complexType>
   
@@ -157,7 +172,7 @@
 <!-- Leaf Entities -->
   <xs:complexType name="star_type">
     <xs:complexContent>
-      <xs:extension base="sphere_type">
+      <xs:extension base="base_sphere_type">
         <xs:sequence>
           <xs:element name="free_body" type="free_body_type" minOccurs="1" maxOccurs="1" />
           <xs:element name="colour" type="Color" minOccurs="0" maxOccurs="0" />

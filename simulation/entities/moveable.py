@@ -32,6 +32,7 @@ class Moveable(Entity):
 
     def getHorisontal(self):
         return self.__vertical.cross(self.__facing).normalize()
+        #return self.__facing.cross(self.__vertical).normalize()
 
     def move(self, displacement_vector: pygame.Vector3):
         self.__centre += displacement_vector
