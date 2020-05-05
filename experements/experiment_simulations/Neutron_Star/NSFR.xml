@@ -22,7 +22,7 @@
       </free_body>
     </star>
 
-    <planet name="earth" radius="6378136.6" parent_star="PSR B1257+12">
+    <planet name="Far Rocky Planet" radius="6378136.6" parent_star="PSR B1257+12">
       <location x="1089998000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
@@ -35,7 +35,7 @@
 
   <seperation_logger name="Far_Rocky_Planet_Orbit_Logger" show_graphs="false" trigger_type="time_period"
                      trigger_limit="524711868.4" zero_time_on_action="false" file_save_path="./">
-    <logged_entity entity_name="earth" layer_name="simulation_layer" />
+    <logged_entity entity_name="Far Rocky Planet" layer_name="simulation_layer" />
     <reference_entity entity_name="PSR B1257+12" layer_name="simulation_layer" />
   </seperation_logger>
 
