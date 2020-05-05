@@ -13,8 +13,7 @@
     <RootNamespace>experements</RootNamespace>
     <InterpreterId>CondaEnv|CondaEnv|Phys205</InterpreterId>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>
-    </CommandLineArguments>
+    <CommandLineArguments>--file=./experiment_simulations/Neutron_Star/NSNR.xml --show</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
