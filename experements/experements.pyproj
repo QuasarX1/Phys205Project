@@ -13,7 +13,8 @@
     <RootNamespace>experements</RootNamespace>
     <InterpreterId>CondaEnv|CondaEnv|Phys205</InterpreterId>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>--file=./experiment_simulations/Neutron_Star/NSNR.xml --show</CommandLineArguments>
+    <CommandLineArguments>
+    </CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -39,7 +40,7 @@
     <Content Include="experiment_simulations\Blue_Giant\deleteme.txt" />
     <Content Include="experiment_simulations\Blue_Supergiant\deleteme.txt" />
     <Content Include="experiment_simulations\Brown_Dwarf\deleteme.txt" />
-    <Content Include="experiment_simulations\Neutron_Star\NRNG.xml" />
+    <Content Include="experiment_simulations\Neutron_Star\NSNG.xml" />
     <Content Include="experiment_simulations\Neutron_Star\NSFG.xml" />
     <Content Include="experiment_simulations\Neutron_Star\NSFR.xml" />
     <Content Include="experiment_simulations\Neutron_Star\NSNR.xml" />
