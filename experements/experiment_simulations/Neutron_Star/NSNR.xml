@@ -22,7 +22,7 @@
       </free_body>
     </star>
 
-    <planet name="earth" radius="6378136.6" parent_star="PSR B1257+12">
+    <planet name="Nearby Rocky Planet" radius="6378136.6" parent_star="PSR B1257+12">
       <location x="209440000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
@@ -34,13 +34,13 @@
   </layer_3D>
 
   <seperation_logger name="Near_Rocky_Planet_Orbit_Logger" show_graphs="false" trigger_type="time_period"
-                     trigger_limit="4425077.998" zero_time_on_action="false" file_save_path="./">
-    <logged_entity entity_name="earth" layer_name="simulation_layer" />
+                     trigger_limit="48675857.98" zero_time_on_action="false" file_save_path="./">
+    <logged_entity entity_name="Nearby Rocky Planet" layer_name="simulation_layer" />
     <reference_entity entity_name="PSR B1257+12" layer_name="simulation_layer" />
   </seperation_logger>
 
   <position_logger name="PSR_location_logger" show_graphs="false" trigger_type="time_period"
-                     trigger_limit="4425077.998" zero_time_on_action="false" file_save_path="./">
+                     trigger_limit="48675857.98" zero_time_on_action="false" file_save_path="./">
     <logged_entity entity_name="PSR B1257+12" layer_name="simulation_layer" />
   </position_logger>
   
