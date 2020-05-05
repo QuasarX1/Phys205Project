@@ -40,7 +40,10 @@
     <Content Include="experiment_simulations\Blue_Giant\deleteme.txt" />
     <Content Include="experiment_simulations\Blue_Supergiant\deleteme.txt" />
     <Content Include="experiment_simulations\Brown_Dwarf\deleteme.txt" />
-    <Content Include="experiment_simulations\Neutron_Star\deleteme.txt" />
+    <Content Include="experiment_simulations\Neutron_Star\NRNG.xml" />
+    <Content Include="experiment_simulations\Neutron_Star\NSFG.xml" />
+    <Content Include="experiment_simulations\Neutron_Star\NSFR.xml" />
+    <Content Include="experiment_simulations\Neutron_Star\NSNR.xml" />
     <Content Include="experiment_simulations\Red_Dwarf\deleteme.txt" />
     <Content Include="experiment_simulations\Red_Giant\deleteme.txt" />
     <Content Include="experiment_simulations\Red_Supergiant\RSFG.xml" />
