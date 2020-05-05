@@ -30,27 +30,7 @@
       </free_body>
     </star>
 
-    <planet name="NaLM" radius="6371000" parent_star="SiriusB">
-      <location x="153173547900" y="0" z="0" />
-      <facing x="1" y="0" z="0" />
-      <vertical x="0" y="1" z="0" />
-      <colour r="0" g="255" b="0" a="0" />
-      <free_body mass="5972370000000000000000000" rotational_period="84816">
-        <velocity x="0" y="0" z="29784.1284494" />
-      </free_body>
-    </planet>
-
-    <planet name="FaLM" radius="6371000" parent_star="SiriusB">
-      <location x="797167975861" y="0" z="0" />
-      <facing x="1" y="0" z="0" />
-      <vertical x="0" y="1" z="0" />
-      <colour r="0" g="255" b="0" a="0" />
-      <free_body mass="5972370000000000000000000" rotational_period="84816">
-        <velocity x="0" y="0" z="13055.7510497" />
-      </free_body>
-    </planet>
-
-    <planet name="NaHM" radius="66854000" parent_star="SiriusB">
+    <planet name="Near_gaseous_planet" radius="66854000" parent_star="SiriusB">
       <location x="153173547900" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
@@ -60,16 +40,6 @@
       </free_body>
     </planet>
 
-    <planet name="FaHM" radius="66854000" parent_star="SiriusB">
-      <location x="797167975861" y="0" z="0" />
-      <facing x="1" y="0" z="0" />
-      <vertical x="0" y="1" z="0" />
-      <colour r="0" g="255" b="0" a="0" />
-      <free_body mass="1898200000000000000000000000" rotational_period="84816">
-        <velocity x="0" y="0" z="13055.7510497" />
-      </free_body>
-    </planet>
-    
   </layer_3D>
   
 </simulation>
