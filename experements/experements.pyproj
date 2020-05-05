@@ -43,7 +43,10 @@
     <Content Include="experiment_simulations\Neutron_Star\deleteme.txt" />
     <Content Include="experiment_simulations\Red_Dwarf\deleteme.txt" />
     <Content Include="experiment_simulations\Red_Giant\deleteme.txt" />
-    <Content Include="experiment_simulations\Red_Supergiant\deleteme.txt" />
+    <Content Include="experiment_simulations\Red_Supergiant\RSFG.xml" />
+    <Content Include="experiment_simulations\Red_Supergiant\RSFR.xml" />
+    <Content Include="experiment_simulations\Red_Supergiant\RSNG.xml" />
+    <Content Include="experiment_simulations\Red_Supergiant\RSNR.xml" />
     <Content Include="experiment_simulations\White_Dwarf\WDFG.xml" />
     <Content Include="experiment_simulations\White_Dwarf\WDFR.xml" />
     <Content Include="experiment_simulations\White_Dwarf\WDNG.xml" />
