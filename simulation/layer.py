@@ -62,6 +62,13 @@ class Layer(object):
     def setBackgroundColour(self, new_background_colour):
         self.backgroundColour = new_background_colour
 
+    def getEntityName(self, entity):
+        entitiesList = list(self.__entities.values())
+        if entity in entitiesList:
+            return list(self.__entities.keys())[entitiesList.index(entity)]
+        else:
+            raise ValueError("The entity is not present in the layer.")
+
     def getEntity(self, name: str):
         """
         Returns a reference to an entity registered with the layer.

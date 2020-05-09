@@ -13,8 +13,7 @@
     <RootNamespace>experements</RootNamespace>
     <InterpreterId>CondaEnv|CondaEnv|Phys205</InterpreterId>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>
-    </CommandLineArguments>
+    <CommandLineArguments>--file=.\experiment_simulations\Yellow_Dwarf\earthTest.xml</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -54,7 +53,12 @@
     <Content Include="experiment_simulations\White_Dwarf\WDFR.xml" />
     <Content Include="experiment_simulations\White_Dwarf\WDNG.xml" />
     <Content Include="experiment_simulations\White_Dwarf\WDNR.xml" />
-    <Content Include="experiment_simulations\Yellow_Dwarf\deleteme.txt" />
+    <Content Include="experiment_simulations\Yellow_Dwarf\YDFG.xml" />
+    <Content Include="experiment_simulations\Yellow_Dwarf\YDFR.xml" />
+    <Content Include="experiment_simulations\Yellow_Dwarf\YDNG.xml" />
+    <Content Include="experiment_simulations\Yellow_Dwarf\earthTest.xml" />
+    <Content Include="experiment_simulations\Yellow_Dwarf\YDNR.xml" />
+    <Content Include="experiment_simulations\Yellow_Dwarf\YDNR_experement.xml" />
     <Content Include="Solar_System.xml" />
   </ItemGroup>
   <ItemGroup>

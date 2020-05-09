@@ -13,7 +13,7 @@ from simulation.entities import Entity, Renderable_Simple2DCircle, Renderable_2D
 from simulation.entities.prefabs import Croshair, Croshair_3D, UnitCube_Wireframe, TriangularPyrimid_Wireframe, Sphere
 from simulation.graphics import Camera, CameraPositionDisplay, CameraForceDisplay, CameraSpeedDisplay
 from simulation.graphics.HUD import Text, ReferencePoint, UpdatingText, Button
-from simulation.logging import ActionLogger, PositionLogger, VelocityLogger, SeperationLogger
+from simulation.logging import ActionLogger, PositionLogger, VelocityLogger, SeperationLogger, BarycenterSeperationLogger
 
 from simulation.entities.astro_bodies import Star, Planet
 
@@ -246,7 +246,7 @@ class Simulation(object):
                     for entity_name in bindingDict[key]:
                         layer.getEntity(key).bindEntity_by_name(entity_name, layer)
 
-            elif childTypeString in ("position_logger", "velocity_logger", "seperation_logger"):
+            elif childTypeString in ("position_logger", "velocity_logger", "seperation_logger", "barycenter_seperation_logger"):
                 logger_xml = remainingChildren[i]
 
                 logger_kwargs = {"name":logger_xml.attrib["name"],
@@ -274,7 +274,16 @@ class Simulation(object):
 
                 elif childTypeString == "seperation_logger":
                     simulation.onItterationEnd += SeperationLogger(referenceEntity = simulation.getEntity(logger_xml.reference_entity.attrib["layer_name"], logger_xml.reference_entity.attrib["entity_name"]),
-                                                                               **logger_kwargs)
+                                                                   **logger_kwargs)
+
+                elif childTypeString == "barycenter_seperation_logger":
+                    measuredEntities = {}
+                    for entity_reference_xml in [child for child in logger_xml.getchildren() if child.tag.split("}")[1] == "measure_entity"]:
+                        measuredEntities[entity_reference_xml.attrib["entity_name"]] = float(entity_reference_xml.attrib["scale"])
+                    simulation.onItterationEnd += BarycenterSeperationLogger(star = simulation.getEntity(logger_xml.star.attrib["layer_name"], logger_xml.star.attrib["entity_name"]),
+                                                                             layer = simulation.getLayer(logger_xml.star.attrib["layer_name"]),
+                                                                             measuredEntities = measuredEntities,
+                                                                             **logger_kwargs)
 
         return simulation
 

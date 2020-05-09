@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<simulation xmlns="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/custom_xml"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/custom_xml simulation_layout_schema.xsd"
+            render_capability="false"
+            timescale="900"><!-- delta_t = 15 min -->
+
+  <camera width="500" height="500" field_of_vision="0.5">
+    <location x="0" y="0" z="-2000000000" />
+    <facing x="0" y="0" z="1" />
+    <vertical x="0" y="1" z="0" />
+  </camera>
+
+  <layer_3D name="simulation_layer" render_capability="true">
+    <star name="sun" tempriture="5772" radius="696342000">
+      <location x="0" y="0" z="0" />
+      <facing x="1" y="0" z="0" />
+      <vertical x="0" y="1" z="0" />
+      <free_body mass="1988500000000000000000000000000" rotational_period="2192832">
+        <velocity x="0" y="0" z="0" />
+      </free_body>
+    </star>
+
+    <planet name="jupiter" radius="71492000" parent_star="sun">
+      <location x="778570000000" y="0" z="0" />
+      <facing x="1" y="0" z="0" />
+      <vertical x="0" y="1" z="0" />
+      <colour r="255" g="75" b="0" a="255" />
+      <free_body mass="1898190000000000000000000000" rotational_period="35730">
+        <velocity x="0" y="0" z="29780" />
+      </free_body>
+    </planet>
+  </layer_3D>
+
+  <seperation_logger name="jupiter_orbit_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="31557600" zero_time_on_action="false" file_save_path="./">
+    <logged_entity entity_name="jupiter" layer_name="simulation_layer" />
+    <reference_entity entity_name="sun" layer_name="simulation_layer" />
+  </seperation_logger>
+
+  <position_logger name="sun_location_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="31557600" zero_time_on_action="false" file_save_path="./">
+    <logged_entity entity_name="sun" layer_name="simulation_layer" />
+  </position_logger>
+  
+</simulation>
