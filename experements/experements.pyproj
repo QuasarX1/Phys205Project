@@ -44,7 +44,10 @@
     <Content Include="experiment_simulations\Neutron_Star\NSFG.xml" />
     <Content Include="experiment_simulations\Neutron_Star\NSFR.xml" />
     <Content Include="experiment_simulations\Neutron_Star\NSNR.xml" />
-    <Content Include="experiment_simulations\Red_Dwarf\deleteme.txt" />
+    <Content Include="experiment_simulations\Red_Dwarf\RDFG.xml" />
+    <Content Include="experiment_simulations\Red_Dwarf\RDFR.xml" />
+    <Content Include="experiment_simulations\Red_Dwarf\RDNG.xml" />
+    <Content Include="experiment_simulations\Red_Dwarf\RDNR.xml" />
     <Content Include="experiment_simulations\Red_Giant\deleteme.txt" />
     <Content Include="experiment_simulations\Red_Supergiant\RSFG.xml" />
     <Content Include="experiment_simulations\Red_Supergiant\RSFR.xml" />
@@ -59,7 +62,6 @@
     <Content Include="experiment_simulations\Yellow_Dwarf\YDNG.xml" />
     <Content Include="experiment_simulations\Yellow_Dwarf\earthTest.xml" />
     <Content Include="experiment_simulations\Yellow_Dwarf\YDNR.xml" />
-    <Content Include="experiment_simulations\Yellow_Dwarf\YDNR_experement.xml" />
     <Content Include="Solar_System.xml" />
   </ItemGroup>
   <ItemGroup>

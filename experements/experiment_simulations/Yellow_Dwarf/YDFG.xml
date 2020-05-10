@@ -33,15 +33,37 @@
     </planet>
   </layer_3D>
 
-  <seperation_logger name="jupiter_orbit_logger" show_graphs="false" trigger_type="time_period"
+  <!-- Solarcentric + Barycentric -->
+  <position_logger name="sun_location_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="378691200" zero_time_on_action="false" file_save_path="./">
+    <logged_entity entity_name="sun" layer_name="simulation_layer" />
+  </position_logger>
+
+  <!-- Barycentric -->
+  <barycenter_seperation_logger name="sun_orbit_barycenter_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="378691200" zero_time_on_action="false" file_save_path="./">
+    <star entity_name="sun" layer_name="simulation_layer" />
+    <measure_entity entity_name="sun" scale="1.0" />
+  </barycenter_seperation_logger>
+
+  <!-- Barycentric -->
+  <barycenter_seperation_logger name="system_orbit_barycenter_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="378691200" zero_time_on_action="false" file_save_path="./">
+    <star entity_name="sun" layer_name="simulation_layer" />
+  </barycenter_seperation_logger>
+
+  <!-- Solarcentric -->
+  <seperation_logger name="jupiter_orbit_sun_logger" show_graphs="false" trigger_type="time_period"
                      trigger_limit="378691200" zero_time_on_action="false" file_save_path="./">
     <logged_entity entity_name="jupiter" layer_name="simulation_layer" />
     <reference_entity entity_name="sun" layer_name="simulation_layer" />
   </seperation_logger>
 
-  <position_logger name="sun_location_logger" show_graphs="false" trigger_type="time_period"
+  <!-- Barycentric -->
+  <barycenter_seperation_logger name="jupiter_orbit_barycenter_logger" show_graphs="false" trigger_type="time_period"
                      trigger_limit="378691200" zero_time_on_action="false" file_save_path="./">
-    <logged_entity entity_name="sun" layer_name="simulation_layer" />
-  </position_logger>
+    <star entity_name="sun" layer_name="simulation_layer" />
+    <measure_entity entity_name="jupiter" scale="1.0" />
+  </barycenter_seperation_logger>
   
 </simulation>

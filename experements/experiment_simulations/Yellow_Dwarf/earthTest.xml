@@ -54,20 +54,6 @@
     </planet>-->
   </layer_3D>
 
-  <!-- Solarcentric -->
-  <seperation_logger name="earth_orbit_sun_logger" show_graphs="false" trigger_type="time_period"
-                     trigger_limit="31557600" zero_time_on_action="false" file_save_path="./">
-    <logged_entity entity_name="earth" layer_name="simulation_layer" />
-    <reference_entity entity_name="sun" layer_name="simulation_layer" />
-  </seperation_logger>
-
-  <!-- Barycentric -->
-  <barycenter_seperation_logger name="earth_orbit_barycenter_logger" show_graphs="false" trigger_type="time_period"
-                     trigger_limit="31557600" zero_time_on_action="false" file_save_path="./">
-    <star entity_name="sun" layer_name="simulation_layer" />
-    <measure_entity entity_name="earth" scale="1.0" />
-  </barycenter_seperation_logger>
-
   <!-- Solarcentric + Barycentric -->
   <position_logger name="sun_location_logger" show_graphs="false" trigger_type="time_period"
                      trigger_limit="31557600" zero_time_on_action="false" file_save_path="./">
@@ -85,6 +71,20 @@
   <barycenter_seperation_logger name="system_orbit_barycenter_logger" show_graphs="false" trigger_type="time_period"
                      trigger_limit="31557600" zero_time_on_action="false" file_save_path="./">
     <star entity_name="sun" layer_name="simulation_layer" />
+  </barycenter_seperation_logger>
+
+  <!-- Solarcentric -->
+  <seperation_logger name="earth_orbit_sun_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="31557600" zero_time_on_action="false" file_save_path="./">
+    <logged_entity entity_name="earth" layer_name="simulation_layer" />
+    <reference_entity entity_name="sun" layer_name="simulation_layer" />
+  </seperation_logger>
+
+  <!-- Barycentric -->
+  <barycenter_seperation_logger name="earth_orbit_barycenter_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="31557600" zero_time_on_action="false" file_save_path="./">
+    <star entity_name="sun" layer_name="simulation_layer" />
+    <measure_entity entity_name="earth" scale="1.0" />
   </barycenter_seperation_logger>
   
 </simulation>

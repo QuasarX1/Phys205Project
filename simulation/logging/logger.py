@@ -1,4 +1,5 @@
 import copy
+import csv
 import datetime
 from matplotlib import pyplot as plt
 import numpy as np
@@ -187,6 +188,8 @@ class PositionLogger(GraphingLogger):
                 y[key].append(position.y)
                 z[key].append(position.z)
         
+        timeStamp = datetime.datetime.now().strftime("%Y %m %d %H %M %S %f")
+
         plt.figure()
         for key in self.__positions.keys():
             plt.plot(t, x[key], color = "blue", label = "{} X Position".format(key))
@@ -196,7 +199,17 @@ class PositionLogger(GraphingLogger):
             plt.ylabel("Component Displacement (m)")
             plt.legend()
             if filepath is not None:
-                plt.savefig(os.path.join(filepath, "Component_Displacement/{}/{}.png".format(key, datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+                temp_filePath = os.path.join(filepath, "Component_Displacement/{}/{}".format(key, timeStamp))
+
+                plt.savefig(temp_filePath + ".png")
+
+                csvFile = open(temp_filePath + ".csv", "x", newline = "")
+                writer = csv.writer(csvFile)
+                writer.writerow(["t", "x", "y", "z"])
+                for i in range(len(t)):
+                    writer.writerow([t[i], x[key][i], y[key][i], z[key][i]])
+                csvFile.close()
+
             if self.getShowGraphs():
                 plt.show()
             plt.clf()
@@ -214,7 +227,25 @@ class PositionLogger(GraphingLogger):
         plt.ylabel("Z Displacement (m)")
         plt.legend()
         if filepath is not None:
-            plt.savefig(os.path.join(filepath, "X_Z_Plane/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+            temp_filePath = os.path.join(filepath, "X_Z_Plane/{}".format(timeStamp))
+
+            plt.savefig(temp_filePath + ".png")
+
+            csvFile = open(temp_filePath + ".csv", "x", newline = "")
+            writer = csv.writer(csvFile)
+            row = ["t"]
+            for key in self.__positions.keys():
+                row.append("{} x".format(key))
+                row.append("{} z".format(key))
+            writer.writerow(row)
+            for i in range(len(t)):
+                row = [t[i]]
+                for key in self.__positions.keys():
+                    row.append(x[key][i])
+                    row.append(z[key][i])
+                writer.writerow(row)
+            csvFile.close()
+
         if self.getShowGraphs():
             plt.show()
         plt.clf()
@@ -232,7 +263,23 @@ class PositionLogger(GraphingLogger):
         plt.ylabel("Distance (m)")
         plt.legend()
         if filepath is not None:
-            plt.savefig(os.path.join(filepath, "Distance_Over_Time/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+            temp_filePath = os.path.join(filepath, "Distance_Over_Time/{}".format(timeStamp))
+
+            plt.savefig(temp_filePath + ".png")
+
+            csvFile = open(temp_filePath + ".csv", "x", newline = "")
+            writer = csv.writer(csvFile)
+            row = ["t"]
+            for key in self.__positions.keys():
+                row.append("{} distance".format(key))
+            writer.writerow(row)
+            for i in range(len(t)):
+                row = [t[i]]
+                for key in self.__positions.keys():
+                    row.append(distance[key][i])
+                writer.writerow(row)
+            csvFile.close()
+
         if self.getShowGraphs():
             plt.show()
         plt.clf()
@@ -288,6 +335,8 @@ class VelocityLogger(GraphingLogger):
                 y[key].append(velocity.y)
                 z[key].append(velocity.z)
         
+        timeStamp = datetime.datetime.now().strftime("%Y %m %d %H %M %S %f")
+
         plt.figure()
         for key in self.__velocities.keys():
             plt.plot(t, x[key], color = "blue", label = "{} X Velocity".format(key))
@@ -297,7 +346,17 @@ class VelocityLogger(GraphingLogger):
             plt.ylabel("Component Velocity ($ms^{-1}$)")
             plt.legend()
             if filepath is not None:
-                plt.savefig(os.path.join(filepath, "Component_Velocity/{}/{}.png".format(key, datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+                temp_filePath = os.path.join(filepath, "Component_Velocity/{}/{}".format(key, timeStamp))
+
+                plt.savefig(temp_filePath + ".png")
+
+                csvFile = open(temp_filePath + ".csv", "x", newline = "")
+                writer = csv.writer(csvFile)
+                writer.writerow(["t", "x velocity", "y velocity", "z velocity"])
+                for i in range(len(t)):
+                    writer.writerow([t[i], x[key][i], y[key][i], z[key][i]])
+                csvFile.close()
+
             if self.getShowGraphs():
                 plt.show()
             plt.clf()
@@ -315,7 +374,25 @@ class VelocityLogger(GraphingLogger):
         plt.ylabel("Z Velocity (m)")
         plt.legend()
         if filepath is not None:
-            plt.savefig(os.path.join(filepath, "X_Z_Velocity_Plane/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+            temp_filePath = os.path.join(filepath, "X_Z_Velocity_Plane/{}".format(timeStamp))
+
+            plt.savefig(temp_filePath + ".png")
+
+            csvFile = open(temp_filePath + ".csv", "x", newline = "")
+            writer = csv.writer(csvFile)
+            row = ["t"]
+            for key in self.__velocities.keys():
+                row.append("{} x velocity".format(key))
+                row.append("{} z velocity".format(key))
+            writer.writerow(row)
+            for i in range(len(t)):
+                row = [t[i]]
+                for key in self.__velocities.keys():
+                    row.append(x[key][i])
+                    row.append(z[key][i])
+                writer.writerow(row)
+            csvFile.close()
+
         if self.getShowGraphs():
             plt.show()
         plt.clf()
@@ -333,7 +410,23 @@ class VelocityLogger(GraphingLogger):
         plt.ylabel("Speed ($ms^{-1}$)")
         plt.legend()
         if filepath is not None:
-            plt.savefig(os.path.join(filepath, "Speed_Over_Time/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+            temp_filePath = os.path.join(filepath, "Speed_Over_Time/{}".format(timeStamp))
+        
+            plt.savefig(temp_filePath + ".png")
+
+            csvFile = open(temp_filePath + ".csv", "x", newline = "")
+            writer = csv.writer(csvFile)
+            row = ["t"]
+            for key in self.__velocities.keys():
+                row.append("{} speed".format(key))
+            writer.writerow(row)
+            for i in range(len(t)):
+                row = [t[i]]
+                for key in self.__velocities.keys():
+                    row.append(speed[key][i])
+                writer.writerow(row)
+            csvFile.close()
+
         if self.getShowGraphs():
             plt.show()
         plt.clf()
@@ -373,8 +466,12 @@ class SeperationLogger(PositionLogger):
                 displacement_y[key].append(displacement.y)
                 displacement_z[key].append(displacement.z)
 
+        timeStamp = datetime.datetime.now().strftime("%Y %m %d %H %M %S %f")
+
         plt.figure()
         for key in validKeys:
+            temp_filePath = os.path.join(filepath, "Component_Displacement/{}/{}".format(key, timeStamp))
+
             plt.plot(t, displacement_x[key], color = "blue", label = "{} X Displacement".format(key))
             plt.plot(t, displacement_y[key], color = "orange", label = "{} Y Displacement".format(key))
             plt.plot(t, displacement_z[key], color = "green", label = "{} Z Displacement".format(key))
@@ -382,7 +479,15 @@ class SeperationLogger(PositionLogger):
             plt.ylabel("Seperation Component Displacement (m)")
             plt.legend()
             if filepath is not None:
-                plt.savefig(os.path.join(filepath, "Component_Displacement/{}/{}.png".format(key, datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+                plt.savefig(temp_filePath + ".png")
+
+                csvFile = open(temp_filePath + ".csv", "x", newline = "")
+                writer = csv.writer(csvFile)
+                writer.writerow(["t", "x seperation", "y seperation", "z seperation"])
+                for i in range(len(t)):
+                    writer.writerow([t[i], displacement_x[key][i], displacement_y[key][i], displacement_z[key][i]])
+                csvFile.close()
+
             if self.getShowGraphs():
                 plt.show()
             plt.clf()
@@ -396,11 +501,29 @@ class SeperationLogger(PositionLogger):
                 plt.plot(displacement_x[key], displacement_z[key], label = key, color = tuple([value / 255 for value in _correctBrightColour(entity.getColour())]))
             else:
                 plt.plot(displacement_x[key], displacement_z[key], label = key)
-        plt.xlabel("X Displacement (m)")
-        plt.ylabel("Z Displacement (m)")
+        plt.xlabel("X Seperation (m)")
+        plt.ylabel("Z Seperation (m)")
         plt.legend()
         if filepath is not None:
-            plt.savefig(os.path.join(filepath, "X_Z_Plane/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+            temp_filePath = os.path.join(filepath, "X_Z_Plane/{}".format(timeStamp))
+
+            plt.savefig(temp_filePath + ".png")
+
+            csvFile = open(temp_filePath + ".csv", "x", newline = "")
+            writer = csv.writer(csvFile)
+            row = ["t"]
+            for key in validKeys:
+                row.append("{} x seperation".format(key))
+                row.append("{} z seperation".format(key))
+            writer.writerow(row)
+            for i in range(len(t)):
+                row = [t[i]]
+                for key in validKeys:
+                    row.append(displacement_x[key][i])
+                    row.append(displacement_z[key][i])
+                writer.writerow(row)
+            csvFile.close()
+
         if self.getShowGraphs():
             plt.show()
         plt.clf()
@@ -415,10 +538,26 @@ class SeperationLogger(PositionLogger):
             else:
                 plt.plot(t, distance[key], label = key)
         plt.xlabel("Time (s)")
-        plt.ylabel("Distance (m)")
+        plt.ylabel("Seperation (m)")
         plt.legend()
         if filepath is not None:
-            plt.savefig(os.path.join(filepath, "Distance_Over_Time/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+            temp_filePath = os.path.join(filepath, "Distance_Over_Time/{}".format(timeStamp))
+        
+            plt.savefig(temp_filePath + ".png")
+
+            csvFile = open(temp_filePath + ".csv", "x", newline = "")
+            writer = csv.writer(csvFile)
+            row = ["t"]
+            for key in validKeys:
+                row.append("{} seperation".format(key))
+            writer.writerow(row)
+            for i in range(len(t)):
+                row = [t[i]]
+                for key in validKeys:
+                    row.append(distance[key][i])
+                writer.writerow(row)
+            csvFile.close()
+
         if self.getShowGraphs():
             plt.show()
         plt.clf()
@@ -495,6 +634,8 @@ class BarycenterSeperationLogger(GraphingLogger):
                 y[key].append(position.y * self.__measuredEntities[key])
                 z[key].append(position.z * self.__measuredEntities[key])
         
+        timeStamp = datetime.datetime.now().strftime("%Y %m %d %H %M %S %f")
+
         plt.figure()
         for key in self.__measuredEntities.keys():
             plt.plot(t, x[key], color = "blue", label = "{} X Position".format(key))
@@ -504,7 +645,17 @@ class BarycenterSeperationLogger(GraphingLogger):
             plt.ylabel("Component Displacement from Barycenter (m)")
             plt.legend()
             if filepath is not None:
-                plt.savefig(os.path.join(filepath, "Component_Displacement/{}/{}.png".format(key, datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+                temp_filePath = os.path.join(filepath, "Component_Displacement/{}/{}".format(key, timeStamp))
+
+                plt.savefig(temp_filePath + ".png")
+
+                csvFile = open(temp_filePath + ".csv", "x", newline = "")
+                writer = csv.writer(csvFile)
+                writer.writerow(["t", "x displacement", "y displacement", "z displacement"])
+                for i in range(len(t)):
+                    writer.writerow([t[i], x[key][i], y[key][i], z[key][i]])
+                csvFile.close()
+
             if self.getShowGraphs():
                 plt.show()
             plt.clf()
@@ -522,7 +673,25 @@ class BarycenterSeperationLogger(GraphingLogger):
         plt.ylabel("Z Displacement (m)")
         plt.legend()
         if filepath is not None:
-            plt.savefig(os.path.join(filepath, "X_Z_Plane/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+            temp_filePath = os.path.join(filepath, "X_Z_Plane/{}".format(timeStamp))
+
+            plt.savefig(temp_filePath + ".png")
+
+            csvFile = open(temp_filePath + ".csv", "x", newline = "")
+            writer = csv.writer(csvFile)
+            row = ["t"]
+            for key in self.__measuredEntities.keys():
+                row.append("{} x displacement".format(key))
+                row.append("{} z displacement".format(key))
+            writer.writerow(row)
+            for i in range(len(t)):
+                row = [t[i]]
+                for key in self.__measuredEntities.keys():
+                    row.append(x[key][i])
+                    row.append(z[key][i])
+                writer.writerow(row)
+            csvFile.close()
+
         if self.getShowGraphs():
             plt.show()
         plt.clf()
@@ -540,7 +709,23 @@ class BarycenterSeperationLogger(GraphingLogger):
         plt.ylabel("Distance (m)")
         plt.legend()
         if filepath is not None:
-            plt.savefig(os.path.join(filepath, "Distance_Over_Time/{}.png".format(datetime.datetime.now().strftime("%Y %m %d %H %M %S %f"))))
+            temp_filePath = os.path.join(filepath, "Distance_Over_Time/{}".format(timeStamp))
+        
+            plt.savefig(temp_filePath + ".png")
+
+            csvFile = open(temp_filePath + ".csv", "x", newline = "")
+            writer = csv.writer(csvFile)
+            row = ["t"]
+            for key in self.__measuredEntities.keys():
+                row.append("{} distance".format(key))
+            writer.writerow(row)
+            for i in range(len(t)):
+                row = [t[i]]
+                for key in self.__measuredEntities.keys():
+                    row.append(distance[key][i])
+                writer.writerow(row)
+            csvFile.close()
+
         if self.getShowGraphs():
             plt.show()
         plt.clf()
