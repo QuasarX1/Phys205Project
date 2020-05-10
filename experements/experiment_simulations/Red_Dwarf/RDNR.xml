@@ -4,7 +4,7 @@
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/custom_xml simulation_layout_schema.xsd"
             render_capability="false"
-            timescale="900">
+            timescale="900"><!-- delta_t = 15 min -->
 
   <camera width="500" height="500" field_of_vision="0.5">
     <location x="0" y="0" z="-1009200000" />
@@ -13,7 +13,7 @@
   </camera>
 
   <layer_3D name="simulation_layer" render_capability="true">
-    <star name="proxima" tempriture="3040" radius="100920000">
+    <star name="proxima centuri" tempriture="3040" radius="100920000">
       <location x="0" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
@@ -33,15 +33,37 @@
     </planet>
   </layer_3D>
 
-  <seperation_logger name="nearby_rocky_planet_orbit_logger" show_graphs="false" trigger_type="time_period"
+  <!-- Solarcentric + Barycentric -->
+  <position_logger name="proxima_centuri_location_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="3902916.091" zero_time_on_action="false" file_save_path="./">
+    <logged_entity entity_name="proxima centuri" layer_name="simulation_layer" />
+  </position_logger>
+
+  <!-- Barycentric -->
+  <barycenter_seperation_logger name="proxima_centuri_orbit_barycenter_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="3902916.091" zero_time_on_action="false" file_save_path="./">
+    <star entity_name="proxima centuri" layer_name="simulation_layer" />
+    <measure_entity entity_name="proxima centuri" scale="1.0" />
+  </barycenter_seperation_logger>
+
+  <!-- Barycentric -->
+  <barycenter_seperation_logger name="system_orbit_barycenter_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="3902916.091" zero_time_on_action="false" file_save_path="./">
+    <star entity_name="proxima centuri" layer_name="simulation_layer" />
+  </barycenter_seperation_logger>
+
+  <!-- Solarcentric -->
+  <seperation_logger name="nearby_rocky_planet_orbit_sun_logger" show_graphs="false" trigger_type="time_period"
                      trigger_limit="3902916.091" zero_time_on_action="false" file_save_path="./">
     <logged_entity entity_name="nearby rocky planet" layer_name="simulation_layer" />
-    <reference_entity entity_name="proxima" layer_name="simulation_layer" />
+    <reference_entity entity_name="proxima centuri" layer_name="simulation_layer" />
   </seperation_logger>
 
-  <position_logger name="proxima_location_logger" show_graphs="false" trigger_type="time_period"
+  <!-- Barycentric -->
+  <barycenter_seperation_logger name="nearby_rocky_planet_orbit_barycenter_logger" show_graphs="false" trigger_type="time_period"
                      trigger_limit="3902916.091" zero_time_on_action="false" file_save_path="./">
-    <logged_entity entity_name="proxima" layer_name="simulation_layer" />
-  </position_logger>
+    <star entity_name="proxima centuri" layer_name="simulation_layer" />
+    <measure_entity entity_name="nearby rocky planet" scale="1.0" />
+  </barycenter_seperation_logger>
   
 </simulation>
