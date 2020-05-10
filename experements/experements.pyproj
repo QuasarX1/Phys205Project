@@ -48,7 +48,10 @@
     <Content Include="experiment_simulations\Red_Dwarf\RDFR.xml" />
     <Content Include="experiment_simulations\Red_Dwarf\RDNG.xml" />
     <Content Include="experiment_simulations\Red_Dwarf\RDNR.xml" />
-    <Content Include="experiment_simulations\Red_Giant\deleteme.txt" />
+    <Content Include="experiment_simulations\Red_Giant\RGFG.xml" />
+    <Content Include="experiment_simulations\Red_Giant\RGFR.xml" />
+    <Content Include="experiment_simulations\Red_Giant\RGNG.xml" />
+    <Content Include="experiment_simulations\Red_Giant\RGNR.xml" />
     <Content Include="experiment_simulations\Red_Supergiant\RSFG.xml" />
     <Content Include="experiment_simulations\Red_Supergiant\RSFR.xml" />
     <Content Include="experiment_simulations\Red_Supergiant\RSNG.xml" />
