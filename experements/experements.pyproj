@@ -13,7 +13,7 @@
     <RootNamespace>experements</RootNamespace>
     <InterpreterId>CondaEnv|CondaEnv|Phys205</InterpreterId>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>--file=.\experiment_simulations\Yellow_Dwarf\earthTest.xml</CommandLineArguments>
+    <CommandLineArguments>--file=.\experiment_simulations\Blue_Supergiant\BSNR.xml</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -37,7 +37,10 @@
     <Content Include="Cygni.xml" />
     <Content Include="Distant_Binary_Stars.xml" />
     <Content Include="experiment_simulations\Blue_Giant\deleteme.txt" />
-    <Content Include="experiment_simulations\Blue_Supergiant\deleteme.txt" />
+    <Content Include="experiment_simulations\Blue_Supergiant\BSFG.xml" />
+    <Content Include="experiment_simulations\Blue_Supergiant\BSFR.xml" />
+    <Content Include="experiment_simulations\Blue_Supergiant\BSNG.xml" />
+    <Content Include="experiment_simulations\Blue_Supergiant\BSNR.xml" />
     <Content Include="experiment_simulations\Brown_Dwarf\deleteme.txt" />
     <Content Include="experiment_simulations\Neutron_Star\NSNG.xml" />
     <Content Include="experiment_simulations\Neutron_Star\NSFG.xml" />
