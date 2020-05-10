@@ -4,7 +4,7 @@
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/custom_xml simulation_layout_schema.xsd"
             render_capability="false"
-            timescale="86400">
+            timescale="900"><!-- delta_t = 15 min -->
 
   <camera width="500" height="500" field_of_vision="0.5">
     <location x="0" y="0" z="-6650066100000" />
