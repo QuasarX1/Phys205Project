@@ -23,12 +23,12 @@
     </star>
 
     <planet name="distant rocky planet" radius="6378136.6" parent_star="betelgeuse">
-      <location x="15574140000000" y="0" z="0" />
+      <location x="14810400000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
       <colour r="0" g="255" b="0" a="255" />
       <free_body mass="5972400000000000000000000" rotational_period="86164.2">
-        <velocity x="0" y="0" z="13055.75105" />
+        <velocity x="0" y="0" z="13386.9702" />
       </free_body>
     </planet>
   </layer_3D>

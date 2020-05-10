@@ -23,12 +23,12 @@
     </star>
 
     <planet name="distant gas planet" radius="71492000" parent_star="betelgeuse">
-      <location x="15574140000000" y="0" z="0" />
+      <location x="14810400000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
       <colour r="255" g="75" b="0" a="255" />
       <free_body mass="1898190000000000000000000000" rotational_period="35730">
-        <velocity x="0" y="0" z="13055.75105" />
+        <velocity x="0" y="0" z="13386.9702" />
       </free_body>
     </planet>
   </layer_3D>

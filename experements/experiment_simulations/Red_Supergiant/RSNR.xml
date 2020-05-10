@@ -23,24 +23,24 @@
     </star>
 
     <planet name="nearby rocky planet" radius="6378136.6" parent_star="betelgeuse">
-      <location x="2992000000000" y="0" z="0" />
+      <location x="2941800000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
       <colour r="0" g="255" b="0" a="255" />
       <free_body mass="5972400000000000000000000" rotational_period="86164.2">
-        <velocity x="0" y="0" z="29784.12845" />
+        <velocity x="0" y="0" z="30037.17736" />
       </free_body>
     </planet>
   </layer_3D>
 
   <seperation_logger name="nearby_rocky_planet_orbit_logger" show_graphs="false" trigger_type="time_period"
-                     trigger_limit="1136073600" zero_time_on_action="false" file_save_path="./">
+                     trigger_limit="615366561.1" zero_time_on_action="false" file_save_path="./">
     <logged_entity entity_name="nearby rocky planet" layer_name="simulation_layer" />
     <reference_entity entity_name="betelgeuse" layer_name="simulation_layer" />
   </seperation_logger>
 
   <position_logger name="betelgeuse_location_logger" show_graphs="false" trigger_type="time_period"
-                     trigger_limit="1136073600" zero_time_on_action="false" file_save_path="./">
+                     trigger_limit="615366561.1" zero_time_on_action="false" file_save_path="./">
     <logged_entity entity_name="betelgeuse" layer_name="simulation_layer" />
   </position_logger>
   
