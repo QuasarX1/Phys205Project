@@ -28,7 +28,7 @@
       <vertical x="0" y="1" z="0" />
       <colour r="0" g="255" b="0" a="255" />
       <free_body mass="5972400000000000000000000" rotational_period="86164.2">
-        <velocity x="0" y="0" z="30028.5" />
+        <velocity x="0" y="0" z="30028.5347" />
       </free_body>
     </planet>
   </layer_3D>
