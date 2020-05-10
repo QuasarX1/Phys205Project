@@ -22,7 +22,7 @@
       </free_body>
     </star>
 
-    <planet name="Far Rocky Planet" radius="6378136.6" parent_star="Zeta Puppis">
+    <planet name="distant rocky planet" radius="6378136.6" parent_star="Zeta Puppis">
       <location x="41543172000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
@@ -33,15 +33,37 @@
     </planet>
   </layer_3D>
 
-  <seperation_logger name="Far_Rocky_Planet_Orbit_Logger" show_graphs="false" trigger_type="time_period"
-                     trigger_limit="19496123850" zero_time_on_action="false" file_save_path="./">
-    <logged_entity entity_name="Far Rocky Planet" layer_name="simulation_layer" />
-    <reference_entity entity_name="Zeta Puppis" layer_name="simulation_layer" />
-  </seperation_logger>
-
+  <!-- Solarcentric + Barycentric -->
   <position_logger name="Zeta_location_logger" show_graphs="false" trigger_type="time_period"
                      trigger_limit="19496123850" zero_time_on_action="false" file_save_path="./">
     <logged_entity entity_name="Zeta Puppis" layer_name="simulation_layer" />
   </position_logger>
-  
+
+  <!-- Barycentric -->
+  <barycenter_seperation_logger name="Zeta_orbit_barycenter_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="19496123850" zero_time_on_action="false" file_save_path="./">
+    <star entity_name="Zeta Puppis" layer_name="simulation_layer" />
+    <measure_entity entity_name="Zeta Puppis" scale="1.0" />
+  </barycenter_seperation_logger>
+
+  <!-- Barycentric -->
+  <barycenter_seperation_logger name="system_orbit_barycenter_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="19496123850" zero_time_on_action="false" file_save_path="./">
+    <star entity_name="Zeta Puppis" layer_name="simulation_layer" />
+  </barycenter_seperation_logger>
+
+  <!-- Solarcentric -->
+  <seperation_logger name="far_rocky_planet_orbit_sun_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="19496123850" zero_time_on_action="false" file_save_path="./">
+    <logged_entity entity_name="distant rocky planet" layer_name="simulation_layer" />
+    <reference_entity entity_name="Zeta Puppis" layer_name="simulation_layer" />
+  </seperation_logger>
+
+  <!-- Barycentric -->
+  <barycenter_seperation_logger name="far_rocky_planet_orbit_barycenter_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="19496123850" zero_time_on_action="false" file_save_path="./">
+    <star entity_name="Zeta Puppis" layer_name="simulation_layer" />
+    <measure_entity entity_name="distant rocky planet" scale="1.0" />
+  </barycenter_seperation_logger>  
+
 </simulation>

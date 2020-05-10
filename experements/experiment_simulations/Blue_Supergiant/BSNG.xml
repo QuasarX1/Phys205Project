@@ -22,7 +22,7 @@
       </free_body>
     </star>
 
-    <planet name="Nearby Gas Planet" radius="71492000" parent_star="Zeta Puppis">
+    <planet name="nearby gas planet" radius="71492000" parent_star="Zeta Puppis">
       <location x="8251749000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
@@ -33,15 +33,37 @@
     </planet>
   </layer_3D>
 
-  <seperation_logger name="Near_Gas_Planet_Orbit_Logger" show_graphs="false" trigger_type="time_period"
-                     trigger_limit="1725908662" zero_time_on_action="false" file_save_path="./">
-    <logged_entity entity_name="Nearby Gas Planet" layer_name="simulation_layer" />
-    <reference_entity entity_name="Zeta Puppis" layer_name="simulation_layer" />
-  </seperation_logger>
-
+  <!-- Solarcentric + Barycentric -->
   <position_logger name="Zeta_location_logger" show_graphs="false" trigger_type="time_period"
                      trigger_limit="1725908662" zero_time_on_action="false" file_save_path="./">
     <logged_entity entity_name="Zeta Puppis" layer_name="simulation_layer" />
   </position_logger>
+
+  <!-- Barycentric -->
+  <barycenter_seperation_logger name="Zeta_orbit_barycenter_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="1725908662" zero_time_on_action="false" file_save_path="./">
+    <star entity_name="Zeta Puppis" layer_name="simulation_layer" />
+    <measure_entity entity_name="Zeta Puppis" scale="1.0" />
+  </barycenter_seperation_logger>
+
+  <!-- Barycentric -->
+  <barycenter_seperation_logger name="system_orbit_barycenter_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="1725908662" zero_time_on_action="false" file_save_path="./">
+    <star entity_name="Zeta Puppis" layer_name="simulation_layer" />
+  </barycenter_seperation_logger>
+
+  <!-- Solarcentric -->
+  <seperation_logger name="nearby_gas_planet_orbit_sun_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="1725908662" zero_time_on_action="false" file_save_path="./">
+    <logged_entity entity_name="nearby gas planet" layer_name="simulation_layer" />
+    <reference_entity entity_name="Zeta Puppis" layer_name="simulation_layer" />
+  </seperation_logger>
+
+  <!-- Barycentric -->
+  <barycenter_seperation_logger name="nearby_gas_planet_orbit_barycenter_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="1725908662" zero_time_on_action="false" file_save_path="./">
+    <star entity_name="Zeta Puppis" layer_name="simulation_layer" />
+    <measure_entity entity_name="nearby gas planet" scale="1.0" />
+  </barycenter_seperation_logger>  
   
 </simulation>
