@@ -4,44 +4,44 @@
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/custom_xml simulation_layout_schema.xsd"
             render_capability="false"
-            timescale="900">
+            timescale="900"><!-- delta_t = 15 min -->
 
   <camera width="500" height="500" field_of_vision="0.5">
-    <location x="0" y="0" z="-100000" />
+    <location x="0" y="0" z="-139100000000" />
     <facing x="0" y="0" z="1" />
     <vertical x="0" y="1" z="0" />
   </camera>
 
   <layer_3D name="simulation_layer" render_capability="true">
-    <star name="PSR B1257+12" tempriture="28860" radius="10000">
+    <star name="Zeta Puppis" tempriture="40000" radius="13910000000">
       <location x="0" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
-      <free_body mass="2784000000000000000000000000000" rotational_period="2192832">
+      <free_body mass="11580000000000000000000000000000" rotational_period="2192832">
         <velocity x="0" y="0" z="0" />
       </free_body>
     </star>
 
-    <planet name="Nearby Rocky Planet" radius="6378136.6" parent_star="PSR B1257+12">
-      <location x="205926000000" y="0" z="0" />
+    <planet name="Nearby Rocky Planet" radius="6378136.6" parent_star="Zeta Puppis">
+      <location x="8251749000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
       <colour r="0" g="255" b="0" a="255" />
       <free_body mass="5972400000000000000000000" rotational_period="86164.2">
-        <velocity x="0" y="0" z="30037.71684" />
+        <velocity x="0" y="0" z="30040.56311" />
       </free_body>
     </planet>
   </layer_3D>
 
   <seperation_logger name="Near_Rocky_Planet_Orbit_Logger" show_graphs="false" trigger_type="time_period"
-                     trigger_limit="43074885.64" zero_time_on_action="false" file_save_path="./">
+                     trigger_limit="1725908662" zero_time_on_action="false" file_save_path="./">
     <logged_entity entity_name="Nearby Rocky Planet" layer_name="simulation_layer" />
-    <reference_entity entity_name="PSR B1257+12" layer_name="simulation_layer" />
+    <reference_entity entity_name="Zeta Puppis" layer_name="simulation_layer" />
   </seperation_logger>
 
-  <position_logger name="PSR_location_logger" show_graphs="false" trigger_type="time_period"
-                     trigger_limit="43074885.64" zero_time_on_action="false" file_save_path="./">
-    <logged_entity entity_name="PSR B1257+12" layer_name="simulation_layer" />
+  <position_logger name="Zeta_location_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="1725908662" zero_time_on_action="false" file_save_path="./">
+    <logged_entity entity_name="Zeta Puppis" layer_name="simulation_layer" />
   </position_logger>
   
 </simulation>

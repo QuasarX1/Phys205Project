@@ -13,7 +13,7 @@
     <RootNamespace>experements</RootNamespace>
     <InterpreterId>CondaEnv|CondaEnv|Phys205</InterpreterId>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>--file=./experiment_simulations/Neutron_Star/NSNR.xml --show</CommandLineArguments>
+    <CommandLineArguments>--file=.\experiment_simulations\Yellow_Dwarf\earthTest.xml</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -36,10 +36,11 @@
   <ItemGroup>
     <Content Include="Cygni.xml" />
     <Content Include="Distant_Binary_Stars.xml" />
-    <Content Include="experiment_simulations\Blue_Giant\deleteme.txt" />
-    <Content Include="experiment_simulations\Blue_Supergiant\deleteme.txt" />
-    <Content Include="experiment_simulations\Brown_Dwarf\deleteme.txt" />
-    <Content Include="experiment_simulations\Neutron_Star\NRNG.xml" />
+    <Content Include="experiment_simulations\Blue_Supergiant\BSFG.xml" />
+    <Content Include="experiment_simulations\Blue_Supergiant\BSFR.xml" />
+    <Content Include="experiment_simulations\Blue_Supergiant\BSNG.xml" />
+    <Content Include="experiment_simulations\Blue_Supergiant\BSNR.xml" />
+    <Content Include="experiment_simulations\Neutron_Star\NSNG.xml" />
     <Content Include="experiment_simulations\Neutron_Star\NSFG.xml" />
     <Content Include="experiment_simulations\Neutron_Star\NSFR.xml" />
     <Content Include="experiment_simulations\Neutron_Star\NSNR.xml" />
@@ -53,14 +54,17 @@
     <Content Include="experiment_simulations\White_Dwarf\WDFR.xml" />
     <Content Include="experiment_simulations\White_Dwarf\WDNG.xml" />
     <Content Include="experiment_simulations\White_Dwarf\WDNR.xml" />
-    <Content Include="experiment_simulations\Yellow_Dwarf\deleteme.txt" />
+    <Content Include="experiment_simulations\Yellow_Dwarf\YDFG.xml" />
+    <Content Include="experiment_simulations\Yellow_Dwarf\YDFR.xml" />
+    <Content Include="experiment_simulations\Yellow_Dwarf\YDNG.xml" />
+    <Content Include="experiment_simulations\Yellow_Dwarf\earthTest.xml" />
+    <Content Include="experiment_simulations\Yellow_Dwarf\YDNR.xml" />
+    <Content Include="experiment_simulations\Yellow_Dwarf\YDNR_experement.xml" />
     <Content Include="Solar_System.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="experiment_simulations\" />
-    <Folder Include="experiment_simulations\Brown_Dwarf\" />
     <Folder Include="experiment_simulations\Neutron_Star\" />
-    <Folder Include="experiment_simulations\Blue_Giant\" />
     <Folder Include="experiment_simulations\Blue_Supergiant\" />
     <Folder Include="experiment_simulations\Red_Dwarf\" />
     <Folder Include="experiment_simulations\Red_Supergiant\" />

@@ -13,7 +13,7 @@ from simulation.entities import Entity, Renderable_Simple2DCircle, Renderable_2D
 from simulation.entities.prefabs import Croshair, Croshair_3D, UnitCube_Wireframe, TriangularPyrimid_Wireframe, Sphere
 from simulation.graphics import Camera, CameraPositionDisplay, CameraForceDisplay, CameraSpeedDisplay
 from simulation.graphics.HUD import Text, ReferencePoint, UpdatingText, Button
-from simulation.logging import ActionLogger, PositionLogger, VelocityLogger, SeperationLogger
+from simulation.logging import ActionLogger, PositionLogger, VelocityLogger, SeperationLogger, BarycenterSeperationLogger
 
 from simulation.entities.astro_bodies import Star, Planet
 
@@ -246,7 +246,7 @@ class Simulation(object):
                     for entity_name in bindingDict[key]:
                         layer.getEntity(key).bindEntity_by_name(entity_name, layer)
 
-            elif childTypeString in ("position_logger", "velocity_logger", "seperation_logger"):
+            elif childTypeString in ("position_logger", "velocity_logger", "seperation_logger", "barycenter_seperation_logger"):
                 logger_xml = remainingChildren[i]
 
                 logger_kwargs = {"name":logger_xml.attrib["name"],
@@ -274,7 +274,16 @@ class Simulation(object):
 
                 elif childTypeString == "seperation_logger":
                     simulation.onItterationEnd += SeperationLogger(referenceEntity = simulation.getEntity(logger_xml.reference_entity.attrib["layer_name"], logger_xml.reference_entity.attrib["entity_name"]),
-                                                                               **logger_kwargs)
+                                                                   **logger_kwargs)
+
+                elif childTypeString == "barycenter_seperation_logger":
+                    measuredEntities = {}
+                    for entity_reference_xml in [child for child in logger_xml.getchildren() if child.tag.split("}")[1] == "measure_entity"]:
+                        measuredEntities[entity_reference_xml.attrib["entity_name"]] = float(entity_reference_xml.attrib["scale"])
+                    simulation.onItterationEnd += BarycenterSeperationLogger(star = simulation.getEntity(logger_xml.star.attrib["layer_name"], logger_xml.star.attrib["entity_name"]),
+                                                                             layer = simulation.getLayer(logger_xml.star.attrib["layer_name"]),
+                                                                             measuredEntities = measuredEntities,
+                                                                             **logger_kwargs)
 
         return simulation
 
@@ -511,6 +520,37 @@ class Simulation(object):
 
                     elif event.key == pygame.K_F11:
                         self.__toggleFullscreen()
+
+                    elif event.key in (pygame.K_KP0, pygame.K_KP1, pygame.K_KP2, pygame.K_KP3, pygame.K_KP4, pygame.K_KP5, pygame.K_KP6, pygame.K_KP7, pygame.K_KP8, pygame.K_KP9, pygame.K_0, pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9):# Go to simulation layer object at index 1
+                        if self.__layers["simulation_layer"]:
+                            if event.key == pygame.K_KP0 or pygame.K_0:
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(0)
+                            elif event.key == pygame.K_KP1 or pygame.K_1:
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(1)
+                            elif event.key == pygame.K_KP2 or pygame.K_2:
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(2)
+                            elif event.key == pygame.K_KP3 or pygame.K_3:
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(3)
+                            elif event.key == pygame.K_KP4 or pygame.K_4:
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(4)
+                            elif event.key == pygame.K_KP5 or pygame.K_5:
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(5)
+                            elif event.key == pygame.K_KP6 or pygame.K_6:
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(6)
+                            elif event.key == pygame.K_KP7 or pygame.K_7:
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(7)
+                            elif event.key == pygame.K_KP8 or pygame.K_8:
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(8)
+                            elif event.key == pygame.K_KP9 or pygame.K_9:
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(9)
+                            if entity is not None:
+                                if hasattr(entity, "getScaleFactor"):
+                                    self.__camera.setLocation(entity.getLocation() + pygame.Vector3(0, 0, -entity.getScaleFactor() * 2))
+                                else:
+                                    self.__camera.setLocation(entity.getLocation())
+                                self.__camera.setFacing(pygame.Vector3(0, 0, 1))
+                                self.__camera.setVertical(pygame.Vector3(0, 1, 0))
+                                self.__camera.setVelocity(pygame.Vector3(0, 0, 0))
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 4:# Scroll Up

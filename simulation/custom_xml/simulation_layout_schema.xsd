@@ -353,11 +353,38 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="underlying_barycenter_seperation_logger_type">
+    <xs:complexContent>
+      <xs:restriction base="graphing_logger_type">
+        <xs:sequence>
+          <xs:element name="logged_entity" type="entity_reference" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:restriction>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="barycenter_seperation_logger_type">
+    <xs:complexContent>
+      <xs:extension base="underlying_barycenter_seperation_logger_type">
+        <xs:sequence>
+          <xs:element name="star" type="entity_reference" minOccurs="1" maxOccurs="unbounded" />
+          <xs:element name="measure_entity" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:attribute name="entity_name" type="xs:string" use="required" />
+              <xs:attribute name="scale" type="xs:float" default="1.0" />
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:group name="loggers_group">
     <xs:choice>
       <xs:element name="position_logger" type="position_logger_type" />
       <xs:element name="velocity_logger" type="velocity_logger_type" />
       <xs:element name="seperation_logger" type="seperation_logger_type" />
+      <xs:element name="barycenter_seperation_logger" type="barycenter_seperation_logger_type" />
     </xs:choice>
   </xs:group>
 

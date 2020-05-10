@@ -46,8 +46,8 @@ class Camera(FreeBody, Moveable):
         self.__focus_distance: float = None
         self.__setFov()
         self.__renderHeightOffset = None
-        self.__movementForce = 1300# Newtons
-        self.__resistanceToMovementForce = 1000# Newtons
+        self.__movementForce = 13000# Newtons
+        self.__resistanceToMovementForce = 10000# Newtons
 
     def getFov(self) -> float:
         return self.__fov
@@ -129,9 +129,9 @@ class Camera(FreeBody, Moveable):
 
         vertical = 0
         if keys[pygame.K_SPACE]:
-            vertical += 1
-        if keys[pygame.K_LSHIFT]:
             vertical -= 1
+        if keys[pygame.K_LSHIFT]:
+            vertical += 1
 
         strafe = 0
         if keys[pygame.K_a]:
@@ -141,19 +141,32 @@ class Camera(FreeBody, Moveable):
             #strafe += 1
             strafe -= 1
 
-        if forewards != 0 or vertical != 0 or strafe != 0:
-            self.addForce((self.getFacing() * forewards + self.getVertical() * vertical + self.getHorisontal() * strafe).normalize() * self.__movementForce)
+        if forewards != 0:
+            self.addForce((self.getFacing() * forewards).normalize() * self.__movementForce)
+        if vertical != 0 or strafe != 0:
+            self.addForce((self.getVertical() * vertical + self.getHorisontal() * strafe).normalize() * self.__movementForce / 10)
 
-        currentVelocity = self.getVelocity()
-        if currentVelocity != pygame.Vector3(0, 0, 0):
-            self.addForce(currentVelocity.normalize() * -1 * self.__resistanceToMovementForce)
+        if np.abs(self.getVelocity().dot(self.getFacing())) > 0:
+            self.addForce((self.getVelocity().dot(self.getFacing()) * self.getFacing()).normalize() * -1 * self.__resistanceToMovementForce)
+
+        if np.abs(self.getVelocity().dot(self.getHorisontal())) > 0:
+            self.addForce((self.getVelocity().dot(self.getHorisontal()) * self.getHorisontal()).normalize() * -1 * self.__resistanceToMovementForce / 10)
+
+        if np.abs(self.getVelocity().dot(self.getVertical())) > 0:
+            self.addForce((self.getVelocity().dot(self.getVertical()) * self.getVertical()).normalize() * -1 * self.__resistanceToMovementForce / 10)
 
 
     def update(self, delta_t, simulation):
         self.manual_update_FreeBody(delta_t, simulation) 
         
-        if self.getVelocity().magnitude() < 30:
-            self.setVelocity(pygame.Vector3(0, 0, 0))
+        if np.abs(self.getVelocity().dot(self.getFacing())) < 200:
+            self.setVelocity(self.getVelocity() - self.getVelocity().dot(self.getFacing()) * self.getFacing())
+
+        if np.abs(self.getVelocity().dot(self.getHorisontal())) < 30:
+            self.setVelocity(self.getVelocity() - self.getVelocity().dot(self.getHorisontal()) * self.getHorisontal())
+
+        if np.abs(self.getVelocity().dot(self.getVertical())) < 30:
+            self.setVelocity(self.getVelocity() - self.getVelocity().dot(self.getVertical()) * self.getVertical())
 
         mouseDeltaX, mouseDeltaY = pygame.mouse.get_rel()
         if mouseDeltaY != 0:
