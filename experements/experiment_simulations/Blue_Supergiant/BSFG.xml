@@ -23,24 +23,24 @@
     </star>
 
     <planet name="Far Gas Planet" radius="71492000" parent_star="Zeta Puppis">
-      <location x="43677777000000" y="0" z="0" />
+      <location x="41543172000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
       <colour r="255" g="75" b="0" a="255" />
       <free_body mass="1898190000000000000000000000" rotational_period="35730">
-        <velocity x="0" y="0" z="13057.22267" />
+        <velocity x="0" y="0" z="13388.47916" />
       </free_body>
     </planet>
   </layer_3D>
 
   <seperation_logger name="Far_Gas_Planet_Orbit_Logger" show_graphs="false" trigger_type="time_period"
-                     trigger_limit="21017912740" zero_time_on_action="false" file_save_path="./">
+                     trigger_limit="19496123850" zero_time_on_action="false" file_save_path="./">
     <logged_entity entity_name="Far Gas Planet" layer_name="simulation_layer" />
     <reference_entity entity_name="Zeta Puppis" layer_name="simulation_layer" />
   </seperation_logger>
 
   <position_logger name="Zeta_location_logger" show_graphs="false" trigger_type="time_period"
-                     trigger_limit="21017912740" zero_time_on_action="false" file_save_path="./">
+                     trigger_limit="19496123850" zero_time_on_action="false" file_save_path="./">
     <logged_entity entity_name="Zeta Puppis" layer_name="simulation_layer" />
   </position_logger>
   
