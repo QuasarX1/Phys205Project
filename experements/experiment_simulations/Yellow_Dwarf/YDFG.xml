@@ -23,24 +23,24 @@
     </star>
 
     <planet name="jupiter" radius="71492000" parent_star="sun">
-      <location x="778570000000" y="0" z="0" />
+      <location x="740520000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
       <colour r="255" g="75" b="0" a="255" />
       <free_body mass="1898190000000000000000000000" rotational_period="35730">
-        <velocity x="0" y="0" z="13060" />
+        <velocity x="0" y="0" z="13720" />
       </free_body>
     </planet>
   </layer_3D>
 
   <seperation_logger name="jupiter_orbit_logger" show_graphs="false" trigger_type="time_period"
-                     trigger_limit="5207004000" zero_time_on_action="false" file_save_path="./">
+                     trigger_limit="378691200" zero_time_on_action="false" file_save_path="./">
     <logged_entity entity_name="jupiter" layer_name="simulation_layer" />
     <reference_entity entity_name="sun" layer_name="simulation_layer" />
   </seperation_logger>
 
   <position_logger name="sun_location_logger" show_graphs="false" trigger_type="time_period"
-                     trigger_limit="5207004000" zero_time_on_action="false" file_save_path="./">
+                     trigger_limit="378691200" zero_time_on_action="false" file_save_path="./">
     <logged_entity entity_name="sun" layer_name="simulation_layer" />
   </position_logger>
   

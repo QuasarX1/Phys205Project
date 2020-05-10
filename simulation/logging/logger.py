@@ -433,7 +433,7 @@ class BarycenterSeperationLogger(GraphingLogger):
             entities[layer.getEntityName(boundEntity)] = boundEntity
         self.__positions = {}
         self.__mass = {}
-        self.__measuredEntities = measuredEntities if len(measuredEntities) > 0 else entities
+        self.__measuredEntities = measuredEntities if len(measuredEntities) > 0 else {key:1.0 for key in entities}
 
         for key in entities.keys():
             if not issubclass(type(entities[key]), Moveable):
