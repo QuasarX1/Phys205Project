@@ -23,12 +23,12 @@
     </star>
 
     <planet name="distant rocky planet" radius="6371000" parent_star="SiriusB">
-      <location x="797167975861" y="0" z="0" />
+      <location x="721349117425" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
       <colour r="0" g="255" b="0" a="255" />
       <free_body mass="5972370000000000000000000" rotational_period="84816">
-        <velocity x="0" y="0" z="13055.7510497" />
+        <velocity x="0" y="0" z="13724.9837363" />
       </free_body>
     </planet>
   </layer_3D>
