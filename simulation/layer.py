@@ -81,6 +81,12 @@ class Layer(object):
         else:
             return None
 
+    def getEntityByIndex(self, index: int):
+        if index < len(self.__entities) and index >= 0:
+            return list(self.__entities.values())[index]
+        else:
+            return None
+
     def addEntity(self, name: str, entity: Entity):
         """
         Regsisters an entity with the layer.

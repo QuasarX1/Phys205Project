@@ -521,6 +521,37 @@ class Simulation(object):
                     elif event.key == pygame.K_F11:
                         self.__toggleFullscreen()
 
+                    elif event.key in (pygame.K_KP0, pygame.K_KP1, pygame.K_KP2, pygame.K_KP3, pygame.K_KP4, pygame.K_KP5, pygame.K_KP6, pygame.K_KP7, pygame.K_KP8, pygame.K_KP9, pygame.K_0, pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9):# Go to simulation layer object at index 1
+                        if self.__layers["simulation_layer"]:
+                            if event.key == pygame.K_KP0 or pygame.K_0
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(0)
+                            elif event.key == pygame.K_KP1 or pygame.K_1
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(1)
+                            elif event.key == pygame.K_KP2 or pygame.K_2
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(2)
+                            elif event.key == pygame.K_KP3 or pygame.K_3
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(3)
+                            elif event.key == pygame.K_KP4 or pygame.K_4
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(4)
+                            elif event.key == pygame.K_KP5 or pygame.K_5
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(5)
+                            elif event.key == pygame.K_KP6 or pygame.K_6
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(6)
+                            elif event.key == pygame.K_KP7 or pygame.K_7
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(7)
+                            elif event.key == pygame.K_KP8 or pygame.K_8
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(8)
+                            elif event.key == pygame.K_KP9 or pygame.K_9
+                                entity = self.__layers["simulation_layer"].getEntityByIndex(9)
+                            if entity is not None:
+                                if hasattr(entity, "getScaleFactor"):
+                                    self.__camera.setLocation(entity.getLocation() + pygame.Vector3(0, 0, -entity.getScaleFactor() * 2))
+                                else:
+                                    self.__camera.setLocation(entity.getLocation())
+                                self.__camera.setFacing(pygame.Vector3(0, 0, 1))
+                                self.__camera.setVertical(pygame.Vector3(0, 1, 0))
+                                self.__camera.setVelocity(pygame.Vector3(0, 0, 0))
+
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 4:# Scroll Up
                         self.__camera.setNetForce(self.__camera.getNetForce() + 10)
