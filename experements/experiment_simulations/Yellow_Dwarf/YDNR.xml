@@ -23,12 +23,12 @@
     </star>
 
     <planet name="earth" radius="6378136.6" parent_star="sun">
-      <location x="149600000000" y="0" z="0" />
+      <location x="147090000000" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
       <colour r="0" g="255" b="0" a="255" />
       <free_body mass="5972400000000000000000000" rotational_period="86164.2">
-        <velocity x="0" y="0" z="29780" />
+        <velocity x="0" y="0" z="30290" />
       </free_body>
     </planet>
   </layer_3D>
