@@ -23,8 +23,8 @@ folders = {"Red Dwarf":     (
          "White Dwarf":     (
                             ("./logging_output/WDNR/SiriusB_location_logger/Component_Displacement/SiriusB",
                              "./logging_output/WDNG/SiriusB_location_logger/Component_Displacement/SiriusB",
-         #                    "./logging_output/WDFR/SiriusB_location_logger/Component_Displacement/SiriusB",
-         #                    "./logging_output/WDFG/SiriusB_location_logger/Component_Displacement/SiriusB"
+                             "./logging_output/WDFR/SiriusB_location_logger/Component_Displacement/SiriusB",
+                             "./logging_output/WDFG/SiriusB_location_logger/Component_Displacement/SiriusB"
                              ),
                              1.04
                              ),
@@ -32,8 +32,8 @@ folders = {"Red Dwarf":     (
          "Neutron Star":    (
                             ("./logging_output/NSNR/PSR_location_logger/Component_Displacement/PSR B1257+12",
                              "./logging_output/NSNG/PSR_location_logger/Component_Displacement/PSR B1257+12",
-         #                    "./logging_output/NSFR/PSR_location_logger/Component_Displacement/PSR B1257+12",
-         #                    "./logging_output/NSFG/PSR_location_logger/Component_Displacement/PSR B1257+12"
+                             "./logging_output/NSFR/PSR_location_logger/Component_Displacement/PSR B1257+12",
+                             "./logging_output/NSFG/PSR_location_logger/Component_Displacement/PSR B1257+12"
                              ),
                              1.4
                              ),
