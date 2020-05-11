@@ -91,7 +91,7 @@ for i, typeOfOrbit in enumerate(("Near Rocky", "Near Gaseous", "Distant Rocky", 
 
     print("--|| {} Raw Results ||--".format(typeOfOrbit))
     for j in range(len(masses)):
-        print("    {} Solar Masses => {} m".format(masses[i], wobbleMagnitudes[i]))
+        print("    {} Solar Masses => {} m".format(masses[j], wobbleMagnitudes[j]))
     print("--|| Done ||--")
     print()
 
