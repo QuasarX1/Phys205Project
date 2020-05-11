@@ -25,6 +25,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="compareResults.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="locate_simulation_library.py">
       <SubType>Code</SubType>
     </Compile>
@@ -35,6 +38,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Cygni.xml" />
+    <Content Include="Distant Gaseous Stellar Wobble against Stellar Mass.png" />
+    <Content Include="Distant Rocky Stellar Wobble against Stellar Mass.png" />
     <Content Include="Distant_Binary_Stars.xml" />
     <Content Include="experiment_simulations\Blue_Supergiant\BSFG.xml" />
     <Content Include="experiment_simulations\Blue_Supergiant\BSFR.xml" />
@@ -65,6 +70,8 @@
     <Content Include="experiment_simulations\Yellow_Dwarf\YDNG.xml" />
     <Content Include="experiment_simulations\Yellow_Dwarf\earthTest.xml" />
     <Content Include="experiment_simulations\Yellow_Dwarf\YDNR.xml" />
+    <Content Include="Near Gaseous Stellar Wobble against Stellar Mass.png" />
+    <Content Include="Near Rocky Stellar Wobble against Stellar Mass.png" />
     <Content Include="Solar_System.xml" />
   </ItemGroup>
   <ItemGroup>
