@@ -33,16 +33,6 @@
     </planet>
   </layer_3D>
 
-  <seperation_logger name="distant_gas_planet_orbit_logger" show_graphs="false" trigger_type="time_period"
-                     trigger_limit="383643506.5" zero_time_on_action="false" file_save_path="./">
-    <logged_entity entity_name="distant gas planet" layer_name="simulation_layer" />
-    <reference_entity entity_name="SiriusB" layer_name="simulation_layer" />
-  </seperation_logger>
-
-  <position_logger name="SiriusB_location_logger" show_graphs="false" trigger_type="time_period"
-                     trigger_limit="383643506.5" zero_time_on_action="false" file_save_path="./">
-    <logged_entity entity_name="SiriusB" layer_name="simulation_layer" />
-  </position_logger>
 
   <!-- Solarcentric + Barycentric -->
   <position_logger name="SiriusB_location_logger" show_graphs="false" trigger_type="time_period"
