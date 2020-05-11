@@ -57,10 +57,10 @@ folders = {"Red Dwarf":     (
                              ),
 
          "Blue Supergiant": (
-                            ("./logging_output/BSNR",
-                             "./logging_output/BSNG",
-         #                    "./logging_output/BSFR",
-         #                    "./logging_output/BSFG"
+                            ("./logging_output/BSNR/Zeta_location_logger/Component_Displacement/Zeta",
+                             "./logging_output/BSNG/Zeta_location_logger/Component_Displacement/Zeta",
+         #                    "./logging_output/BSFR/Zeta_location_logger/Component_Displacement/Zeta",
+         #                    "./logging_output/BSFG/Zeta_location_logger/Component_Displacement/Zeta"
                              ),
                              56.1
                              )
