@@ -22,12 +22,12 @@
       </free_body>
     </star>
 
-    <planet name="near gas planet" radius="6378136.6" parent_star="Aldebaran">
+    <planet name="near gas planet" radius="71492000" parent_star="Aldebaran">
       <location x="164953834548.65475" y="0" z="0" />
       <facing x="1" y="0" z="0" />
       <vertical x="0" y="1" z="0" />
-      <colour r="0" g="255" b="0" a="255" />
-      <free_body mass="5972400000000000000000000" rotational_period="86164.2">
+      <colour r="255" g="75" b="0" a="255" />
+      <free_body mass="1898190000000000000000000000" rotational_period="35730">
         <velocity x="0" y="0" z="30028.534710602587" />
       </free_body>
     </planet>
