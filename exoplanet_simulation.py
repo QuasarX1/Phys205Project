@@ -11,9 +11,9 @@ import uuid
 import simulation as sim
 from simulation import Simulation
 from simulation import RenderMode
-from simulation.entities.astro_bodies import Star, Planet, Sun, Mercury, Venus, Earth
+from simulation.entities.astro_bodies import Star, Planet, Sun, Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto
 from simulation.entities.prefabs import UnitCube_Wireframe
-from simulation.logging import GraphingLogger, PositionLogger, VelocityLogger, SeperationLogger
+from simulation.logging import ActionLogger, PositionLogger, VelocityLogger, SeperationLogger
 
 
 
@@ -45,19 +45,21 @@ else:
 
 
 # Create a blank simulation ----------------------------------------------------------------------------------------------------------
-#simulation = Simulation(renderMode = renderOption, timeScale = 3600.0 * 24.0, cameraDimentions = pygame.Vector2(0.01, 0.01))
-#simulation = Simulation(renderMode = renderOption, timeScale = 3600.0 * 24.0, cameraDimentions = pygame.Vector2(500, 500))
-simulation = Simulation(renderMode = renderOption, timeScale = 3600.0 * 24.0, cameraDimentions = pygame.Vector2(500, 500))
-#simulation = Simulation(renderMode = renderOption, timeScale = 3944700, cameraDimentions = pygame.Vector2(500, 500))
+simulation = Simulation(renderMode = renderOption, timeScale = 900, cameraDimentions = pygame.Vector2(500, 500))
 
-runID = str(uuid.uuid4())
+runID = simulation.getRunID()
 
 
 
 # Position the Camera ----------------------------------------------------------------------------------------------------------------
 # Nessessary for Earth-Sun Distance
-#simulation.getCamera().setLocation(pygame.Vector3(0, 0, -1.496 * 10**11))
-simulation.getCamera().setLocation(pygame.Vector3(0, 0, -20 * 10**8))
+#simulation.getCamera().setLocation(pygame.Vector3(0, 0, -1.496 * 10**11))# At Earth's orbital radius
+simulation.getCamera().setLocation(pygame.Vector3(0, 0, -20 * 10**8))# Closer in towards the Sun
+
+# Top down view - currently not working
+#simulation.getCamera().setLocation(pygame.Vector3(0, 20 * 10**8, 0))
+#simulation.getCamera().setFacing(pygame.Vector3(0, -1, 0))
+#simulation.getCamera().setVertical(pygame.Vector3(0, 0, 1))
 
 
 # Create and add display layers ------------------------------------------------------------------------------------------------------
@@ -66,146 +68,89 @@ simulation.addLayer("simulation_layer", simulation_layer)
 
 
 
-# Add display entities to the HUD layer ------------------------------------------------------------------------------------------
-
-
-
 # Add massive bodies to a simulation layer ------------------------------------------------------------------------------------------
 sun = Sun()
 simulation_layer.addEntity("sun", sun)
 
-mercury = Mercury(sun)
-simulation_layer.addEntity("mercury", mercury)
+#mercury = Mercury(sun)
+#simulation_layer.addEntity("mercury", mercury)
 
-venus = Venus(sun)
-simulation_layer.addEntity("venus", venus)
+#venus = Venus(sun)
+#simulation_layer.addEntity("venus", venus)
 
 earth = Earth(sun)
 simulation_layer.addEntity("earth", earth)
 
-
-
-
-'''
-sun = Star(radius = 6.96 * 10**8,# The Sun's equatorial radius in m
-           temperature = 5700,# Surface tempriture in K
-           mass = 1.989 * 10**30,# Mass of the Sun in Kg
-           initial_velocity = pygame.Vector3(0, 0, 0),
-           initial_angular_velocity = 360 / (60 * 60 * 24 * 25.05),# roatates (siderialy) once at the equator every 25.05 Earth days
-           location = pygame.Vector3(0, 0, 0))
-simulation_layer.addEntity("sun", sun)
-
-mercury = Planet(radius = 2.4397 * 10**6,# Equatorial radius in m
-               mass = 3.3011 * 10**23,# Mass in Kg
-               parentStar = sun,
-               initial_velocity = pygame.Vector3(0, 0, 4.7362 * 10**4),# Orbital velocity in m/s
-               initial_angular_velocity = 360 / (60 * 60 * 24 * 58.646),# Roatates (siderialy) once at the equator every ...
-               location = pygame.Vector3(5.790905 * 10**10, 0, 0),# Distance from the Sun in m
-               colour = pygame.Color(255, 150, 0))# Arbitrary colour
-simulation_layer.addEntity("mercury", mercury)
-
-#venus = Planet(radius = 1.737 * 10**6,# Earth's equatorial radius in m
-#               mass = 5.972 * 10**24,# Earth's mass in Kg
-#               parentStar = sun,
-#               initial_velocity = pygame.Vector3(0, 0, 2.997930184 * 10**4),# The Earth's orbital velocity in m/s
-#               initial_angular_velocity = 360 / (60 * 60 * 23.56),# roatates (siderialy) once at the equator every 23.56 hours
-#               location = pygame.Vector3(1.496 * 10**11, 0, 0),# The distance between the Earth and the Sun in m
-#               colour = pygame.Color(0, 255, 0))# Arbitrary colour
-#simulation_layer.addEntity("venus", venus)
-
-earth = Planet(radius = 1.737 * 10**6,# Earth's equatorial radius in m
-               mass = 5.972 * 10**24,# Earth's mass in Kg
-               parentStar = sun,
-               initial_velocity = pygame.Vector3(0, 0, 2.997930184 * 10**4),# The Earth's orbital velocity in m/s
-               initial_angular_velocity = 360 / (60 * 60 * 23.56),# roatates (siderialy) once at the equator every 23.56 hours
-               location = pygame.Vector3(1.496 * 10**11, 0, 0),# The distance between the Earth and the Sun in m
-               colour = pygame.Color(0, 255, 0))# Arbitrary colour
-simulation_layer.addEntity("earth", earth)
-
-#mars = Planet(radius = 1.737 * 10**6,# Earth's equatorial radius in m
-#               mass = 5.972 * 10**24,# Earth's mass in Kg
-#               parentStar = sun,
-#               initial_velocity = pygame.Vector3(0, 0, 2.997930184 * 10**4),# The Earth's orbital velocity in m/s
-#               initial_angular_velocity = 360 / (60 * 60 * 23.56),# roatates (siderialy) once at the equator every 23.56 hours
-#               location = pygame.Vector3(1.496 * 10**11, 0, 0),# The distance between the Earth and the Sun in m
-#               colour = pygame.Color(0, 255, 0))# Arbitrary colour
+#mars = Mars(sun)
 #simulation_layer.addEntity("mars", mars)
 
-#juypter = Planet(radius = 1.737 * 10**6,# Earth's equatorial radius in m
-#               mass = 5.972 * 10**24,# Earth's mass in Kg
-#               parentStar = sun,
-#               initial_velocity = pygame.Vector3(0, 0, 2.997930184 * 10**4),# The Earth's orbital velocity in m/s
-#               initial_angular_velocity = 360 / (60 * 60 * 23.56),# roatates (siderialy) once at the equator every 23.56 hours
-#               location = pygame.Vector3(1.496 * 10**11, 0, 0),# The distance between the Earth and the Sun in m
-#               colour = pygame.Color(0, 255, 0))# Arbitrary colour
-#simulation_layer.addEntity("juypter", juypter)
+#jupiter = Jupiter(sun)
+#simulation_layer.addEntity("jupiter", jupiter)
 
-#saturn = Planet(radius = 1.737 * 10**6,# Earth's equatorial radius in m
-#               mass = 5.972 * 10**24,# Earth's mass in Kg
-#               parentStar = sun,
-#               initial_velocity = pygame.Vector3(0, 0, 2.997930184 * 10**4),# The Earth's orbital velocity in m/s
-#               initial_angular_velocity = 360 / (60 * 60 * 23.56),# roatates (siderialy) once at the equator every 23.56 hours
-#               location = pygame.Vector3(1.496 * 10**11, 0, 0),# The distance between the Earth and the Sun in m
-#               colour = pygame.Color(0, 255, 0))# Arbitrary colour
+#saturn = Saturn(sun)
 #simulation_layer.addEntity("saturn", saturn)
 
-#uranus = Planet(radius = 1.737 * 10**6,# Earth's equatorial radius in m
-#               mass = 5.972 * 10**24,# Earth's mass in Kg
-#               parentStar = sun,
-#               initial_velocity = pygame.Vector3(0, 0, 2.997930184 * 10**4),# The Earth's orbital velocity in m/s
-#               initial_angular_velocity = 360 / (60 * 60 * 23.56),# roatates (siderialy) once at the equator every 23.56 hours
-#               location = pygame.Vector3(1.496 * 10**11, 0, 0),# The distance between the Earth and the Sun in m
-#               colour = pygame.Color(0, 255, 0))# Arbitrary colour
+#uranus = Uranus(sun)
 #simulation_layer.addEntity("uranus", uranus)
 
-#neptune = Planet(radius = 1.737 * 10**6,# Earth's equatorial radius in m
-#               mass = 5.972 * 10**24,# Earth's mass in Kg
-#               parentStar = sun,
-#               initial_velocity = pygame.Vector3(0, 0, 2.997930184 * 10**4),# The Earth's orbital velocity in m/s
-#               initial_angular_velocity = 360 / (60 * 60 * 23.56),# roatates (siderialy) once at the equator every 23.56 hours
-#               location = pygame.Vector3(1.496 * 10**11, 0, 0),# The distance between the Earth and the Sun in m
-#               colour = pygame.Color(0, 255, 0))# Arbitrary colour
+#neptune = Neptune(sun)
 #simulation_layer.addEntity("neptune", neptune)
-'''
+
+#pluto = Pluto(sun)
+#simulation_layer.addEntity("pluto", pluto)
 
 
 
 # Set up logging for important quantities --------------------------------------------------------------------------------------------
-logging_time_period = 60*60*24*365.25 * 1
-trigger_function = GraphingLogger.createTimePeriodTrigger(logging_time_period)
+logging_time_period_interior = 60*60*24*365.25 * 165
+trigger_function_interior = ActionLogger.createTimePeriodTrigger(logging_time_period_interior)
 
-#simulation.onItterationEnd += PositionLogger(name = "earth_position_logger",
+logging_time_period_exterior = 60*60*24*365.25 * 165
+trigger_function_exterior = ActionLogger.createTimePeriodTrigger(logging_time_period_exterior)
+
+#simulation.onItterationEnd += SeperationLogger(name = "interior_plannet_orbit_logger",
+#                                               runID = runID,
+#                                               entities = {"mercury": mercury, "venus": venus, "earth": earth, "mars": mars},
+#                                               trigger = trigger_function_interior,
+#                                               zero_time_on_action = False,
+#                                               show_graphs = showGraphs,
+#                                               file_save_path = filepath,
+#                                               referenceEntity = sun)
+
+#simulation.onItterationEnd += SeperationLogger(name = "earth_orbit_logger",
+#                                               runID = runID,
+#                                               entities = {"earth": earth},
+#                                               trigger = trigger_function_interior,
+#                                               zero_time_on_action = False,
+#                                               show_graphs = showGraphs,
+#                                               file_save_path = filepath,
+#                                               referenceEntity = sun)
+
+#simulation.onItterationEnd += SeperationLogger(name = "exterior_plannet_orbit_logger",
+#                                               runID = runID,
+#                                               entities = {"jupiter": jupiter, "saturn": saturn, "uranus": uranus, "neptune": neptune, "pluto": pluto},
+#                                               trigger = trigger_function_exterior,
+#                                               zero_time_on_action = False,
+#                                               show_graphs = showGraphs,
+#                                               file_save_path = filepath,
+#                                               referenceEntity = sun)
+
+#simulation.onItterationEnd += SeperationLogger(name = "exterior_plannet_orbit_logger",
+#                                               runID = runID,
+#                                               entities = {"juypter": juypter, "saturn": saturn, "uranus": uranus, "neptune": neptune},
+#                                               trigger = trigger_function,
+#                                               zero_time_on_action = False,
+#                                               show_graphs = showGraphs,
+#                                               file_save_path = filepath,
+#                                               referenceEntity = sun)
+
+#simulation.onItterationEnd += PositionLogger(name = "sun_position_logger",
 #                                             runID = runID,
-#                                             entity = earth,
-#                                             trigger = GraphingLogger.createTimePeriodTrigger(60*60*24*365.25),
+#                                             entities = {"sun": sun},
+#                                             trigger = trigger_function_exterior,
 #                                             zero_time_on_action = False,
 #                                             show_graphs = showGraphs,
-#                                             file_save_path = filepath).log
-
-#simulation.onItterationEnd += PositionLogger(name = "mercury_position_logger",
-#                                             runID = runID,
-#                                             entity = mercury,
-#                                             trigger = GraphingLogger.createTimePeriodTrigger(60*60*24*365.25),
-#                                             zero_time_on_action = False,
-#                                             show_graphs = showGraphs,
-#                                             file_save_path = filepath).log
-
-simulation.onItterationEnd += SeperationLogger(name = "position_logger",
-                                             runID = runID,
-                                             entities = {"mercury": mercury, "venus": venus, "earth": earth},
-                                             trigger = trigger_function,
-                                             zero_time_on_action = False,
-                                             show_graphs = showGraphs,
-                                             file_save_path = filepath,
-                                             referenceEntity = sun).log
-
-simulation.onItterationEnd += PositionLogger(name = "sun_position_logger",
-                                             runID = runID,
-                                             entities = {"sun": sun},
-                                             trigger = trigger_function,
-                                             zero_time_on_action = False,
-                                             show_graphs = showGraphs,
-                                             file_save_path = filepath).log
+#                                             file_save_path = filepath)
 
     
 

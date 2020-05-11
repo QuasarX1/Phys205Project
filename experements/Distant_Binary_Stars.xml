@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<simulation xmlns="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/custom_xml"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/custom_xml simulation_layout_schema.xsd"
+            render_capability="true">
+
+  <camera width="500" height="500" field_of_vision="0.5">
+    <location x="0" y="0" z="-2000000000" />
+    <facing x="0" y="0" z="1" />
+    <vertical x="0" y="1" z="0" />
+  </camera>
+
+  <layer_3D name="simulation_layer" render_capability="true">
+    <star name="sun" tempriture="5700" radius="6051800">
+      <location x="149600000000" y="0" z="0" />
+      <facing x="1" y="0" z="0" />
+      <vertical x="0" y="1" z="0" />
+      <free_body mass="1989000000000000000000000000000" rotational_period="790517880">
+        <velocity x="0" y="0" z="0" />
+      </free_body>
+    </star>
+
+    <star name="CygnusX1" tempriture="31000" radius="14622300000">
+      <location x="57710000000000000000" y="0" z="0" />
+      <facing x="1" y="0" z="0" />
+      <vertical x="0" y="1" z="0" />
+      <free_body mass="30000000000000000000000000000000" rotational_period="483840">
+        <velocity x="0" y="0" z="-13000" />
+      </free_body>
+    </star>
+
+    <star name="SiriusA" tempriture="9940" radius="1191369300">
+      <location x="81551000000000000" y="0" z="0" />
+      <facing x="1" y="0" z="0" />
+      <vertical x="0" y="1" z="0" />
+      <free_body mass="2022000000000000000000000000000" rotational_period="475200">
+        <velocity x="0" y="0" z="-5500" />
+      </free_body>
+    </star>
+
+    <planet name="earth" radius="6371000" parent_star="sun">
+      <location x="149600000000" y="0" z="0" />
+      <facing x="1" y="0" z="0" />
+      <vertical x="0" y="1" z="0" />
+      <colour r="0" g="255" b="0" a="0" />
+      <free_body mass="5972000000000000000000000" rotational_period="84816">
+        <velocity x="0" y="0" z="29979.3018" />
+      </free_body>
+    </planet>
+  </layer_3D>
+  
+</simulation>

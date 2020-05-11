@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<simulation xmlns="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/layout_schema"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/layout_schema simulation_layout_schema.xsd"
+            render_capability="false"
+            timescale="900"><!-- delta_t = 15 min -->
+
+  <camera width="500" height="500" field_of_vision="0.5">
+    <location x="0" y="0" z="-11903427000" />
+    <facing x="0" y="0" z="1" />
+    <vertical x="0" y="1" z="0" />
+  </camera>
+
+  <layer_3D name="simulation_layer" render_capability="true">
+    <star name="SiriusB" tempriture="25000" radius="1190342700">
+      <location x="0" y="0" z="0" />
+      <facing x="1" y="0" z="0" />
+      <vertical x="0" y="1" z="0" />
+      <free_body mass="2036000000000000000000000000000" rotational_period="475200">
+        <velocity x="0" y="0" z="0" />
+      </free_body>
+    </star>
+
+    <planet name="distant rocky planet" radius="6371000" parent_star="SiriusB">
+      <location x="721349117425" y="0" z="0" />
+      <facing x="1" y="0" z="0" />
+      <vertical x="0" y="1" z="0" />
+      <colour r="0" g="255" b="0" a="255" />
+      <free_body mass="5972370000000000000000000" rotational_period="84816">
+        <velocity x="0" y="0" z="13724.9837363" />
+      </free_body>
+    </planet>
+  </layer_3D>
+
+  <!-- Solarcentric + Barycentric -->
+  <position_logger name="SiriusB_location_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="383643506.5" zero_time_on_action="false" file_save_path="./">
+    <logged_entity entity_name="SiriusB" layer_name="simulation_layer" />
+  </position_logger>
+
+  <!-- Barycentric -->
+  <barycenter_seperation_logger name="SiriusB_orbit_barycenter_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="383643506.5" zero_time_on_action="false" file_save_path="./">
+    <star entity_name="SiriusB" layer_name="simulation_layer" />
+    <measure_entity entity_name="SiriusB" scale="1.0" />
+  </barycenter_seperation_logger>
+
+  <!-- Barycentric -->
+  <barycenter_seperation_logger name="system_orbit_barycenter_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="383643506.5" zero_time_on_action="false" file_save_path="./">
+    <star entity_name="SiriusB" layer_name="simulation_layer" />
+  </barycenter_seperation_logger>
+
+  <!-- Solarcentric -->
+  <seperation_logger name="far_rocky_planet_orbit_sun_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="383643506.5" zero_time_on_action="false" file_save_path="./">
+    <logged_entity entity_name="distant rocky planet" layer_name="simulation_layer" />
+    <reference_entity entity_name="SiriusB" layer_name="simulation_layer" />
+  </seperation_logger>
+
+  <!-- Barycentric -->
+  <barycenter_seperation_logger name="far_rocky_planet_orbit_barycenter_logger" show_graphs="false" trigger_type="time_period"
+                     trigger_limit="383643506.5" zero_time_on_action="false" file_save_path="./">
+    <star entity_name="SiriusB" layer_name="simulation_layer" />
+    <measure_entity entity_name="distant rocky planet" scale="1.0" />
+  </barycenter_seperation_logger>
+  
+</simulation>

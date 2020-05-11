@@ -2,6 +2,7 @@ import numpy as np
 import pygame
 
 from simulation.entities.renderable import Renderable_2D, Renderable_2DLine, Renderable_3DWireframe, Renderable_3DSolid
+from simulation.custom_xml.xml_loading import xml_bool, createPygameVector2, createPygameVector3, createPygameColor
 
 class UnitCube_Wireframe(Renderable_3DWireframe):
     def __init__(self, location: pygame.Vector3 = pygame.Vector3(0, 0, 0), facing: pygame.Vector3 = pygame.Vector3(1, 0, 0), vertical: pygame.Vector3 = pygame.Vector3(0, 1, 0), scale = 1, colour: pygame.Color = pygame.Color(255, 255, 255), **kwargs) -> Renderable_3DWireframe:
@@ -32,6 +33,14 @@ class UnitCube_Wireframe(Renderable_3DWireframe):
     def update(self, delta_t, simulation):
         pass
 
+    @staticmethod
+    def UnitCube_WireframeFromXML(entity_xml, layer):
+            return {"entity": UnitCube_Wireframe(location = createPygameVector3(entity_xml.location),
+                                                 facing = createPygameVector3(entity_xml.facing),
+                                                 vertical = createPygameVector3(entity_xml.vertical),
+                                                 colour = createPygameColor(entity_xml.colour),
+                                                 scale = float(entity_xml.attrib["scale"]))}
+
 
 
 class TriangularPyrimid_Wireframe(Renderable_3DWireframe):
@@ -55,6 +64,14 @@ class TriangularPyrimid_Wireframe(Renderable_3DWireframe):
 
     def update(self, delta_t, simulation):
         pass
+
+    @staticmethod
+    def TriangularPyrimid_WireframeFromXML(entity_xml, layer):
+        return {"entity": TriangularPyrimid_Wireframe(location = createPygameVector3(entity_xml.location),
+                                                      facing = createPygameVector3(entity_xml.facing),
+                                                      vertical = createPygameVector3(entity_xml.vertical),
+                                                      colour = createPygameColor(entity_xml.colour),
+                                                      scale = float(entity_xml.attrib["scale"]))}
 
 
 
@@ -98,6 +115,14 @@ class Sphere(Renderable_3DSolid):
     def update(self, delta_t, simulation):
         pass
 
+    @staticmethod
+    def SphereFromXML(entity_xml, layer):
+            return {"entity": Sphere(location = createPygameVector3(entity_xml.location),
+                                     facing = createPygameVector3(entity_xml.facing),
+                                     vertical = createPygameVector3(entity_xml.vertical),
+                                     colour = createPygameColor(entity_xml.colour),
+                                     radius = float(entity_xml.attrib["radius"]))}
+
 
 
 class Croshair(Renderable_2D):
@@ -116,6 +141,12 @@ class Croshair(Renderable_2D):
 
     def update(self, delta_t, simulation):
         pass
+
+    @staticmethod
+    def CroshairFromXML(entity_xml, layer):
+            return {"entity": Croshair(location = createPygameVector3(entity_xml.location),
+                                       colour = createPygameColor(entity_xml.colour),
+                                       scale = float(entity_xml.attrib["scale"]))}
 
 
 
@@ -142,3 +173,11 @@ class Croshair_3D(Renderable_3DWireframe):
             camera = simulation.getCamera()
             self.setFacing(camera.getFacing())
             self.setVertical(camera.getVertical())
+
+    @staticmethod
+    def Croshair_3DFromXML(entity_xml, layer):
+        return {"entity": Croshair_3D(location = createPygameVector3(entity_xml.location),
+                                      facing = createPygameVector3(entity_xml.facing),
+                                      vertical = createPygameVector3(entity_xml.vertical),
+                                      colour = createPygameColor(entity_xml.colour),
+                                      scale = float(entity_xml.attrib["scale"]))}

@@ -1,0 +1,408 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/custom_xml"
+    elementFormDefault="qualified"
+    xmlns="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/custom_xml"
+    xmlns:mstns="http://raw.githubusercontent.com/QuasarX1/Phys205Project/dev/simulation/custom_xml"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+
+<!-- Vectors -->
+  <xs:complexType name="Vector2">
+    <xs:attribute name="x" type="xs:float" default="0.0" />
+    <xs:attribute name="y" type="xs:float" default="0.0" />
+  </xs:complexType>
+
+  <xs:complexType name="Vector3">
+    <xs:attribute name="x" type="xs:float" default="0.0" />
+    <xs:attribute name="y" type="xs:float" default="0.0" />
+    <xs:attribute name="z" type="xs:float" default="0.0" />
+  </xs:complexType>
+
+
+<!-- Colour -->
+  <xs:complexType name="Color">
+    <xs:attribute name="r" type="xs:int" default="0" />
+    <xs:attribute name="g" type="xs:int" default="0" />
+    <xs:attribute name="b" type="xs:int" default="0" />
+    <xs:attribute name="a" type="xs:int" default="255" />
+  </xs:complexType>
+
+
+<!-- Entity Reference -->
+  <xs:complexType name="entity_reference">
+    <xs:attribute name="layer_name" type="xs:string" use="required" />
+    <xs:attribute name="entity_name" type="xs:string" use="required" />
+  </xs:complexType>
+
+
+<!-- Free Body -->
+  <xs:complexType name="free_body_type">
+    <xs:sequence>
+      <xs:element name="velocity" type="Vector3" minOccurs="1" maxOccurs="1" />
+      <xs:element name="bound_entity_name" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="mass" type="xs:float" use="required" />
+    <xs:attribute name="moment_of_inertia" type="xs:float" default="0.0" />
+    <xs:attribute name="rotational_period" type="xs:float" default="0.0" />
+  </xs:complexType>
+
+
+<!-- Entities -->
+  <xs:complexType name="entity_type">
+    <xs:attribute name="name" type="xs:string" use="required" />
+  </xs:complexType>
+  
+  <xs:complexType name="moveable_type">
+    <xs:complexContent>
+      <xs:extension base="entity_type">
+        <xs:sequence>
+          <xs:element name="location" type="Vector3" minOccurs="1" maxOccurs="1" />
+          <xs:element name="facing" type="Vector3" minOccurs="1" maxOccurs="1" />
+          <xs:element name="vertical" type="Vector3" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="visable" type="xs:boolean" default="true" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+
+  <xs:complexType name="renderable_2Dline_type">
+    <xs:complexContent>
+      <xs:extension base="moveable_type">
+        <xs:sequence>
+          <xs:element name="point1" type="Vector3" minOccurs="1" maxOccurs="1" />
+          <xs:element name="point2" type="Vector3" minOccurs="1" maxOccurs="1" />
+          <xs:element name="colour" type="Color" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="length" type="xs:float" default="1.0" />
+        <xs:attribute name="point1_is_midpoint" type="xs:boolean" default="false" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  
+    
+  <xs:complexType name="renderable_simple2Dcircle_type">
+    <xs:complexContent>
+      <xs:extension base="moveable_type">
+        <xs:sequence>
+          <xs:element name="colour" type="Color" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="radius" type="xs:float" default="1.0" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  
+  
+  <xs:complexType name="unitcube_wireframe_type">
+    <xs:complexContent>
+      <xs:extension base="moveable_type">
+        <xs:sequence>
+          <xs:element name="colour" type="Color" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="scale" type="xs:float" default="1.0" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  
+  
+  <xs:complexType name="triangularpyrimid_wireframe_type">
+    <xs:complexContent>
+      <xs:extension base="moveable_type">
+        <xs:sequence>
+          <xs:element name="colour" type="Color" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="scale" type="xs:float" default="1.0" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  
+  
+  
+  
+  <!--Renderable_Simple2DPolygon-->
+  
+
+
+
+
+
+  <xs:complexType name="base_sphere_type">
+    <xs:complexContent>
+      <xs:extension base="moveable_type">
+        <xs:attribute name="radius" type="xs:float" default="1.0" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="sphere_type">
+    <xs:complexContent>
+      <xs:extension base="base_sphere_type">
+        <xs:sequence>
+          <xs:element name="colour" type="Color"  minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="base_camera_type">
+    <xs:complexContent>
+      <xs:restriction base="moveable_type">
+        <xs:attribute name="name" type="xs:string" use="required" fixed="camera" />
+      </xs:restriction>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="camera_type">
+    <xs:complexContent>
+      <xs:extension base="moveable_type">
+        <xs:attribute name="name" type="xs:string" fixed="camera" />
+        <xs:attribute name="width" type="xs:integer" use="required" />
+        <xs:attribute name="height" type="xs:integer" use="required" />
+        <xs:attribute name="field_of_vision" type="xs:float" default="0.5" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  
+<!-- Leaf Entities -->
+  <xs:complexType name="star_type">
+    <xs:complexContent>
+      <xs:extension base="base_sphere_type">
+        <xs:sequence>
+          <xs:element name="free_body" type="free_body_type" minOccurs="1" maxOccurs="1" />
+          <xs:element name="colour" type="Color" minOccurs="0" maxOccurs="0" />
+        </xs:sequence>
+        <xs:attribute name="tempriture" type="xs:float" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  
+  
+  <xs:complexType name="planet_type">
+    <xs:complexContent>
+      <xs:extension base="sphere_type">
+        <xs:sequence>
+          <xs:element name="free_body" type="free_body_type" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="parent_star" type="xs:string" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  
+  
+  <xs:complexType name="croshair_type">
+    <xs:complexContent>
+      <xs:extension base="moveable_type">
+        <xs:sequence>
+          <xs:element name="colour" type="Color" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="scale" type="xs:float" default="0.05" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  
+  
+  <xs:complexType name="croshair_3D_type">
+    <xs:complexContent>
+      <xs:extension base="moveable_type">
+        <xs:sequence>
+          <xs:element name="colour" type="Color" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="scale" type="xs:float" default="0.05" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  
+
+<!-- Entity Groups -->
+  <xs:group name="entities_2D_group">
+    <xs:choice>
+      <xs:element name="renderable_2Dline" type="renderable_2Dline_type" />
+      <xs:element name="renderable_simple2Dcircle" type="renderable_simple2Dcircle_type" />
+      <xs:element name="croshair" type="croshair_type" />
+    </xs:choice>
+  </xs:group>
+  
+  <xs:group name="entities_3D_group">
+    <xs:choice>
+      <xs:element name="sphere" type="sphere_type" />
+      <xs:element name="unitcube_wireframe" type="unitcube_wireframe_type" />
+      <xs:element name="triangularpyrimid_wireframe" type="triangularpyrimid_wireframe_type" />
+      <xs:element name="croshair_3D" type="croshair_3D_type" />
+      <xs:element name="star" type="star_type" />
+      <xs:element name="planet" type="planet_type" />
+    </xs:choice>
+  </xs:group>
+  
+  <xs:group name="mixed_entities_group">
+    <xs:choice>
+      <xs:element name="renderable_2Dline" type="renderable_2Dline_type" />
+      <xs:element name="renderable_simple2Dcircle" type="renderable_simple2Dcircle_type" />
+      <xs:element name="croshair" type="croshair_type" />
+      <xs:element name="sphere" type="sphere_type" />
+      <xs:element name="unitcube_wireframe" type="unitcube_wireframe_type" />
+      <xs:element name="triangularpyrimid_wireframe" type="triangularpyrimid_wireframe_type" />
+      <xs:element name="croshair_3D" type="croshair_3D_type" />
+      <xs:element name="star" type="star_type" />
+      <xs:element name="planet" type="planet_type" />
+    </xs:choice>
+  </xs:group>
+  
+  
+<!-- Layer Types -->
+  <xs:complexType name="layer_2D_type">
+    <xs:sequence>
+      <xs:group ref="entities_2D_group" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="render_capability" type="xs:boolean" default="true" />
+  </xs:complexType>
+
+  <xs:complexType name="layer_3D_type">
+    <xs:sequence>
+      <xs:group ref="entities_3D_group" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="render_capability" type="xs:boolean" default="true" />
+  </xs:complexType>
+
+  <xs:complexType name="mixed_layer_type">
+    <xs:sequence>
+      <xs:group ref="mixed_entities_group" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="render_capability" type="xs:boolean" default="true" />
+  </xs:complexType>
+
+  <xs:group name="layers_group">
+    <xs:choice>
+      <xs:element name="layer_2D" type="layer_2D_type" />
+      <xs:element name="layer_3D" type="layer_3D_type" />
+      <xs:element name="mixed_layer" type="mixed_layer_type" />
+    </xs:choice>
+  </xs:group>
+
+
+<!-- Loggers -->
+  <xs:complexType name="logger_type">
+    <xs:sequence>
+      <xs:element name="logged_entity" type="entity_reference" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="file_save_path" type="xs:string" use="optional" />
+  </xs:complexType>
+
+  <xs:complexType name="action_logger_type">
+    <xs:complexContent>
+      <xs:extension base="logger_type">
+        <xs:attribute name="trigger_type" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              The type of trigger function to use.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base = "xs:string">
+              <xs:enumeration value="time_period" />
+              <xs:enumeration value="data_chunk" />
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="trigger_limit" type="xs:float" use="required" />
+        <xs:attribute name="zero_time_on_action" type="xs:boolean" default="false" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="graphing_logger_type">
+    <xs:complexContent>
+      <xs:extension base="action_logger_type">
+        <xs:attribute name="show_graphs" type="xs:boolean" default="true" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="position_logger_type">
+    <xs:complexContent>
+      <xs:extension base="graphing_logger_type" />
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="velocity_logger_type">
+    <xs:complexContent>
+      <xs:extension base="graphing_logger_type" />
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="seperation_logger_type">
+    <xs:complexContent>
+      <xs:extension base="graphing_logger_type">
+        <xs:sequence>
+          <xs:element name="reference_entity" type="entity_reference" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="underlying_barycenter_seperation_logger_type">
+    <xs:complexContent>
+      <xs:restriction base="graphing_logger_type">
+        <xs:sequence>
+          <xs:element name="logged_entity" type="entity_reference" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:restriction>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="barycenter_seperation_logger_type">
+    <xs:complexContent>
+      <xs:extension base="underlying_barycenter_seperation_logger_type">
+        <xs:sequence>
+          <xs:element name="star" type="entity_reference" minOccurs="1" maxOccurs="unbounded" />
+          <xs:element name="measure_entity" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:attribute name="entity_name" type="xs:string" use="required" />
+              <xs:attribute name="scale" type="xs:float" default="1.0" />
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:group name="loggers_group">
+    <xs:choice>
+      <xs:element name="position_logger" type="position_logger_type" />
+      <xs:element name="velocity_logger" type="velocity_logger_type" />
+      <xs:element name="seperation_logger" type="seperation_logger_type" />
+      <xs:element name="barycenter_seperation_logger" type="barycenter_seperation_logger_type" />
+    </xs:choice>
+  </xs:group>
+
+  
+  
+<!-- Simulation -->
+  <xs:complexType name="simulation_type">
+    <xs:sequence>
+      <xs:element name="camera" type="camera_type" minOccurs="0" />
+      <xs:group ref="layers_group" minOccurs="0" maxOccurs="unbounded" />
+      <xs:group ref="loggers_group" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="render_capability" type="xs:boolean" default="true" />
+    <xs:attribute name="timescale" type="xs:float" default="86400" /><!-- Default is one Earth year -->
+  </xs:complexType>
+
+  
+  
+  <xs:element name="simulation" type="simulation_type" />
+  
+</xs:schema>

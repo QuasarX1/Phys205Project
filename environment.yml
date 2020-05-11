@@ -9,8 +9,8 @@ dependencies:
   - backcall=0.1.0=py37_0
   - blas=1.0=mkl
   - bleach=3.1.0=py37_0
-  - ca-certificates=2019.11.27=0
-  - certifi=2019.11.28=py37_0
+  - ca-certificates=2020.1.1=0
+  - certifi=2020.4.5.1=py37_0
   - colorama=0.4.3=py_0
   - cycler=0.10.0=py37_0
   - decorator=4.4.1=py_0
@@ -38,10 +38,14 @@ dependencies:
   - keras-applications=1.0.8=py_0
   - keras-preprocessing=1.1.0=py_1
   - kiwisolver=1.1.0=py37ha925a31_0
+  - libiconv=1.15=h1df5818_7
   - libmklml=2019.0.5=0
   - libpng=1.6.37=h2a8f88b_0
   - libprotobuf=3.11.2=h7bd577a_0
   - libsodium=1.0.16=h9d3ae62_0
+  - libxml2=2.9.9=h464c3ec_0
+  - libxslt=1.1.33=h579f668_0
+  - lxml=4.5.0=py37h1350720_0
   - m2w64-gcc-libgfortran=5.3.0=6
   - m2w64-gcc-libs=5.3.0=7
   - m2w64-gcc-libs-core=5.3.0=7
@@ -62,7 +66,7 @@ dependencies:
   - notebook=6.0.2=py37_0
   - numpy=1.17.3=py37h4ceb530_0
   - numpy-base=1.17.3=py37hc3f5095_0
-  - openssl=1.1.1d=he774522_3
+  - openssl=1.1.1g=he774522_0
   - opt_einsum=3.1.0=py_0
   - pandoc=2.2.3.2=0
   - pandocfilters=1.4.2=py37_1

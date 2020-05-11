@@ -1,1 +1,1 @@
-from simulation.logging.logger import Logger, ActionLogger, GraphingLogger, PositionLogger, VelocityLogger, SeperationLogger
+from simulation.logging.logger import Logger, ActionLogger, GraphingLogger, PositionLogger, VelocityLogger, SeperationLogger, BarycenterSeperationLogger
